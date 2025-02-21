@@ -4,7 +4,7 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 class ORGate(cv.Canvas):
-    input_coord: dict = None
+    input_coord: list = []
     output_coord: tuple = None
 
     FULL_SIDE_LENGTH = 50
@@ -53,6 +53,7 @@ class ORGate(cv.Canvas):
             output_line = cv.Path.LineTo(start_x + self.FULL_SIDE_LENGTH + self.INPUT_ARM_WIDTH + self.__CIRCLE_DIAMETER, start_y + (self.FULL_SIDE_LENGTH / 2))
 
         symbol_elements.append(output_line)
+        self.output_coord = (output_line.x, output_line.y)
 
         points = self.get_spaced_points(self.FULL_SIDE_LENGTH, input_count)
 
@@ -67,12 +68,13 @@ class ORGate(cv.Canvas):
 
         for point in points:
             x = spline(point)
-            print(x, point)
             move = cv.Path.MoveTo(start_x + x, start_y + point)
             input_line = cv.Path.LineTo(start_x - self.INPUT_ARM_WIDTH, start_y + point)
 
             symbol_elements.append(move)
             symbol_elements.append(input_line)
+
+            self.input_coord.append((input_line.x, input_line.y))
 
         self.shapes = [
             cv.Path(

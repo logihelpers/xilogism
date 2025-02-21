@@ -17,8 +17,8 @@ async def main(page: ft.Page):
     page.window.title_bar_hidden = True
     page.window.center()
     page.padding = ft.padding.all(0)
-    page.window.width = 960
-    page.window.height = 600
+    page.window.width = 1280
+    page.window.height = 768
     page.spacing = 0
     page.bgcolor = "#ededed"
 
@@ -32,8 +32,20 @@ async def main(page: ft.Page):
     xg = XORGate(560, 50)
     xog = XORGate(670, 50, xnor=True, input_count=3)
     
-    print("Input Coordinates", ag.input_coord)
-    print("Output Coordinates", ag.output_coord)
+    print("NOT Input Coordinates", ng.input_coord)
+    print("NOT Output Coordinates", ng.output_coord)
+    print("AND Input Coordinates", ag.input_coord)
+    print("AND Output Coordinates", ag.output_coord)
+    print("NAND Input Coordinates", nag.input_coord)
+    print("NAND Output Coordinates", nag.output_coord)
+    print("OR Input Coordinates", og.input_coord)
+    print("OR Output Coordinates", og.output_coord)
+    print("NOR Input Coordinates", nog.input_coord)
+    print("NOR Output Coordinates", nog.output_coord)
+    print("XOR Input Coordinates", xg.input_coord)
+    print("XOR Output Coordinates", xg.output_coord)
+    print("XNOR Input Coordinates", xog.input_coord)
+    print("XNOR Output Coordinates", xog.output_coord)
 
     page.add(
         ft.Row(
