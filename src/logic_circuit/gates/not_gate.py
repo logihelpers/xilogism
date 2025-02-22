@@ -1,7 +1,8 @@
 import flet as ft
 import flet.canvas as cv
+from ..abstract_gate import LogicElement
 
-class NOTGate(cv.Canvas):
+class NOTGate(LogicElement):
     input_coord: tuple = None
     output_coord: tuple = None
 

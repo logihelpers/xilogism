@@ -2,6 +2,8 @@ import flet as ft
 import splash
 import titlebar as tb
 import sidebar as sb
+import flet.canvas as cv
+
 from logic_circuit.gates.not_gate import NOTGate
 from logic_circuit.gates.and_gate import ANDGate
 from logic_circuit.gates.or_gate import ORGate
@@ -9,6 +11,7 @@ from logic_circuit.gates.xor_gate import XORGate
 from logic_circuit.input_node import InputNode
 from logic_circuit.output_node import OutputNode
 from logic_circuit.wire import Wire
+from logic_circuit.canvas import LogicCanvas
 
 async def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -42,6 +45,18 @@ async def main(page: ft.Page):
     onn = OutputNode(830, 50)
 
     wire = Wire(inn.output_coord, onn.input_coord)
+
+    canvas = LogicCanvas()
+    canvas.add_to_canvas(ng)
+    canvas.add_to_canvas(ag)
+    canvas.add_to_canvas(nag)
+    canvas.add_to_canvas(og)
+    canvas.add_to_canvas(nog)
+    canvas.add_to_canvas(xg)
+    canvas.add_to_canvas(xog)
+    canvas.add_to_canvas(inn)
+    canvas.add_to_canvas(onn)
+    canvas.add_to_canvas(wire)
     
     page.add(
         ft.Row(
@@ -67,7 +82,7 @@ async def main(page: ft.Page):
                             ),
                             ft.Text("Recent Projects", size=16),
                             ft.Divider(),
-                            ft.Row([ng, ag, nag, og, nog, xg, xog, inn, onn, wire], scroll=True)
+                            canvas
                         ]
                     ),
                     expand = True,

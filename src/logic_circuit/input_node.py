@@ -1,7 +1,9 @@
 import flet as ft
 import flet.canvas as cv
 
-class InputNode(cv.Canvas):
+from .abstract_gate import LogicElement
+
+class InputNode(LogicElement):
     output_coord: tuple = None
 
     FULL_LENGTH: int = 50

@@ -3,7 +3,9 @@ import flet.canvas as cv
 import numpy as np
 from scipy.interpolate import CubicSpline
 
-class ORGate(cv.Canvas):
+from ..abstract_gate import LogicElement
+
+class ORGate(LogicElement):
     input_coord: list = []
     output_coord: tuple = None
 

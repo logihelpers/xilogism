@@ -1,7 +1,9 @@
 import flet as ft
 import flet.canvas as cv
 
-class Wire(cv.Canvas):
+from .abstract_gate import LogicElement
+
+class Wire(LogicElement):
     def __init__(self, start_coord: tuple, end_coord: tuple):
         super().__init__()
 

@@ -2,7 +2,9 @@ import flet as ft
 import flet.canvas as cv
 import math
 
-class ANDGate(cv.Canvas):
+from ..abstract_gate import LogicElement
+
+class ANDGate(LogicElement):
     input_coord: list = []
     output_coord: tuple = None
 
