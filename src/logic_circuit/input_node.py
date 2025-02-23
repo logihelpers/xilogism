@@ -1,11 +1,9 @@
 import flet as ft
 import flet.canvas as cv
 
-from .abstract_gate import LogicElement
+from .abstract_element import LogicElement
 
 class InputNode(LogicElement):
-    output_coord: tuple = None
-
     FULL_LENGTH: int = 50
     OUTPUT_ARM_WIDTH: int = 20
 
@@ -49,5 +47,6 @@ class InputNode(LogicElement):
             ),
         ]
 
-        self.output_coord = (start_x + (InputNode.__CIRCLE_DIAMETER / 2), 
-                     start_y + InputNode.__CIRCLE_DIAMETER + InputNode.OUTPUT_ARM_WIDTH)
+        self.output_coord = (output_line.x, output_line.y)
+        
+        self.output_node_position = LogicElement.Position.BOTTOM

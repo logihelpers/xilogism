@@ -4,14 +4,16 @@ import titlebar as tb
 import sidebar as sb
 import flet.canvas as cv
 
-from logic_circuit.gates.not_gate import NOTGate
-from logic_circuit.gates.and_gate import ANDGate
-from logic_circuit.gates.or_gate import ORGate
-from logic_circuit.gates.xor_gate import XORGate
-from logic_circuit.input_node import InputNode
-from logic_circuit.output_node import OutputNode
-from logic_circuit.wire import Wire
-from logic_circuit.canvas import LogicCanvas
+from views.start_view import StartView
+
+# from logic_circuit.gates.not_gate import NOTGate
+# from logic_circuit.gates.and_gate import ANDGate
+# from logic_circuit.gates.or_gate import ORGate
+# from logic_circuit.gates.xor_gate import XORGate
+# from logic_circuit.input_node import InputNode
+# from logic_circuit.output_node import OutputNode
+# from logic_circuit.wire import Wire
+# from logic_circuit.canvas import LogicCanvas
 
 async def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -33,64 +35,43 @@ async def main(page: ft.Page):
 
     page.appbar = tb.Titlebar()
     
-    ng = NOTGate(30, 50)
-    ag = ANDGate(120, 50, input_count=5)
-    nag = ANDGate(230, 50, nand=True)
-    og = ORGate(340, 50)
-    nog = ORGate(450, 50, nor=True, input_count=4)
-    xg = XORGate(560, 50)
-    xog = XORGate(670, 50, xnor=True, input_count=3)
+    # ng = NOTGate(30, 50)
+    # ag = ANDGate(120, 50, input_count=5)
+    # nag = ANDGate(230, 50, nand=True, input_count=3)
+    # og = ORGate(340, 50)
+    # nog = ORGate(450, 50, nor=True, input_count=4)
+    # xg = XORGate(560, 50)
+    # xog = XORGate(670, 50, xnor=True, input_count=3)
 
-    inn = InputNode(780, 50)
-    onn = OutputNode(830, 50)
+    # inn = InputNode(780, 50)
+    # onn = OutputNode(850, 50)
 
-    wire = Wire(inn.output_coord, onn.input_coord)
+    # wire = Wire(inn, onn)
+    # wire2 = Wire(ng, ag, 0)
+    # wire3 = Wire(og, nog, 3)
+    # wire4 = Wire(ag, nag, 2)
+    # wire5 = Wire(nag, og, 1)
+    # wire6 = Wire(nag, og, 0)
 
-    canvas = LogicCanvas()
-    canvas.add_to_canvas(ng)
-    canvas.add_to_canvas(ag)
-    canvas.add_to_canvas(nag)
-    canvas.add_to_canvas(og)
-    canvas.add_to_canvas(nog)
-    canvas.add_to_canvas(xg)
-    canvas.add_to_canvas(xog)
-    canvas.add_to_canvas(inn)
-    canvas.add_to_canvas(onn)
-    canvas.add_to_canvas(wire)
+    # canvas = LogicCanvas()
+    # canvas.add_to_canvas(ng, ag, nag, og, nog)
+    # canvas.add_to_canvas(xg, xog, inn, onn)
+    # canvas.add_to_canvas(wire, wire2, wire3, wire4, wire5, wire6)
+
+    start_view = StartView()
+
+    switcher = ft.AnimatedSwitcher(
+        start_view,
+        transition=ft.AnimatedSwitcherTransition.SCALE,
+        duration=500,
+        reverse_duration=100,
+        switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
+        switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
+        expand=True
+    )
     
     page.add(
-        ft.Row(
-            controls=[
-                sb.SideBar(),
-                ft.Container(
-                    content = ft.Column(
-                        controls=[
-                            ft.Text("Good Evening, Owen!", weight=ft.FontWeight.W_900, size=32),
-                            sb.SideBarButton(ft.Icons.SEARCH, "Search", "#d8d8d8", "#666666"),
-                            ft.Text("Pinned Projects", size=16),
-                            ft.Row(
-                                controls=[
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                                    ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9")
-                                ],
-                                scroll=True
-                            ),
-                            ft.Text("Recent Projects", size=16),
-                            ft.Divider(),
-                            canvas
-                        ]
-                    ),
-                    expand = True,
-                    padding=ft.padding.all(16)
-                )
-            ],
-            expand=True
-        )
+        switcher
     )
 
     first_login = await page.client_storage.get_async("first-login")

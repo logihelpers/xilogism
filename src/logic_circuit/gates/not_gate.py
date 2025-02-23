@@ -1,11 +1,8 @@
 import flet as ft
 import flet.canvas as cv
-from ..abstract_gate import LogicElement
+from ..abstract_element import LogicElement
 
 class NOTGate(LogicElement):
-    input_coord: tuple = None
-    output_coord: tuple = None
-
     FULL_HEIGHT: int = 50
     INPUT_ARM_WIDTH: int = 20
     OUTPUT_ARM_WIDTH: int = 20
@@ -45,5 +42,8 @@ class NOTGate(LogicElement):
             )
         ]
 
-        self.input_coord = (start_x - 20, start_y + 25)
+        self.input_coord = [(start_x - 20, start_y + 25)]
         self.output_coord = (start_x + 55, start_y + 25)
+
+        self.rect = (start_x, start_y, NOTGate.FULL_WIDTH, NOTGate.FULL_HEIGHT)
+        self.output_node_position = LogicElement.Position.RIGHT

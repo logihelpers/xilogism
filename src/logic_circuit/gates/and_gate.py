@@ -2,27 +2,28 @@ import flet as ft
 import flet.canvas as cv
 import math
 
-from ..abstract_gate import LogicElement
+from ..abstract_element import LogicElement
 
 class ANDGate(LogicElement):
-    input_coord: list = []
-    output_coord: tuple = None
-
     FULL_SIDE_LENGTH = 50
     INPUT_ARM_WIDTH: int = 20
     OUTPUT_ARM_WIDTH: int = 20
 
     __CIRCLE_DIAMETER: int = 10
 
+    FULL_WIDTH: int = FULL_SIDE_LENGTH + __CIRCLE_DIAMETER + INPUT_ARM_WIDTH + OUTPUT_ARM_WIDTH
+
     def __init__(self, start_x: int, start_y: int, input_count: int = 2, nand: bool = False):
         super().__init__()
 
+        self.input_coord = []
         scale = 1
 
         if input_count > 4:
-            scale = 1 + ((input_count - 4) * 0.2)
+            scale = 1 + ((input_count - 4) * 0.25)
             self.FULL_SIDE_LENGTH *= scale
             self.__CIRCLE_DIAMETER *= scale
+            self.FULL_WIDTH = self.FULL_SIDE_LENGTH + self.INPUT_ARM_WIDTH + self.OUTPUT_ARM_WIDTH
         
         symbol_elements = [
             cv.Path.MoveTo(start_x, start_y),
@@ -78,6 +79,10 @@ class ANDGate(LogicElement):
 
         if nand:
             self.shapes.append(dot)
+            self.FULL_WIDTH += self.__CIRCLE_DIAMETER
+        
+        self.rect = (start_x, start_y, self.FULL_WIDTH, self.FULL_SIDE_LENGTH)
+        self.output_node_position = LogicElement.Position.RIGHT
     
     def get_spaced_points(self, total: float, divisions: int):
         step = total / (divisions + 1)

@@ -1,11 +1,9 @@
 import flet as ft
 import flet.canvas as cv
 
-from .abstract_gate import LogicElement
+from .abstract_element import LogicElement
 
 class OutputNode(LogicElement):
-    input_coord: tuple = None
-
     FULL_LENGTH: int = 50
     OUTPUT_ARM_WIDTH: int = 20
 
@@ -49,4 +47,5 @@ class OutputNode(LogicElement):
             ),
         ]
 
-        self.input_coord = (input_line.x, input_line.y)
+        self.input_coord = [(input_line.x, input_line.y)]
+        self.output_node_position = LogicElement.Position.LEFT
