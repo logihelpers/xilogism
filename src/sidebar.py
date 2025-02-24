@@ -1,5 +1,4 @@
 import flet as ft
-import asyncio
 
 class SideBar(ft.Container):
     def __init__(self):
@@ -9,9 +8,11 @@ class SideBar(ft.Container):
         self.padding = ft.padding.all(16)
         self.margin = ft.margin.all(0)
 
+        self.new_button = SideBarButton(ft.Icons.OPEN_IN_NEW, "New File")
+
         top_column = ft.Column(
             controls = [
-                SideBarButton(ft.Icons.OPEN_IN_NEW, "New File"),
+                self.new_button,
                 SideBarButton(ft.Icons.FILE_OPEN, "Open")
             ],
             expand=True,

@@ -8,7 +8,8 @@ authors = [
     { name = "Flet developer", email = "you@example.com" }
 ]
 dependencies = [
-  "flet==0.26.0"
+  "flet==0.26.0",
+  "flet-screenshot @ file://C:\\Users\\owen\\flet-screenshot",
 ]
 
 [tool.flet]

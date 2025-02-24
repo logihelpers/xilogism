@@ -2,6 +2,7 @@ import flet as ft
 
 class Titlebar(ft.WindowDragArea):
     def __init__(self):
+        self.account_button = AccountButton()
         super().__init__(
             content=ft.Container(
                 content = ft.Row(
@@ -10,7 +11,7 @@ class Titlebar(ft.WindowDragArea):
                         ft.Row(
                             controls = [
                                 ft.Container(
-                                    content=AccountButton(),
+                                    content=self.account_button,
                                     padding=ft.padding.only(right=24),
                                 ),
                                 ft.Container(
@@ -50,7 +51,7 @@ class Titlebar(ft.WindowDragArea):
         self.page.window.maximized = not self.page.window.maximized
         self.page.update()
 
-class AccountButton(ft.PopupMenuButton):
+class AccountButton(ft.IconButton):
     def __init__(self):
         super().__init__()
         self.icon = ft.Icons.PERSON

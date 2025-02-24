@@ -1,7 +1,7 @@
 import flet as ft
 from sidebar import SideBar, SideBarButton
 
-class StartView(ft.Container):
+class EditorView(ft.Container):
     def __init__(self):
         super().__init__()
 
@@ -28,11 +28,8 @@ class StartView(ft.Container):
             ]
         )
 
-        self.sidebar = SideBar()
-
         self.content = ft.Row(
             controls=[
-                self.sidebar,
                 ft.Container(
                     content = self.main_column,
                     expand = True,
@@ -41,7 +38,3 @@ class StartView(ft.Container):
             ],
             expand=True
         )
-    
-    def add_to_page(self, control: ft.Control):
-        self.main_column.controls.append(control)
-        self.main_column.update()

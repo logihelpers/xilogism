@@ -3,8 +3,10 @@ import splash
 import titlebar as tb
 import sidebar as sb
 import flet.canvas as cv
+from flet_screenshot import FletScreenshot
 
 from views.start_view import StartView
+from views.editor_view import EditorView
 
 # from logic_circuit.gates.not_gate import NOTGate
 # from logic_circuit.gates.and_gate import ANDGate
@@ -59,20 +61,37 @@ async def main(page: ft.Page):
     # canvas.add_to_canvas(wire, wire2, wire3, wire4, wire5, wire6)
 
     start_view = StartView()
+    editor_view = EditorView()
 
     switcher = ft.AnimatedSwitcher(
         start_view,
         transition=ft.AnimatedSwitcherTransition.SCALE,
-        duration=500,
+        duration=300,
         reverse_duration=100,
         switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
         switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         expand=True
     )
-    
-    page.add(
-        switcher
+
+    screenshoter = FletScreenshot(
+        content=switcher,
+        expand=True
     )
+    
+    page.add(screenshoter)
+
+    page.appbar.account_button.on_click = lambda x: screenshoter.capture()
+
+    def show_pic(event):
+        start_view.add_to_page(ft.Image(src_base64=event.data))
+
+    screenshoter.on_capture = show_pic
+
+    def show_editor_view(event):
+        switcher.content = editor_view
+        switcher.update()
+
+    start_view.sidebar.new_button.on_click = show_editor_view
 
     first_login = await page.client_storage.get_async("first-login")
     if first_login is None:
