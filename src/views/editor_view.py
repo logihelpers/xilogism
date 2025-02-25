@@ -23,54 +23,63 @@ class EditorView(ft.Container):
 
         canvas = LogicCanvas()
         canvas.add_to_canvas(ng, ag, nag)
-        canvas.add_to_canvas(wire2, wire4,)
+        canvas.add_to_canvas(wire2, wire4)
+        canvas.height=250
 
         self.main_column = ft.Column(
             controls=[
                 ft.Card(
-                    ft.Row(
-                        controls=[
-                            ft.Column(
-                                controls=[
-                                    ft.ElevatedButton(
-                                        content=ft.Row(
-                                            controls=[
-                                                ft.Icon(ft.Icons.ADD),
-                                                ft.Text("New")
-                                            ]
+                    content = ft.Container(
+                        content = ft.Row(
+                            controls=[
+                                ft.Column(
+                                    controls=[
+                                        ft.ElevatedButton(
+                                            content=ft.Row(
+                                                controls=[
+                                                    ft.Icon(ft.Icons.ADD),
+                                                    ft.Text("New")
+                                                ]
+                                            ),
+                                            width=96
+                                        ),
+                                        ft.ElevatedButton(
+                                            content=ft.Row(
+                                                controls=[
+                                                    ft.Icon(ft.Icons.FILE_OPEN),
+                                                    ft.Text("Open")
+                                                ]
+                                            ),
+                                            width=96
                                         )
-                                    ),
-                                    ft.ElevatedButton(
-                                        content=ft.Row(
-                                            controls=[
-                                                ft.Icon(ft.Icons.FILE_OPEN),
-                                                ft.Text("Open")
-                                            ]
+                                    ]
+                                ),
+                                ft.VerticalDivider(color=ft.Colors.BLACK, width=9, thickness=16),
+                                ft.Column(
+                                    controls=[
+                                        ft.ElevatedButton(
+                                            content=ft.Row(
+                                                controls=[
+                                                    ft.Icon(ft.Icons.SAVE),
+                                                    ft.Text("Save")
+                                                ]
+                                            ),
+                                            width=96
+                                        ),
+                                        ft.ElevatedButton(
+                                            content=ft.Row(
+                                                controls=[
+                                                    ft.Icon(ft.Icons.SAVE_AS),
+                                                    ft.Text("Save as")
+                                                ]
+                                            ),
+                                            width=96
                                         )
-                                    )
-                                ]
-                            ),
-                            ft.Column(
-                                controls=[
-                                    ft.ElevatedButton(
-                                        content=ft.Row(
-                                            controls=[
-                                                ft.Icon(ft.Icons.SAVE),
-                                                ft.Text("Save")
-                                            ]
-                                        )
-                                    ),
-                                    ft.ElevatedButton(
-                                        content=ft.Row(
-                                            controls=[
-                                                ft.Icon(ft.Icons.SAVE_AS),
-                                                ft.Text("Save as")
-                                            ]
-                                        )
-                                    )
-                                ]
-                            )
-                        ]
+                                    ]
+                                )
+                            ]
+                        ),
+                        padding=16
                     )
                 ),
                 ft.Row(
@@ -88,7 +97,8 @@ class EditorView(ft.Container):
                                 ft.Text("Circuit Diagram"),
                                 ft.Container(canvas, expand=True)
                             ],
-                            expand=True
+                            expand=True,
+                            scroll=True
                         )
                     ],
                     expand=True
