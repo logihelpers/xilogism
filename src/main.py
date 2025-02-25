@@ -2,7 +2,6 @@ import flet as ft
 import splash
 import titlebar as tb
 import sidebar as sb
-import flet.canvas as cv
 from flet_screenshot import FletScreenshot
 
 from views.start_view import StartView

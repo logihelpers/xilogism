@@ -1,26 +1,97 @@
 import flet as ft
 from sidebar import SideBar, SideBarButton
 
+from logic_circuit.gates.not_gate import NOTGate
+from logic_circuit.gates.and_gate import ANDGate
+from logic_circuit.gates.or_gate import ORGate
+from logic_circuit.gates.xor_gate import XORGate
+from logic_circuit.input_node import InputNode
+from logic_circuit.output_node import OutputNode
+from logic_circuit.wire import Wire
+from logic_circuit.canvas import LogicCanvas
+
 class EditorView(ft.Container):
     def __init__(self):
         super().__init__()
 
+        ng = NOTGate(30, 50)
+        ag = ANDGate(120, 50, input_count=5)
+        nag = ANDGate(230, 50, nand=True, input_count=3)
+
+        wire2 = Wire(ng, ag, 0)
+        wire4 = Wire(ag, nag, 2)
+
+        canvas = LogicCanvas()
+        canvas.add_to_canvas(ng, ag, nag)
+        canvas.add_to_canvas(wire2, wire4,)
+
         self.main_column = ft.Column(
             controls=[
                 ft.Card(
-                    ft.Row([ft.Text("AHAHA")])
+                    ft.Row(
+                        controls=[
+                            ft.Column(
+                                controls=[
+                                    ft.ElevatedButton(
+                                        content=ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.ADD),
+                                                ft.Text("New")
+                                            ]
+                                        )
+                                    ),
+                                    ft.ElevatedButton(
+                                        content=ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.FILE_OPEN),
+                                                ft.Text("Open")
+                                            ]
+                                        )
+                                    )
+                                ]
+                            ),
+                            ft.Column(
+                                controls=[
+                                    ft.ElevatedButton(
+                                        content=ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.SAVE),
+                                                ft.Text("Save")
+                                            ]
+                                        )
+                                    ),
+                                    ft.ElevatedButton(
+                                        content=ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.SAVE_AS),
+                                                ft.Text("Save as")
+                                            ]
+                                        )
+                                    )
+                                ]
+                            )
+                        ]
+                    )
                 ),
                 ft.Row(
                     controls=[
-                        ft.TextField(expand=True),
+                        ft.TextField(
+                            expand=True,
+                            multiline=True,
+                            fit_parent_size=True,
+                            text_vertical_align=ft.VerticalAlignment.START
+                        ),
                         ft.Column(
                             controls=[
-                                ft.Text("Logic Circuit"),
-                                ft.Text("Circuit Diagram")
+                                ft.Text("Logic Diagram"),
+                                ft.Container(canvas, expand=True),
+                                ft.Text("Circuit Diagram"),
+                                ft.Container(canvas, expand=True)
                             ],
                             expand=True
                         )
-                    ]
+                    ],
+                    expand=True
                 )
             ]
         )
