@@ -7,24 +7,21 @@ class EditorView(ft.Container):
 
         self.main_column = ft.Column(
             controls=[
-                ft.Text("Good Evening, Owen!", weight=ft.FontWeight.W_900, size=32),
-                SideBarButton(ft.Icons.SEARCH, "Search", "#d8d8d8", "#666666"),
-                ft.Text("Pinned Projects", size=16),
+                ft.Card(
+                    ft.Row([ft.Text("AHAHA")])
+                ),
                 ft.Row(
                     controls=[
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9"),
-                        ft.Container(ft.Text(""), width=128, height = 160, bgcolor="#d9d9d9")
-                    ],
-                    scroll=True
-                ),
-                ft.Text("Recent Projects", size=16),
-                ft.Divider(),
-                # canvas
+                        ft.TextField(expand=True),
+                        ft.Column(
+                            controls=[
+                                ft.Text("Logic Circuit"),
+                                ft.Text("Circuit Diagram")
+                            ],
+                            expand=True
+                        )
+                    ]
+                )
             ]
         )
 

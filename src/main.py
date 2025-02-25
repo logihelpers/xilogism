@@ -78,7 +78,7 @@ async def main(page: ft.Page):
         expand=True
     )
     
-    page.add(screenshoter)
+    page.add(switcher)
 
     page.appbar.account_button.on_click = lambda x: screenshoter.capture()
 
@@ -88,10 +88,22 @@ async def main(page: ft.Page):
     screenshoter.on_capture = show_pic
 
     def show_editor_view(event):
+        page.appbar.home_button.visible = True
+        page.appbar.home_button.update()
+
         switcher.content = editor_view
         switcher.update()
 
     start_view.sidebar.new_button.on_click = show_editor_view
+
+    def show_start_view(event):
+        page.appbar.home_button.visible = False
+        page.appbar.home_button.update()
+
+        switcher.content = start_view
+        switcher.update()
+
+    page.appbar.home_button.on_click = show_start_view
 
     first_login = await page.client_storage.get_async("first-login")
     if first_login is None:
