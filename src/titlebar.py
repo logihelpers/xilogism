@@ -12,7 +12,7 @@ class Titlebar(ft.WindowDragArea):
                         ft.Row(
                             controls=[
                                 self.home_button,
-                                ft.Text("Logihelp", size=24, color="white", weight=ft.FontWeight.BOLD)
+                                ft.Text("Xillogism", size=24, color="white", weight=ft.FontWeight.BOLD)
                             ]
                         ),
                         ft.Row(

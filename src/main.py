@@ -71,20 +71,8 @@ async def main(page: ft.Page):
         switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         expand=True
     )
-
-    screenshoter = FletScreenshot(
-        content=switcher,
-        expand=True
-    )
     
     page.add(switcher)
-
-    page.appbar.account_button.on_click = lambda x: screenshoter.capture()
-
-    def show_pic(event):
-        start_view.add_to_page(ft.Image(src_base64=event.data))
-
-    screenshoter.on_capture = show_pic
 
     def show_editor_view(event):
         page.appbar.home_button.visible = True

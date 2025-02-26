@@ -10,6 +10,8 @@ from logic_circuit.output_node import OutputNode
 from logic_circuit.wire import Wire
 from logic_circuit.canvas import LogicCanvas
 
+from flet_screenshot import FletScreenshot
+
 class EditorView(ft.Container):
     def __init__(self):
         super().__init__()
@@ -25,6 +27,23 @@ class EditorView(ft.Container):
         canvas.add_to_canvas(ng, ag, nag)
         canvas.add_to_canvas(wire2, wire4)
         canvas.height=250
+
+        self.screenshoter = FletScreenshot(
+            content=ft.Container(canvas, expand=True),
+            expand=True
+        )
+        self.screenshoter.on_capture = lambda e: print(e.data)
+
+        self.save_button = ft.ElevatedButton(
+            content=ft.Row(
+                controls=[
+                    ft.Icon(ft.Icons.SAVE),
+                    ft.Text("Save")
+                ]
+            ),
+            width=96,
+            on_click= lambda x: self.screenshoter.capture()
+        )
 
         self.main_column = ft.Column(
             controls=[
@@ -57,15 +76,7 @@ class EditorView(ft.Container):
                                 ft.VerticalDivider(color=ft.Colors.BLACK, width=9, thickness=16),
                                 ft.Column(
                                     controls=[
-                                        ft.ElevatedButton(
-                                            content=ft.Row(
-                                                controls=[
-                                                    ft.Icon(ft.Icons.SAVE),
-                                                    ft.Text("Save")
-                                                ]
-                                            ),
-                                            width=96
-                                        ),
+                                        self.save_button,
                                         ft.ElevatedButton(
                                             content=ft.Row(
                                                 controls=[
@@ -93,7 +104,7 @@ class EditorView(ft.Container):
                         ft.Column(
                             controls=[
                                 ft.Text("Logic Diagram"),
-                                ft.Container(canvas, expand=True),
+                                self.screenshoter,
                                 ft.Text("Circuit Diagram"),
                                 ft.Container(canvas, expand=True)
                             ],
