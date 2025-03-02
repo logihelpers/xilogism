@@ -1,9 +1,9 @@
 import flet as ft
-import flet.canvas as cv
+import xilocanvas as xv
 
 from .abstract_element import LogicElement
 
-class LogicCanvas(cv.Canvas):
+class LogicCanvas(xv.Xilocanvas):
     def __init__(self):
         super().__init__()
 

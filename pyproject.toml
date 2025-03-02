@@ -9,7 +9,7 @@ authors = [
 ]
 dependencies = [
   "flet==0.26.0",
-  "flet-screenshot @ file://C:\\Users\\owen\\flet-screenshot",
+  "xilocanvas @ git+https://github.com/logihelpers/xilocanvas.git",
 ]
 
 [tool.flet]

@@ -10,11 +10,18 @@ from logic_circuit.output_node import OutputNode
 from logic_circuit.wire import Wire
 from logic_circuit.canvas import LogicCanvas
 
-from flet_screenshot import FletScreenshot
-
 class EditorView(ft.Container):
     def __init__(self):
         super().__init__()
+
+        self.imageshow = ft.Image(
+            src="https://picsum.photos/200/200?3",
+            width=200,
+            height=200,
+            fit=ft.ImageFit.NONE,
+            repeat=ft.ImageRepeat.NO_REPEAT,
+            border_radius=ft.border_radius.all(10),
+        )
 
         ng = NOTGate(30, 50)
         ag = ANDGate(120, 50, input_count=5)
@@ -24,15 +31,10 @@ class EditorView(ft.Container):
         wire4 = Wire(ag, nag, 2)
 
         canvas = LogicCanvas()
+        canvas.on_capture = self.display_canvas
         canvas.add_to_canvas(ng, ag, nag)
         canvas.add_to_canvas(wire2, wire4)
         canvas.height=250
-
-        self.screenshoter = FletScreenshot(
-            content=ft.Container(canvas, expand=True),
-            expand=True
-        )
-        self.screenshoter.on_capture = lambda e: print(e.data)
 
         self.save_button = ft.ElevatedButton(
             content=ft.Row(
@@ -42,7 +44,7 @@ class EditorView(ft.Container):
                 ]
             ),
             width=96,
-            on_click= lambda x: self.screenshoter.capture()
+            on_click= lambda x: canvas.capture()
         )
 
         self.main_column = ft.Column(
@@ -104,12 +106,51 @@ class EditorView(ft.Container):
                         ft.Column(
                             controls=[
                                 ft.Text("Logic Diagram"),
-                                self.screenshoter,
+                                ft.Container(canvas, expand=True),
                                 ft.Text("Circuit Diagram"),
-                                ft.Container(canvas, expand=True)
+                                self.imageshow,
+                                ft.Text("                Bill of Materials"),
+                                ft.Container(
+                                    content = ft.DataTable(
+                                        bgcolor="white",
+                                        border=ft.border.all(2, "black"),
+                                        border_radius=10,
+                                        vertical_lines=ft.BorderSide(2, "black"),
+                                        horizontal_lines=ft.BorderSide(1, "black"),
+                                        columns=[
+                                            ft.DataColumn(ft.Text("Amount"), numeric=True),
+                                            ft.DataColumn(ft.Text("Gate Type")),
+                                            ft.DataColumn(ft.Text("Component")),
+                                        ],
+                                        rows=[
+                                            ft.DataRow(
+                                                cells=[
+                                                    ft.DataCell(ft.Text("5")),
+                                                    ft.DataCell(ft.Text("AND")),
+                                                    ft.DataCell(ft.Text("74xx")),
+                                                ],
+                                            ),
+                                            ft.DataRow(
+                                                cells=[
+                                                    ft.DataCell(ft.Text("9")),
+                                                    ft.DataCell(ft.Text("NOR")),
+                                                    ft.DataCell(ft.Text("74xx")),
+                                                ],
+                                            ),
+                                            ft.DataRow(
+                                                cells=[
+                                                    ft.DataCell(ft.Text("11")),
+                                                    ft.DataCell(ft.Text("XNOR")),
+                                                    ft.DataCell(ft.Text("748x")),
+                                                ],
+                                            ),
+                                        ],
+                                    ),
+                                    padding=ft.padding.symmetric(16, 64)
+                                )
                             ],
                             expand=True,
-                            scroll=True
+                            scroll=True,
                         )
                     ],
                     expand=True
@@ -127,3 +168,7 @@ class EditorView(ft.Container):
             ],
             expand=True
         )
+    
+    def display_canvas(self, event):
+        self.imageshow.src_base64 = event.data
+        self.imageshow.update()
