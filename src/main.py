@@ -61,6 +61,7 @@ async def main(page: ft.Page):
 
         sidebar.scale_all(scale)
         start_view.scale_all(scale)
+        titlebar.scale_all(scale)
 
     main_child = ft.Row(
         controls=[
