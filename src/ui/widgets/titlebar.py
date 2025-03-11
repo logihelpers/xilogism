@@ -10,8 +10,6 @@ class TitleBar(ft.Container):
         self.sidebar_hide_button = ft.FilledButton(
             bgcolor="#00ffffff"
         )
-
-        self.build()
     
     def build(self):
         self.sidebar_hide_button.content = ft.Image(

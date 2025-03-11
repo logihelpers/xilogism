@@ -8,6 +8,7 @@ from mediaquerycontainer import MediaQueryContainer, MediaQueryContainerChangeEv
 from ui.widgets.sidebar import SideBar
 from ui.widgets.titlebar import TitleBar
 from ui.views.start_view import StartView
+from ui.views.open_existing_view import OpenExistingView
 
 async def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -52,16 +53,31 @@ async def main(page: ft.Page):
     titlebar.sidebar_hide_button.on_click = hide_sidebar
 
     sidebar.on_animation_end = hide
+    
+    open_existing_view = OpenExistingView()
+
+    switcher = ft.AnimatedSwitcher(
+        content = open_existing_view,
+        transition=ft.AnimatedSwitcherTransition.FADE,
+        duration=250,
+        reverse_duration=250,
+        switch_in_curve=ft.AnimationCurve.LINEAR,
+        switch_out_curve=ft.AnimationCurve.LINEAR,
+    )
+
+    def switch_child():
+        switcher.content = open_existing_view
+        switcher.update()
+
+    sidebar.new = switch_child
 
     def size_change(event: MediaQueryContainerChangeEvent):
         scale: float = event.window_width / 967.2
-        
-        if scale >= 1.35:
-            scale *= 0.75
 
         sidebar.scale_all(scale)
-        start_view.scale_all(scale)
         titlebar.scale_all(scale)
+
+        switcher.content.scale_all(scale)
 
     main_child = ft.Row(
         controls=[
@@ -74,7 +90,7 @@ async def main(page: ft.Page):
                     expand = True,
                     controls=[
                         titlebar,
-                        start_view
+                        switcher
                     ]
                 )
             )

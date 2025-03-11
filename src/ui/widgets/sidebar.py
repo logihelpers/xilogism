@@ -37,14 +37,26 @@ class SideBar(ft.Container):
                         )
                     )
                 ),
-                SideBar.Title("Home", is_home=True),
-                SideBar.Button("icons_light/start.png", "Start"),
-                SideBar.Button("icons_light/new.png", "New Xilogism"),
-                SideBar.Button("icons_light/open.png", "Open Xilogism"),
-                SideBar.Title("Pinned"),
-                SideBar.Button("icons_light/logo.png", "Xilogism 1"),
-                SideBar.Button("icons_light/logo.png", "Logic Circuit 1"),
-                SideBar.Button("icons_light/logo.png", "Xilogism 2"),
+                ft.Column(
+                    controls = [
+                        SideBar.Title("Home", is_home=True),
+                        SideBar.Button("icons_light/start.png", "Start"),
+                        SideBar.Button("icons_light/new.png", "New Xilogism", on_button_press=self.new),
+                        SideBar.Button("icons_light/open.png", "Open Xilogism"),
+                        SideBar.Title("Pinned"),
+                        SideBar.Button("icons_light/logo.png", "Xilogism 1"),
+                        SideBar.Button("icons_light/logo.png", "Logic Circuit 1"),
+                        SideBar.Button("icons_light/logo.png", "Xilogism 2"),
+                        SideBar.Title("Recent Files"),
+                        SideBar.Button("icons_light/logo.png", "LCD - Lab 1"),
+                        SideBar.Button("icons_light/logo.png", "LCD - Lab 2"),
+                        SideBar.Button("icons_light/logo.png", "FMSS - CIRCUIT"),
+                        SideBar.Title("Google Drive"),
+                    ],
+                    expand=True,
+                    spacing=0,
+                    scroll=True
+                )
             ],
             expand=True,
             spacing=0
@@ -53,6 +65,9 @@ class SideBar(ft.Container):
         self.content = top_column
 
         super().build()
+    
+    def new(self):
+        pass
 
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:
@@ -77,21 +92,23 @@ class SideBar(ft.Container):
             self.content = ft.Row(
                 controls = [
                     ft.Text(self.title, weight=ft.FontWeight.W_700, color="black", size=14 * self.widget_scale),
-                    ft.FilledButton(
+                    ft.Container(
                         content=ft.Image(
                             src="/icons_light/settings_more.png",
                             width=16 * self.widget_scale,
                             height=16 * self.widget_scale
                         ),
                         bgcolor="#00191f51",
-                        visible = not self.is_home
+                        visible = not self.is_home,
+                        shape=ft.BoxShape.CIRCLE,
+                        on_hover=self.__on_title_hover
                     )
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             )
             self.padding = ft.padding.only(
                 8 * self.widget_scale, 
-                16 * self.widget_scale, 
+                12 * self.widget_scale, 
                 8 * self.widget_scale, 
                 8 * self.widget_scale
             )
@@ -99,6 +116,10 @@ class SideBar(ft.Container):
             SideBar.Title.refs[self.title] = self
 
             super().build()
+        
+        def __on_title_hover(self, event: ft.ControlEvent):
+            event.control.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
+            event.control.update()
         
         @staticmethod
         def scale_all(scale: float):
@@ -112,13 +133,15 @@ class SideBar(ft.Container):
         refs: dict = dict()
         active: bool = False
         widget_scale: float = 1.0
-        def __init__(self, path: str, label: str):
+        def __init__(self, path: str, label: str, on_button_press = None):
             super().__init__()
             self.label = label
             self.path = path
+            self.tooltip = path
 
             self.on_hover = self.__hover
             self.on_click = self.__on_button_press
+            self.on_button_press = on_button_press
         
         def __hover(self, event: ft.ControlEvent):
             if event.control.active:

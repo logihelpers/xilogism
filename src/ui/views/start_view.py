@@ -8,7 +8,7 @@ class StartView(ft.Container):
         self.widget_scale = 1.0
     
     def build(self):
-        self.padding = ft.padding.all(16 * self.widget_scale)
+        self.padding = ft.padding.all(16)
         self.expand = True
         self.content = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
@@ -16,8 +16,8 @@ class StartView(ft.Container):
                 ft.Container(
                     content = ft.Image(
                         src="/icons_light/logo.png",
-                        width=320 * self.widget_scale,
-                        height=320 * self.widget_scale
+                        width=(320 * self.widget_scale) * 1.10,
+                        height=(320 * self.widget_scale) * 1.10
                     ),
                     expand=True
                 ),
