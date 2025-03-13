@@ -3,14 +3,14 @@ import asyncio
 
 async def app(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.fonts = {"Product Sans" : "/Product Sans Regular.ttf"}
-    page.theme = ft.Theme(color_scheme_seed = "#4169e1", font_family="Product Sans")
+    page.fonts = {"Inter" : "/fonts/Inter.ttf"}
+    page.theme = ft.Theme(color_scheme_seed = "#4169e1", font_family="Inter")
     page.window.title_bar_hidden = True
-    page.window.width = 600
+    page.window.width = 640
     page.window.height = 300
     page.window.center()
 
-    image = ft.Image(src="/icon.png", width=150, fit=ft.ImageFit.SCALE_DOWN)
+    image = ft.Image(src="/icon.png", width=200, height = 200, fit=ft.ImageFit.SCALE_DOWN)
 
     pr = ft.ProgressRing(width=16, height=16, stroke_width = 2)
 
@@ -18,7 +18,13 @@ async def app(page: ft.Page):
         ft.Row(
             [
                 image,
-                ft.Text("Logihelp", size=96, color="#1d2357", weight=ft.FontWeight.W_500)
+                ft.Column(
+                    controls = [
+                        ft.Text("Logihelp", size=96, color="#51431C", weight=ft.FontWeight.W_500),
+                        ft.Text("Code to Circuits? Xilogized!", size=16, color="black", weight=ft.FontWeight.W_500)
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                )
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -27,12 +33,12 @@ async def app(page: ft.Page):
         ft.Row(
             [
                 pr,
-                ft.Text("Please wait while we set a few things up for you.", size=16, color="#1d2357"),
+                ft.Text("Please wait while we set a few things up for you.", size=16, color="black"),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.START,
         ),
     )
 
-    await asyncio.sleep(2)
+    await asyncio.sleep(5)
     page.window.close()

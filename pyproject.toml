@@ -5,27 +5,28 @@ description = "A companion application for Computer Engineering Students taking 
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
-    { name = "Flet developer", email = "you@example.com" }
+    { name = "treppenwitz03", email = "owendavidmalicsi@gmail.com" }
 ]
 dependencies = [
   "flet==0.26.0",
   "xilocanvas @ git+https://github.com/logihelpers/xilocanvas.git",
+  "mediaquerycontainer @ git+https://github.com/logihelpers/MediaQueryContainer.git"
 ]
 
 [tool.flet]
 # org name in reverse domain name notation, e.g. "com.mycompany".
 # Combined with project.name to build bundle ID for iOS and Android apps
-org = "com.mycompany"
+org = "io.logihelpers"
 
 # project display name that is used as an app title on Android and iOS home screens,
 # shown in window titles and about app dialogs on desktop.
 product = "xilogism"
 
 # company name to display in about app dialogs
-company = "Flet"
+company = "Logihelpers"
 
 # copyright text to display in about app dialogs
-copyright = "Copyright (C) 2025 by Flet"
+copyright = "Copyright (C) 2025 by Logihelpers"
 
 [tool.flet.app]
 path = "src"
