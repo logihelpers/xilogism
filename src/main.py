@@ -57,22 +57,23 @@ async def main(page: ft.Page):
     open_existing_view = OpenExistingView()
 
     switcher = ft.AnimatedSwitcher(
-        content = open_existing_view,
+        content = start_view,
         transition=ft.AnimatedSwitcherTransition.FADE,
         duration=250,
         reverse_duration=250,
         switch_in_curve=ft.AnimationCurve.LINEAR,
         switch_out_curve=ft.AnimationCurve.LINEAR,
+        expand=True
     )
 
     def switch_child():
-        switcher.content = open_existing_view
+        switcher.content = open_existing_view if switcher.content == start_view else start_view
         switcher.update()
 
     sidebar.new = switch_child
 
     def size_change(event: MediaQueryContainerChangeEvent):
-        scale: float = event.window_width / 967.2
+        scale: float = 1 + (((event.window_width / 967.2) - 1) / 2)
 
         sidebar.scale_all(scale)
         titlebar.scale_all(scale)

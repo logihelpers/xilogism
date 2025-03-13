@@ -12,6 +12,8 @@ class StartView(ft.Container):
         self.expand = True
         self.content = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            expand=True,
             controls=[
                 ft.Container(
                     content = ft.Image(
@@ -94,7 +96,7 @@ class StartView(ft.Container):
                                     )
                                 ),
                                 style=ft.ButtonStyle(
-                                    bgcolor="#4d191f51",
+                                    bgcolor="#4d51431C",
                                     shape=ft.RoundedRectangleBorder(16 * self.widget_scale)
                                 )
                             )
@@ -123,7 +125,7 @@ class StartView(ft.Container):
                                         ],
                                     )
                                 ),
-                                bgcolor="#26191f51"
+                                bgcolor="#2651431C"
                             )
                         )
                     ]
