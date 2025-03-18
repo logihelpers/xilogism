@@ -1,11 +1,12 @@
 from flet import *
 
-from mediaquerycontainer import MediaQueryContainer as MediaQuery, MediaQueryContainerChangeEvent
+from mediaquerycontainer import MediaQueryContainer as MediaQuery
 
 from presentation.views.widgets.sidebar.sidebar import SideBar
 from presentation.views.widgets.titlebar import TitleBar
 
 from presentation.views.start_view import StartView
+from presentation.views.open_existing_view import OpenExistingView
 
 class WindowView(Row):
     def __init__(self):
@@ -15,6 +16,17 @@ class WindowView(Row):
         self.sidebar = SideBar()
         self.titlebar = TitleBar()
         self.start_view = StartView()
+        self.open_view = OpenExistingView()
+
+        self.switcher = AnimatedSwitcher(
+            content = self.start_view,
+            transition= AnimatedSwitcherTransition.FADE,
+            duration=250,
+            reverse_duration=250,
+            switch_in_curve= AnimationCurve.LINEAR,
+            switch_out_curve= AnimationCurve.LINEAR,
+            expand=True
+        )
 
         self.controls = [
             self.media_query,
@@ -26,15 +38,7 @@ class WindowView(Row):
                     expand = True,
                     controls=[
                         self.titlebar,
-                        AnimatedSwitcher(
-                            content = self.start_view,
-                            transition= AnimatedSwitcherTransition.FADE,
-                            duration=250,
-                            reverse_duration=250,
-                            switch_in_curve= AnimationCurve.LINEAR,
-                            switch_out_curve= AnimationCurve.LINEAR,
-                            expand=True
-                        )
+                        self.switcher
                     ]
                 )
             )

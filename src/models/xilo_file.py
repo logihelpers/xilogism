@@ -7,7 +7,7 @@ class XiloFile:
         self._size__ = size
         self._thumbnail__ = thumbnail
 
-        XiloFile.all_files.append(self.as_dict())
+        XiloFile.all_files.append(self)
     
     @property
     def title(self) -> str:
@@ -58,3 +58,12 @@ class XiloFile:
                 "thumbnail": self.thumbnail
             }
         }
+    
+    @staticmethod
+    def parse(title: str):
+        file: XiloFile = None
+        for file in XiloFile.all_files:
+            if file.title == title:
+                return file
+        
+        return None
