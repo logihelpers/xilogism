@@ -1,13 +1,14 @@
 import flet as ft
-from registration_ui import RegistrationDialog
+from presentation.views.dialogs.registration_dialog import RegistrationDialog
 
 class SideBar(ft.Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
     def __init__(self):
-        super().__init__(animate_offset=250)
-
-    def build(self):
+        super().__init__(
+            animate_offset=200,
+            animate=ft.animation.Animation(200, ft.AnimationCurve.LINEAR),
+        )
         self.active = "Start"        
         self.bgcolor = "#d9d9d9"
         self.width = 180 * self.widget_scale
@@ -23,7 +24,7 @@ class SideBar(ft.Container):
                         border=ft.border.only(bottom=ft.BorderSide(1, "#6b6b6b")),
                         padding=ft.padding.all(16 * self.widget_scale),
                         content=ft.FilledButton(
-                            bgcolor="#0051431C",
+                            bgcolor="#00191f51",
                             content = ft.Row(
                                 controls=[
                                     ft.Image(
@@ -64,8 +65,6 @@ class SideBar(ft.Container):
         )
         
         self.content = top_column
-
-        super().build()
     
     def open(self, event):
         dialog = RegistrationDialog()
@@ -103,7 +102,7 @@ class SideBar(ft.Container):
                             width=16 * self.widget_scale,
                             height=16 * self.widget_scale
                         ),
-                        bgcolor="#0051431C",
+                        bgcolor="#00191f51",
                         visible = not self.is_home,
                         shape=ft.BoxShape.CIRCLE,
                         on_hover=self.__on_title_hover
@@ -123,7 +122,7 @@ class SideBar(ft.Container):
             super().build()
         
         def __on_title_hover(self, event: ft.ControlEvent):
-            event.control.bgcolor = "#4d51431C" if event.data == "true" else "#d9d9d9"
+            event.control.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
             event.control.update()
         
         @staticmethod
@@ -152,7 +151,7 @@ class SideBar(ft.Container):
             if event.control.active:
                 return
 
-            event.control.bgcolor = "#4d51431C" if event.data == "true" else "#d9d9d9"
+            event.control.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
             event.control.update()
         
         def build(self):
@@ -181,7 +180,7 @@ class SideBar(ft.Container):
 
             if self.label == "Start":
                 SideBar.Button.refs["Start"].active = True
-                SideBar.Button.refs["Start"].bgcolor = "#4d51431C"
+                SideBar.Button.refs["Start"].bgcolor = "#4d191f51"
             
             super().build()
         
@@ -190,7 +189,7 @@ class SideBar(ft.Container):
             widget: SideBar.Button = None
             for name, widget in SideBar.Button.refs.items():
                 if name == self.label:
-                    widget.bgcolor = "#4d51431C"
+                    widget.bgcolor = "#4d191f51"
                     widget.active = True
                     widget.update()
                 else:

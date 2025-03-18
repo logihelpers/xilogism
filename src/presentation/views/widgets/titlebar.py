@@ -1,25 +1,30 @@
-import flet as ft
+from flet import *
+from presentation.states.title_button_state import *
+from presentation.states.sidebar_hide_state import *
 
-class TitleBar(ft.Container):
+class TitleBar(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
-    sidebar_hide_button: ft.FilledButton = None
+    sidebar_hide_button: FilledButton = None
     def __init__(self):
         super().__init__()
 
-        self.sidebar_hide_button = ft.FilledButton(
-            bgcolor="#00ffffff"
+        self.title_button_state = TitleButtonState()
+        self.sidebar_hide_state = SideBarHideState()
+
+        self.sidebar_hide_button = FilledButton(
+            bgcolor="#00ffffff",
+            on_click=self.sidebar_hide_state.invert
         )
-    
-    def build(self):
-        self.sidebar_hide_button.content = ft.Image(
+
+        self.sidebar_hide_button.content = Image(
             src="/icons_light/sidebar_show.png",
             width=16 * self.widget_scale,
             height=16 * self.widget_scale,
         )
 
-        self.settings_button = ft.FilledButton(
-            content = ft.Image(
+        self.settings_button = FilledButton(
+            content = Image(
                 src="/icons_light/setting.png",
                 width=16 * self.widget_scale,
                 height=16 * self.widget_scale,
@@ -27,29 +32,29 @@ class TitleBar(ft.Container):
             bgcolor="#00ffffff"
         )
 
-        self.content = ft.WindowDragArea(
-            content = ft.Row(
+        self.content = WindowDragArea(
+            content = Row(
                 controls=[
-                    ft.Row(
+                    Row(
                         controls=[
                             self.sidebar_hide_button,
-                            ft.Container(
-                                ft.Text(
+                            Container(
+                                Text(
                                     value="START XILOGISM",
-                                    weight=ft.FontWeight.W_600,
+                                    weight=FontWeight.W_600,
                                     size=16 * self.widget_scale
                                 ),
-                                padding=ft.padding.only(left=16 * self.widget_scale),
+                                padding=padding.only(left=16 * self.widget_scale),
                             )
                         ],
                         expand=True
                     ),
-                    ft.Row(
+                    Row(
                         spacing = 0,
                         controls=[
                             self.settings_button,
-                            ft.FilledButton(
-                                content = ft.Image(
+                            FilledButton(
+                                content = Image(
                                     src="/icons_light/minimize_new.png",
                                     width=16 * self.widget_scale,
                                     height=16 * self.widget_scale,
@@ -57,8 +62,8 @@ class TitleBar(ft.Container):
                                 bgcolor="#00ffffff",
                                 on_click = self.minimize
                             ),
-                            ft.FilledButton(
-                                content = ft.Image(
+                            FilledButton(
+                                content = Image(
                                     src="/icons_light/maximize_new.png",
                                     width=16 * self.widget_scale,
                                     height=16 * self.widget_scale,
@@ -66,31 +71,30 @@ class TitleBar(ft.Container):
                                 bgcolor="#00ffffff",
                                 on_click = self.maximize
                             ),
-                            ft.FilledButton(
-                                content = ft.Image(
+                            FilledButton(
+                                content = Image(
                                     src="/icons_light/close_new.png",
                                     width=16 * self.widget_scale,
                                     height=16 * self.widget_scale,
                                 ),
                                 bgcolor="#00ffffff",
-                                on_click = lambda e: self.page.window.close()
+                                on_click = self.close_app
                             ),
                         ]
                     )
                 ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                alignment=MainAxisAlignment.SPACE_BETWEEN
             )
         )
 
-        super().build()
-
     def minimize(self, event):
-        self.page.window.minimized = True
-        self.page.update()
+        self.title_button_state.state = WindowState.MINIMIZE
 
     def maximize(self, event):
-        self.page.window.maximized = not self.page.window.maximized
-        self.page.update()
+        self.title_button_state.state = WindowState.MAXIMIZE
+    
+    def close_app(self, event):
+        self.title_button_state.state = WindowState.CLOSE
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:

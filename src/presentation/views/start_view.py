@@ -10,6 +10,7 @@ class StartView(ft.Container):
     def build(self):
         self.padding = ft.padding.all(16)
         self.expand = True
+        self.expand_loose = True
         self.content = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -96,7 +97,7 @@ class StartView(ft.Container):
                                     )
                                 ),
                                 style=ft.ButtonStyle(
-                                    bgcolor="#4d51431C",
+                                    bgcolor="#4d191f51",
                                     shape=ft.RoundedRectangleBorder(16 * self.widget_scale)
                                 )
                             )
@@ -125,7 +126,7 @@ class StartView(ft.Container):
                                         ],
                                     )
                                 ),
-                                bgcolor="#2651431C"
+                                bgcolor="#26191f51"
                             )
                         )
                     ]

@@ -20,7 +20,7 @@ async def app(page: ft.Page):
                 image,
                 ft.Column(
                     controls = [
-                        ft.Text("Logihelp", size=96, color="#51431C", weight=ft.FontWeight.W_500),
+                        ft.Text("Logihelp", size=96, color="#191f51", weight=ft.FontWeight.W_500),
                         ft.Text("Code to Circuits? Xilogized!", size=16, color="black", weight=ft.FontWeight.W_500)
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -40,5 +40,5 @@ async def app(page: ft.Page):
         ),
     )
 
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     page.window.close()
