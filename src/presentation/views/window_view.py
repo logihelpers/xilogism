@@ -2,7 +2,7 @@ from flet import *
 
 from mediaquerycontainer import MediaQueryContainer as MediaQuery, MediaQueryContainerChangeEvent
 
-from presentation.views.widgets.sidebar import SideBar
+from presentation.views.widgets.sidebar.sidebar import SideBar
 from presentation.views.widgets.titlebar import TitleBar
 
 from presentation.views.start_view import StartView
