@@ -1,4 +1,6 @@
 from presentation.states.active_sidebar_button_state import *
+from presentation.states.active_file_state import ActiveFileState
+
 from presentation.views.widgets.sidebar.button import SideBarButton
 
 from models.xilo_file import XiloFile
@@ -10,6 +12,7 @@ class ActiveSideBarButtonController:
         self.page = page
 
         self.asbb_state = ActiveSideBarButtonState()
+        self.af_state = ActiveFileState()
 
         self.asbb_state.on_change = self.change_active
     
@@ -22,7 +25,12 @@ class ActiveSideBarButtonController:
             if name == active:
                 widget.bgcolor = "#4d191f51"
                 widget.active = True
-                self.open_file(name)
+
+                self.af_state.active = XiloFile.parse(name)
+
+                if active == "Start" or active == "Open Xilogism" or active == "New Xilogism":
+                    self.af_state.active = active
+
                 widget.update()
             else:
                 if widget.bgcolor == "#d9d9d9":
@@ -33,11 +41,3 @@ class ActiveSideBarButtonController:
                 widget.update()
         
         self.page.update()
-    
-    def open_file(self, filename: str):
-        files: list = XiloFile.all_files
-        file: XiloFile = None
-        for file in files:
-            if file.title == filename:
-                # editor_view.load(file)
-                return

@@ -1,43 +1,41 @@
-import flet as ft
+from flet import *
 
-class OpenExistingView(ft.Container):
+class OpenExistingView(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
     def __init__(self):
         super().__init__()
         self.widget_scale = 1.0
-    
-    def build(self):
-        self.padding = ft.padding.all(16 * self.widget_scale)
+        self.padding = padding.all(16 * self.widget_scale)
         self.expand = True
-        self.content = ft.Column(
+        self.content = Column(
             controls = [
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                Row(
+                    alignment=MainAxisAlignment.SPACE_BETWEEN,
                     controls=[
-                        ft.Text(
+                        Text(
                             "Buon giorno, Amico!",
                             color="black",
-                            weight=ft.FontWeight.W_700,
+                            weight=FontWeight.W_700,
                             italic=True,
                             size=28
                         ),
-                        ft.Container(
-                            padding = ft.padding.symmetric(4, 24),
+                        Container(
+                            padding = padding.symmetric(4, 24),
                             border_radius=32,
                             bgcolor="#4d191f51",
-                            border=ft.border.all(1, "black"),
-                            content=ft.Row(
+                            border=border.all(1, "black"),
+                            content=Row(
                                 controls=[
-                                    ft.Image(
+                                    Image(
                                         src="/icons_light/search.png",
                                         width=24,
                                         height=24
                                     ),
-                                    ft.Text(
+                                    Text(
                                         "Search",
                                         color="black",
-                                        weight=ft.FontWeight.W_500,
+                                        weight=FontWeight.W_500,
                                         size=14,
                                         width=128
                                     )
@@ -46,12 +44,12 @@ class OpenExistingView(ft.Container):
                         )
                     ]
                 ),
-                ft.Text(
+                Text(
                     "Pinned Projects",
-                    weight=ft.FontWeight.W_500,
+                    weight=FontWeight.W_500,
                     size=14
                 ),
-                ft.Row( # Pinned row
+                Row( # Pinned row
                     controls=[
                         OpenExistingView.PinnedButton(),
                         OpenExistingView.PinnedButton(),
@@ -63,18 +61,18 @@ class OpenExistingView(ft.Container):
                     scroll=True,
                     spacing=16
                 ),
-                ft.Container(
-                    content = ft.Text(
+                Container(
+                    content = Text(
                         "Recent Projects",
-                        weight=ft.FontWeight.W_500,
+                        weight=FontWeight.W_500,
                         size=14
                     ),
-                    padding=ft.padding.only(top=16)
+                    padding=padding.only(top=16)
                 ),
-                ft.Divider(1, color="#6b6b6b"),
-                ft.Container(
-                    padding=ft.padding.only(top=8, right=8, bottom=0, left=8),
-                    content = ft.Column( # Recents Column
+                Divider(1, color="#6b6b6b"),
+                Container(
+                    padding=padding.only(top=8, right=8, bottom=0, left=8),
+                    content = Column( # Recents Column
                         controls=[
                             OpenExistingView.RecentsButton(),
                             OpenExistingView.RecentsButton(),
@@ -91,8 +89,6 @@ class OpenExistingView(ft.Container):
                 )
             ]
         )
-
-        super().build()
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:
@@ -102,26 +98,26 @@ class OpenExistingView(ft.Container):
 
             self.old_scale = scale
     
-    class PinnedButton(ft.Container):
+    class PinnedButton(Container):
         def __init__(self):
             super().__init__()
 
             self.bgcolor = "#00191f51"
             self.width = 144
             self.height = 200
-            self.content = ft.Column(
+            self.content = Column(
                 spacing=0,
                 controls=[
-                    ft.Container(
-                        ft.Stack(
+                    Container(
+                        Stack(
                             controls=[
-                                ft.Image(
+                                Image(
                                     src="/icons_light/white.jpg",
                                     width=144,
                                     height=180,
                                     border_radius=8
                                 ),
-                                ft.Image(
+                                Image(
                                     src="/icons_light/Heart.png",
                                     width=24,
                                     height=24,
@@ -133,30 +129,30 @@ class OpenExistingView(ft.Container):
                         expand=True,
                         bgcolor="#f4f4f4",
                         border_radius=8,
-                        border=ft.border.all(1, ft.Colors.BLACK)
+                        border=border.all(1, Colors.BLACK)
                     ),
-                    ft.Row(
+                    Row(
                         spacing=0,
                         controls = [
-                            ft.Image(
+                            Image(
                                 "/icons_light/Document.png",
                                 width=24,
                                 height=24
                             ),
-                            ft.Text(
+                            Text(
                                 spans=[
-                                    ft.TextSpan(
+                                    TextSpan(
                                         text="My First Project\n",
-                                        style=ft.TextStyle(
+                                        style=TextStyle(
                                             size=12,
-                                            weight=ft.FontWeight.W_500
+                                            weight=FontWeight.W_500
                                         )
                                     ),
-                                    ft.TextSpan(
+                                    TextSpan(
                                         text="Modified: 1/26/20 8:54 AM",
-                                        style=ft.TextStyle(
+                                        style=TextStyle(
                                             size=8,
-                                            weight=ft.FontWeight.W_500,
+                                            weight=FontWeight.W_500,
                                             color="#6b6b6b"
                                         )
                                     )
@@ -169,54 +165,54 @@ class OpenExistingView(ft.Container):
         
             self.on_hover = self.__hover
         
-        def __hover(self, event: ft.ControlEvent):
+        def __hover(self, event: ControlEvent):
             event.control.bgcolor = "#4d191f51" if event.data == "true" else None
             event.control.update()
     
-    class RecentsButton(ft.Container):
+    class RecentsButton(Container):
         def __init__(self):
             super().__init__()
             self.bgcolor = "#00191f51"
 
-            self.content = ft.Row(
+            self.content = Row(
                 spacing=0,
                 controls=[
-                    ft.Image(
+                    Image(
                         src="/icons_light/Document.png",
                         width=40,
                         height=40,
-                        fit=ft.ImageFit.COVER
+                        fit=ImageFit.COVER
                     ),
-                    ft.Text(
+                    Text(
                         expand=True,
                         spans=[
-                            ft.TextSpan(
+                            TextSpan(
                                 text="Untitled Design\n",
-                                style=ft.TextStyle(
+                                style=TextStyle(
                                     size=12,
-                                    weight=ft.FontWeight.W_500,
-                                    color=ft.Colors.BLACK
+                                    weight=FontWeight.W_500,
+                                    color=Colors.BLACK
                                 )
                             ),
-                            ft.TextSpan(
+                            TextSpan(
                                 text="C:\\Users\\Arlecchino\\Downloads\n",
-                                style=ft.TextStyle(
+                                style=TextStyle(
                                     size=10,
-                                    weight=ft.FontWeight.W_500,
+                                    weight=FontWeight.W_500,
                                     color="#6b6b6b"
                                 )
                             ),
-                            ft.TextSpan(
+                            TextSpan(
                                 text="Modified: 2/2/25 8:54 PM",
-                                style=ft.TextStyle(
+                                style=TextStyle(
                                     size=10,
-                                    weight=ft.FontWeight.W_500,
+                                    weight=FontWeight.W_500,
                                     color="#6b6b6b"
                                 )
                             )
                         ]
                     ),
-                    ft.Image(
+                    Image(
                         src="/icons_light/settings_more.png",
                         width=32,
                         height=32
@@ -226,6 +222,6 @@ class OpenExistingView(ft.Container):
         
             self.on_hover = self.__hover
         
-        def __hover(self, event: ft.ControlEvent):
+        def __hover(self, event: ControlEvent):
             event.control.bgcolor = "#4d191f51" if event.data == "true" else None
             event.control.update()

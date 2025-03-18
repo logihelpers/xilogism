@@ -8,4 +8,5 @@ class WindowController:
         window = WindowView()
         page.add(window)
 
+        self.page.session.set("window", window)
         self.page.session.set("sidebar", window.sidebar)
