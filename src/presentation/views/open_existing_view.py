@@ -25,7 +25,7 @@ class OpenExistingView(ft.Container):
                         ft.Container(
                             padding = ft.padding.symmetric(4, 24),
                             border_radius=32,
-                            bgcolor="#4d51431C",
+                            bgcolor="#4d191f51",
                             border=ft.border.all(1, "black"),
                             content=ft.Row(
                                 controls=[
@@ -106,7 +106,7 @@ class OpenExistingView(ft.Container):
         def __init__(self):
             super().__init__()
 
-            self.bgcolor = "#0051431C"
+            self.bgcolor = "#00191f51"
             self.width = 144
             self.height = 200
             self.content = ft.Column(
@@ -170,13 +170,13 @@ class OpenExistingView(ft.Container):
             self.on_hover = self.__hover
         
         def __hover(self, event: ft.ControlEvent):
-            event.control.bgcolor = "#4d51431C" if event.data == "true" else None
+            event.control.bgcolor = "#4d191f51" if event.data == "true" else None
             event.control.update()
     
     class RecentsButton(ft.Container):
         def __init__(self):
             super().__init__()
-            self.bgcolor = "#0051431C"
+            self.bgcolor = "#00191f51"
 
             self.content = ft.Row(
                 spacing=0,
@@ -227,5 +227,5 @@ class OpenExistingView(ft.Container):
             self.on_hover = self.__hover
         
         def __hover(self, event: ft.ControlEvent):
-            event.control.bgcolor = "#4d51431C" if event.data == "true" else None
+            event.control.bgcolor = "#4d191f51" if event.data == "true" else None
             event.control.update()
