@@ -11,16 +11,16 @@ class SideBarState(Enum):
 
 class SideBarHideState(metaclass=Singleton):
     def __init__(self):
-        self.__state__ = SideBarState.SHOWN
+        self._state__ = SideBarState.SHOWN
         self._on_change = None
     
     @property
     def state(self) -> SideBarState:
-        return self.__state__
+        return self._state__
     
     @state.setter
     def state(self, state: SideBarState):
-        self.__state__ = state
+        self._state__ = state
         if self._on_change:
             if asyncio.iscoroutinefunction(self._on_change):
                 asyncio.ensure_future(self._on_change())

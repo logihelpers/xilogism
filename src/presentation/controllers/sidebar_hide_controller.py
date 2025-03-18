@@ -1,6 +1,6 @@
 import asyncio
 from presentation.states.sidebar_hide_state import *
-from presentation.views.widgets.sidebar import SideBar
+from presentation.views.widgets.sidebar.sidebar import SideBar
 
 from flet import Page, transform
 
