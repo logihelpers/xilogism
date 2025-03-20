@@ -6,8 +6,8 @@ from flet import *
 from services.singleton import Singleton
 
 class SideBarState(Enum):
-    SHOWN = 1
-    HIDDEN = 2
+    SHOWN = True
+    HIDDEN = False
 
 class SideBarHideState(metaclass=Singleton):
     def __init__(self):
@@ -20,14 +20,10 @@ class SideBarHideState(metaclass=Singleton):
     
     @state.setter
     def state(self, state: SideBarState):
+        self._on_change()
         self._state__ = state
-        if self._on_change:
-            if asyncio.iscoroutinefunction(self._on_change):
-                asyncio.ensure_future(self._on_change())
-            else:
-                self._on_change()
     
-    async def invert(self, event: ControlEvent):
+    def invert(self, event: ControlEvent):
         self.state = SideBarState.HIDDEN if self.state is SideBarState.SHOWN else SideBarState.SHOWN
     
     @property

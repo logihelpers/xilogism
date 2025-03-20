@@ -8,6 +8,8 @@ from presentation.views.widgets.titlebar import TitleBar
 from presentation.views.start_view import StartView
 from presentation.views.open_existing_view import OpenExistingView
 
+from slidablepanel import SlidablePanel
+
 class WindowView(Row):
     def __init__(self):
         super().__init__()
@@ -17,6 +19,10 @@ class WindowView(Row):
         self.titlebar = TitleBar()
         self.start_view = StartView()
         self.open_view = OpenExistingView()
+
+        self.slidable_panel = SlidablePanel(
+            sidebar=self.sidebar
+        )
 
         self.switcher = AnimatedSwitcher(
             content = self.start_view,
@@ -30,7 +36,7 @@ class WindowView(Row):
 
         self.controls = [
             self.media_query,
-            self.sidebar,
+            self.slidable_panel,
             Container(
                 expand = True,
                 padding = padding.symmetric(8, 0),

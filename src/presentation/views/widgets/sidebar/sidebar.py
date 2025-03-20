@@ -10,10 +10,7 @@ class SideBar(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
     def __init__(self):
-        super().__init__(
-            animate_offset=200,
-            animate=animation.Animation(200, AnimationCurve.LINEAR),
-        )
+        super().__init__()
         self.active = "Start"        
         self.bgcolor = "#d9d9d9"
         self.width = 180 * self.widget_scale
