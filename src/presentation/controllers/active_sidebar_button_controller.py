@@ -21,7 +21,7 @@ class ActiveSideBarButtonController:
 
         name: str = ""
         widget: SideBarButton = None
-        for name, widget in SideBarButton.refs.items():
+        for index, (name, widget) in enumerate(SideBarButton.refs):
             if name == active:
                 widget.bgcolor = "#4d191f51"
                 widget.active = True
@@ -30,6 +30,12 @@ class ActiveSideBarButtonController:
 
                 if active == "Start" or active == "Open Xilogism" or active == "New Xilogism":
                     self.af_state.active = active
+                    widget.update()
+                    continue
+                
+                # TODO: TEMPORARY
+                if not XiloFile.parse(name):
+                    self.af_state.active = index + 3
 
                 widget.update()
             else:

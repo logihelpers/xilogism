@@ -1,7 +1,7 @@
 from flet import *
 
 class SideBarButton(FilledButton):
-        refs: dict = dict()
+        refs: list = list()
         active: bool = False
         widget_scale: float = 1.0
         def __init__(self, path: str, label: str, on_button_press = None):
@@ -35,11 +35,12 @@ class SideBarButton(FilledButton):
                 padding=padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale)
             )
 
-            SideBarButton.refs[self.label] = self
+            # SideBarButton.refs[self.label] = self
+            SideBarButton.refs.append((self.label, self))
 
             if self.label == "Start":
-                SideBarButton.refs["Start"].active = True
-                SideBarButton.refs["Start"].bgcolor = "#4d191f51"
+                self.active = True
+                self.bgcolor = "#4d191f51"
         
         def __hover(self, event: ControlEvent):
             button: SideBarButton = event.control

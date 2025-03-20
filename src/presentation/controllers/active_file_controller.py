@@ -11,6 +11,8 @@ class ActiveFileController:
 
         self.af_state = ActiveFileState()
 
+        self.window: WindowView = self.page.session.get("window")
+
         self.af_state.on_change = self.switch_file
     
     def switch_file(self):
@@ -18,20 +20,21 @@ class ActiveFileController:
             self.switch_main_views(self.af_state.active)
         elif type(self.af_state.active) is XiloFile:
             print(self.af_state.active.title)
+        else: # TODO: Temporary
+            self.window.switcher.switch(self.af_state.active)
         # load file
     
     def switch_main_views(self, active_view: str):
-        window: WindowView = self.page.session.get("window")
-        
         match active_view:
             case "Start":
-                window.switcher.content = window.start_view
-                window.update()
+                self.window.switcher.switch(0)
             case "Open Xilogism":
-                window.switcher.content = window.open_view
-                window.update()
+                self.window.switcher.switch(2)
             case "New Xilogism":
+                self.window.switcher.switch(1)
                 #display yung new view dito
                 pass
             case _:
                 print("HOW DID WE EVEN REACH THIS POINT???")
+            
+        self.window.update()
