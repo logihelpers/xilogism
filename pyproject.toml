@@ -10,7 +10,8 @@ authors = [
 dependencies = [
   "flet==0.26.0",
   "xilocanvas @ git+https://github.com/logihelpers/xilocanvas.git",
-  "slidablepanel @ git@github.com:logihelpers/SlidablePanel.git",
+  "slidablepanel @ git+https://github.com/logihelpers/SlidablePanel.git",
+  "xiloswitcher @ git+https://github.com/logihelpers/xiloswitcher.git",
   "mediaquerycontainer @ git+https://github.com/logihelpers/MediaQueryContainer.git"
 ]
 
