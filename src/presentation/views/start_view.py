@@ -58,7 +58,7 @@ class StartView(ft.Container):
                         ),
                         ft.Container(
                             padding = ft.padding.all(16 * self.widget_scale),
-                            margin = ft.margin.symmetric(8 * self.widget_scale, 24 * self.widget_scale),
+                            margin = ft.margin.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
                             width=480 * self.widget_scale,
                             height=128 * self.widget_scale,
                             content = ft.FilledButton(
