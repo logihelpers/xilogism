@@ -33,57 +33,60 @@ class TitleBar(Container):
         )
 
         self.content = WindowDragArea(
-            content = Row(
-                controls=[
-                    Row(
-                        controls=[
-                            self.sidebar_hide_button,
-                            Container(
-                                Text(
-                                    value="START XILOGISM",
-                                    weight=FontWeight.W_600,
-                                    size=16 * self.widget_scale
+            content = Container(
+                padding=padding.symmetric(0, 8),
+                content = Row(
+                    controls=[
+                        Row(
+                            controls=[
+                                self.sidebar_hide_button,
+                                Container(
+                                    Text(
+                                        value="START XILOGISM",
+                                        weight=FontWeight.W_600,
+                                        size=16 * self.widget_scale,
+                                    ),
+                                    padding=padding.only(left=16 * self.widget_scale),
+                                )
+                            ],
+                            expand=True
+                        ),
+                        Row(
+                            spacing = 0,
+                            controls=[
+                                self.settings_button,
+                                FilledButton(
+                                    content = Image(
+                                        src="/icons_light/minimize_new.png",
+                                        width=16 * self.widget_scale,
+                                        height=16 * self.widget_scale,
+                                    ),
+                                    bgcolor="#00ffffff",
+                                    on_click = self.minimize
                                 ),
-                                padding=padding.only(left=16 * self.widget_scale),
-                            )
-                        ],
-                        expand=True
-                    ),
-                    Row(
-                        spacing = 0,
-                        controls=[
-                            self.settings_button,
-                            FilledButton(
-                                content = Image(
-                                    src="/icons_light/minimize_new.png",
-                                    width=16 * self.widget_scale,
-                                    height=16 * self.widget_scale,
+                                FilledButton(
+                                    content = Image(
+                                        src="/icons_light/maximize_new.png",
+                                        width=16 * self.widget_scale,
+                                        height=16 * self.widget_scale,
+                                    ),
+                                    bgcolor="#00ffffff",
+                                    on_click = self.maximize
                                 ),
-                                bgcolor="#00ffffff",
-                                on_click = self.minimize
-                            ),
-                            FilledButton(
-                                content = Image(
-                                    src="/icons_light/maximize_new.png",
-                                    width=16 * self.widget_scale,
-                                    height=16 * self.widget_scale,
+                                FilledButton(
+                                    content = Image(
+                                        src="/icons_light/close_new.png",
+                                        width=16 * self.widget_scale,
+                                        height=16 * self.widget_scale,
+                                    ),
+                                    bgcolor="#00ffffff",
+                                    on_click = self.close_app
                                 ),
-                                bgcolor="#00ffffff",
-                                on_click = self.maximize
-                            ),
-                            FilledButton(
-                                content = Image(
-                                    src="/icons_light/close_new.png",
-                                    width=16 * self.widget_scale,
-                                    height=16 * self.widget_scale,
-                                ),
-                                bgcolor="#00ffffff",
-                                on_click = self.close_app
-                            ),
-                        ]
-                    )
-                ],
-                alignment=MainAxisAlignment.SPACE_BETWEEN
+                            ]
+                        )
+                    ],
+                    alignment=MainAxisAlignment.SPACE_BETWEEN
+                )
             )
         )
 

@@ -17,7 +17,10 @@ class SideBar(Container):
         self.offset = transform.Offset(0, 0)
         self.padding = padding.all(0)
         self.margin = margin.all(0)
-        self.border=border.only(right=BorderSide(1, color="#6d6d6d"))
+        self.border = border.only(
+            right=BorderSide(1, color="#6d6d6d"), 
+            left=BorderSide(1, color="#6d6d6d")
+        )
 
         self.active_sidebar_button_state = ActiveSideBarButtonState()
 

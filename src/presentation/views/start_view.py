@@ -1,132 +1,137 @@
-import flet as ft
+from flet import *
 
-class StartView(ft.Container):
+from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+
+class StartView(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
     def __init__(self):
         super().__init__()
         self.widget_scale = 1.0
+
+        self.active_sidebar_button_state = ActiveSideBarButtonState()
     
     def build(self):
-        self.padding = ft.padding.all(16)
+        self.padding = padding.all(16)
         self.expand = True
         self.expand_loose = True
-        self.content = ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_AROUND,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        self.content = Row(
+            alignment=MainAxisAlignment.SPACE_AROUND,
+            vertical_alignment=CrossAxisAlignment.CENTER,
             expand=True,
             controls=[
-                ft.Container(
-                    content = ft.Image(
+                Container(
+                    content = Image(
                         src="/icons_light/logo.png",
                         width=(320 * self.widget_scale) * 1.10,
                         height=(320 * self.widget_scale) * 1.10
                     ),
                     expand=True
                 ),
-                ft.Column(
+                Column(
                     expand=True,
-                    alignment = ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment = ft.CrossAxisAlignment.CENTER,
+                    alignment = MainAxisAlignment.CENTER,
+                    horizontal_alignment = CrossAxisAlignment.CENTER,
                     spacing = 0,
                     controls = [
-                        ft.Text(
+                        Text(
                             spans=[
-                                ft.TextSpan(
+                                TextSpan(
                                     text="GET YOUR HANDS DIRTY WITH\n",
-                                    style=ft.TextStyle(
+                                    style=TextStyle(
                                         size=16 * self.widget_scale,
                                         italic=True
                                     )
                                 ),
-                                ft.TextSpan(
+                                TextSpan(
                                     text="XILOGISM",
-                                    style=ft.TextStyle(
+                                    style=TextStyle(
                                         size=72 * self.widget_scale,
-                                        weight=ft.FontWeight.W_800,
+                                        weight=FontWeight.W_800,
                                     )
                                 )
                             ],
-                            text_align=ft.TextAlign.START,
+                            text_align=TextAlign.START,
                             no_wrap=True
                         ),
-                        ft.Text(
+                        Text(
                             value="CODES TO CIRCUITS, XILOGIZED!",
                             size=20,
-                            weight=ft.FontWeight.W_700,
-                            text_align=ft.TextAlign.CENTER,
+                            weight=FontWeight.W_700,
+                            text_align=TextAlign.CENTER,
                         ),
-                        ft.Container(
-                            padding = ft.padding.all(16 * self.widget_scale),
-                            margin = ft.margin.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                        Container(
+                            padding = padding.all(16 * self.widget_scale),
+                            margin = margin.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
                             width=480 * self.widget_scale,
                             height=128 * self.widget_scale,
-                            content = ft.FilledButton(
-                                content=ft.Container(
-                                    padding = ft.padding.all(16 * self.widget_scale),
-                                    content = ft.Row(
+                            content = FilledButton(
+                                content=Container(
+                                    padding = padding.all(16 * self.widget_scale),
+                                    content = Row(
                                         controls=[
-                                            ft.Image(
+                                            Image(
                                                 src="/icons_light/new.png",
                                                 width=56 * self.widget_scale,
                                                 height=56 * self.widget_scale
                                             ),
-                                            ft.Text(
+                                            Text(
                                                 spans=[
-                                                    ft.TextSpan(
+                                                    TextSpan(
                                                         text="CREATE MY XILOGISM\n",
-                                                        style=ft.TextStyle(
+                                                        style=TextStyle(
                                                             size=16 * self.widget_scale,
                                                             color="black",
-                                                            weight=ft.FontWeight.W_600
+                                                            weight=FontWeight.W_600
                                                         )
                                                     ),
-                                                    ft.TextSpan(
+                                                    TextSpan(
                                                         text="Pseudocode Format",
-                                                        style=ft.TextStyle(
+                                                        style=TextStyle(
                                                             size=12 * self.widget_scale,
                                                             color="black",
                                                             italic=True
                                                         )
                                                     )
                                                 ],
-                                                text_align=ft.TextAlign.CENTER,
+                                                text_align=TextAlign.CENTER,
                                                 expand=True
                                             )
                                         ]
                                     )
                                 ),
-                                style=ft.ButtonStyle(
+                                style=ButtonStyle(
                                     bgcolor="#4d191f51",
-                                    shape=ft.RoundedRectangleBorder(16 * self.widget_scale)
+                                    shape=RoundedRectangleBorder(16 * self.widget_scale)
                                 )
                             )
                         ),
-                        ft.Container(
-                            padding=ft.padding.symmetric(0, 80 * self.widget_scale),
+                        Container(
+                            padding=padding.symmetric(0, 80 * self.widget_scale),
                             width=480 * self.widget_scale,
                             height=48 * self.widget_scale,
-                            content = ft.FilledButton(
-                                content=ft.Container(
-                                    padding = ft.padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
-                                    content = ft.Row(
+                            content = FilledButton(
+                                content=Container(
+                                    padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                                    content = Row(
                                         controls = [
-                                            ft.Image(
+                                            Image(
                                                 src="/icons_light/open.png",
                                                 width=16 * self.widget_scale,
                                                 height=16 * self.widget_scale
                                             ),
-                                            ft.Text(
+                                            Text(
                                                 value="OPEN EXISTING",
-                                                weight=ft.FontWeight.W_600,
+                                                weight=FontWeight.W_600,
                                                 color="black",
-                                                text_align=ft.TextAlign.CENTER,
+                                                text_align=TextAlign.CENTER,
                                                 expand=True
                                             )
                                         ],
                                     )
                                 ),
-                                bgcolor="#26191f51"
+                                bgcolor="#26191f51",
+                                on_click=self.switch_existing
                             )
                         )
                     ]
@@ -135,6 +140,9 @@ class StartView(ft.Container):
         )
 
         super().build()
+    
+    def switch_existing(self, event: ControlEvent):
+        self.active_sidebar_button_state.active = "Open Xilogism"
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:
