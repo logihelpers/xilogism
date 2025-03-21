@@ -2,6 +2,7 @@ from flet import *
 import splash
 
 from presentation.controllers import InitControllers
+from services.fonts import InitFonts
 
 class Xilogism(Page):
     def __init__(self, page: Page):
@@ -11,10 +12,9 @@ class Xilogism(Page):
         self.theme = Theme(
             color_scheme_seed = "#4169e1"
         )
-        self.fonts = {
-            "Product Sans" : "/fonts/Product Sans Regular.ttf",
-            "Inter" : "/fonts/Inter.ttf"
-        }
+
+        InitFonts(self)
+        
         self.theme = Theme(color_scheme_seed = "#4169e1", font_family="Inter")
         self.window.title_bar_hidden = True
         self.window.center()
