@@ -25,9 +25,9 @@ class EditorView(Container):
 
         self.hidden_options = SlidablePanel(
             content_hidden=True,
-            content_width=64,
-            visible=False,
+            content_width=72,
             content=Container(
+                margin=margin.only(right = 8),
                 border=border.all(1, "black"),
                 bgcolor="#1a191f51",
                 border_radius=8,
@@ -300,17 +300,24 @@ class EditorView(Container):
                         expand=True,
                         controls=[
                             Row(
-                                height=32,
-                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                controls=[
+                                height = 32,
+                                spacing = 0,
+                                controls = [
+                                    self.hidden_options,
                                     Row(
+                                        expand = True,
+                                        height=32,
+                                        alignment=MainAxisAlignment.SPACE_BETWEEN,
                                         controls=[
-                                            self.hidden_options,
-                                            self.font_family_chooser,
-                                            self.font_size_tf
+                                            Row(
+                                                controls=[
+                                                    self.font_family_chooser,
+                                                    self.font_size_tf
+                                                ]
+                                            ),
+                                            self.undo_redo_button_group
                                         ]
-                                    ),
-                                    self.undo_redo_button_group
+                                    )
                                 ]
                             ),
                             Container(
