@@ -10,3 +10,4 @@ class WindowController:
 
         self.page.session.set("window", window)
         self.page.session.set("sidebar", window.sidebar)
+        self.page.session.set("editor_view", window.editor_view)

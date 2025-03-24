@@ -15,6 +15,9 @@ from xiloswitcher import XiloSwitcher
 class WindowView(Row):
     def __init__(self):
         super().__init__()
+    
+    def build(self):
+        super().build()
 
         self.media_query = MediaQuery()
         self.sidebar = SideBar()
@@ -25,7 +28,8 @@ class WindowView(Row):
         self.open_view = OpenExistingView()
 
         self.slidable_panel = SlidablePanel(
-            sidebar=self.sidebar
+            content=self.sidebar,
+            content_hidden=False,
         )
 
         self.switcher = XiloSwitcher(

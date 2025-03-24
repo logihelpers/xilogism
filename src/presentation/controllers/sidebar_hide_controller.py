@@ -21,6 +21,13 @@ class SideBarHideController:
     def hide_reveal_sidebar(self):
         state: SideBarState = self.sbh_state.state
 
-        self.window.slidable_panel.toggle_panel(state.value)
+        if not self.window.editor_view.hidden_options.content_hidden:
+            self.window.editor_view.hidden_options.visible = False
+        else:
+            self.window.editor_view.hidden_options.visible = True
+        self.window.editor_view.hidden_options.update()
+
+        self.window.slidable_panel.content_hidden = state.value
+        self.window.editor_view.hidden_options.content_hidden = not state.value
         
         self.page.update()
