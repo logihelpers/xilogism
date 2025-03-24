@@ -66,6 +66,7 @@ class StartView(Container):
                             width=480 * self.widget_scale,
                             height=128 * self.widget_scale,
                             content = FilledButton(
+                                on_click=self.switch_new,
                                 content=Container(
                                     padding = padding.all(16 * self.widget_scale),
                                     content = Row(
@@ -143,6 +144,9 @@ class StartView(Container):
     
     def switch_existing(self, event: ControlEvent):
         self.active_sidebar_button_state.active = "Open Xilogism"
+    
+    def switch_new(self, event):
+        self.active_sidebar_button_state.active = "New Xilogism"
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:
