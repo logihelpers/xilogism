@@ -8,9 +8,9 @@ class Xilogism(Page):
     def __init__(self, page: Page):
         self = page
 
-        page.theme_mode = ThemeMode.LIGHT
+        self.theme_mode = ThemeMode.LIGHT
         self.theme = Theme(
-            color_scheme_seed = "#4169e1"
+            color_scheme_seed = "#4169e1",
         )
 
         InitFonts(self)
