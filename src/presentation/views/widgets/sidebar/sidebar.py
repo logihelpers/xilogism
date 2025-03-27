@@ -1,6 +1,8 @@
 from flet import *
 
 from presentation.views.dialogs.registration_dialog import RegistrationDialog
+from presentation.views.dialogs.login_dialog import LoginDialog
+
 from presentation.views.widgets.sidebar.title import SideBarTitle
 from presentation.views.widgets.sidebar.button import SideBarButton
 

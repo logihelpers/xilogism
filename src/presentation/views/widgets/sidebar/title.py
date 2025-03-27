@@ -9,7 +9,7 @@ class SideBarTitle(Container):
             self.is_home = is_home
             self.content = Row(
                 controls = [
-                    Text(self.title, weight=FontWeight.W_700, color="black", size=14 * self.widget_scale),
+                    Text(self.title, weight=FontWeight.W_700, color="black", size=14 * self.widget_scale, no_wrap=False),
                     Container(
                         content=Image(
                             src="/icons_light/settings_more.png",
@@ -36,7 +36,7 @@ class SideBarTitle(Container):
         
         def _on_title_hover(self, event: ControlEvent):
             control: SideBarTitle = event.control
-            control.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
+            control.bgcolor = "#4d191f51" if eval(event.data.capitalize()) else "#d9d9d9"
             control.update()
         
         @staticmethod

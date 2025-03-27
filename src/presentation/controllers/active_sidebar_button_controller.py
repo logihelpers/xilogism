@@ -2,6 +2,7 @@ from presentation.states.active_sidebar_button_state import *
 from presentation.states.active_file_state import ActiveFileState
 
 from presentation.views.widgets.sidebar.button import SideBarButton
+from presentation.views.widgets.titlebar import TitleBar
 
 from models.xilo_file import XiloFile
 
@@ -15,9 +16,15 @@ class ActiveSideBarButtonController:
         self.af_state = ActiveFileState()
 
         self.asbb_state.on_change = self.change_active
+
+        self.titlebar: TitleBar = self.page.session.get("window").titlebar
     
     def change_active(self):
         active: str = self.asbb_state.active
+
+        self.titlebar.title = active.upper()
+        self.titlebar.build()
+        self.titlebar.update()
 
         name: str = ""
         widget: SideBarButton = None

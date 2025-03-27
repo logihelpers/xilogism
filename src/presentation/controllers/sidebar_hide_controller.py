@@ -2,7 +2,7 @@ import asyncio
 from presentation.states.sidebar_hide_state import *
 from presentation.views.window_view import WindowView
 
-from flet import Page, transform
+from flet import Page
 
 class SideBarHideController:
     def __init__(self, page: Page):
@@ -23,5 +23,7 @@ class SideBarHideController:
 
         self.window.slidable_panel.content_hidden = state.value
         self.window.editor_view.hidden_options.content_hidden = not state.value
+
+        self.window.titlebar.sidebar_hide_button.content.content = self.window.titlebar.sidebar_show_button_content if state.value else self.window.titlebar.sidebar_hide_button_content
         
         self.page.update()

@@ -13,6 +13,7 @@ class EditorView(Container):
     font_size = 16
     font_family = "Iosevka"
     current_text = ""
+    bg_dark: bool = False
     def __init__(self):
         super().__init__()
         self.widget_scale = 1.0
@@ -290,6 +291,10 @@ class EditorView(Container):
             ]
         )
 
+        self.canvas = Xilocanvas(
+            expand=True
+        )
+
         self.content = Row(
             expand=True,
             controls=[
@@ -340,7 +345,8 @@ class EditorView(Container):
                                 ),
                                 border=border.all(1, "#6b6b6b"),
                                 border_radius=8,
-                                clip_behavior=ClipBehavior.ANTI_ALIAS_WITH_SAVE_LAYER
+                                padding = 0 if self.bg_dark else 2,
+                                clip_behavior=ClipBehavior.ANTI_ALIAS
                             )
                         ]
                     )
@@ -371,9 +377,7 @@ class EditorView(Container):
                                         Stack(
                                             expand=True,
                                             controls=[
-                                                Xilocanvas(
-                                                    expand=True,
-                                                ),
+                                                self.canvas,
                                                 Container(
                                                     top=8,
                                                     right=8,
