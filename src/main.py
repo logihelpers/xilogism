@@ -19,10 +19,10 @@ class Xilogism(Page):
         self.window.title_bar_hidden = True
         self.window.center()
         self.padding = padding.all(0)
-        self.window.min_height = 600
+        self.window.min_height = 620
         self.window.min_width = 980
         self.window.width = 980
-        self.window.height = 600
+        self.window.height = 620
         self.spacing = 0
         self.bgcolor = "#ededed"
 

@@ -1,22 +1,17 @@
 from flet import *
 
-class RegistrationDialog(AlertDialog):
+class LoginDialog(AlertDialog):
     FIELD_WIDTH: float = 300
     FIELD_RADIUS: float = 100
     
     def __init__(self):
         super().__init__()
-        self.bgcolor = "#f4f4f4"
+        self.bgcolor = "#FFFFFF"
         self.width = 320
         self.height = 720
         
     def build(self):
         self.content = Container(
-            expand=True,
-            padding=padding.only(0, 16),
-            border_radius=15,
-            bgcolor="lightgray",
-            width=320,
             content=Column(
                 alignment=MainAxisAlignment.START,
                 horizontal_alignment=CrossAxisAlignment.START,
@@ -33,7 +28,7 @@ class RegistrationDialog(AlertDialog):
                         ]
                     ),
                     Text(
-                        value="Register",
+                        value="Login",
                         size=40,
                         weight=FontWeight.BOLD,
                         color="#1D2357",
@@ -43,7 +38,7 @@ class RegistrationDialog(AlertDialog):
                     Container(
                         margin=margin.only(top=5),
                         content=Text(
-                            value="Create your account",
+                            value="Please log in to continue",
                             weight=FontWeight.BOLD,
                             size=14,
                             color="black",
@@ -51,17 +46,32 @@ class RegistrationDialog(AlertDialog):
                             style=TextStyle(font_family="Inter")
                         )
                     ),
-                    self._create_button("SIGN UP WITH GOOGLE"),
-                    self._create_text_field("Name", Icons.PERSON),
                     self._create_text_field("Email", Icons.EMAIL),
                     self._create_text_field("Password", Icons.LOCK, password=True),
-                    self._create_button("REGISTER"),
+                    Row(
+                        alignment=MainAxisAlignment.END,
+                        controls=[
+                            TextButton(
+                                content=Text(
+                                    value="Forgot your password?",
+                                    color="#1D2357",
+                                    style=TextStyle(
+                                        decoration=TextDecoration.UNDERLINE,
+                                        weight=FontWeight.BOLD,
+                                        font_family="Inter"
+                                    )
+                                )
+                            )
+                        ]
+                    ),
+                    self._create_button("LOGIN"),
+                    self._create_button("LOGIN WITH GOOGLE"),
                     Row(
                         alignment=MainAxisAlignment.CENTER,
                         controls=[
                             TextButton(
                                 content=Text(
-                                    value="Already have an account? Sign In",
+                                    value="Don't have an account? Sign Up",
                                     color="#1D2357",
                                     style=TextStyle(
                                         decoration=TextDecoration.UNDERLINE,
@@ -73,7 +83,11 @@ class RegistrationDialog(AlertDialog):
                         ]
                     )
                 ]
-            )
+            ),
+            padding=padding.all(16),
+            border_radius=15,
+            bgcolor="lightgray",
+            width=320
         )
         super().build()
 

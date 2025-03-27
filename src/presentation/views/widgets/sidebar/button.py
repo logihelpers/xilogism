@@ -28,7 +28,7 @@ class SideBarButton(FilledButton):
                             width=16 * self.widget_scale,
                             height=16 * self.widget_scale
                         ),
-                        Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale)
+                        Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale, no_wrap=False)
                     ],
                     vertical_alignment=CrossAxisAlignment.CENTER
                 ),
