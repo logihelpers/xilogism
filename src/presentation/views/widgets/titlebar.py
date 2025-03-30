@@ -47,7 +47,8 @@ class TitleBar(Container):
                 width=16 * self.widget_scale,
                 height=16 * self.widget_scale,
             ),
-            bgcolor="#00ffffff"
+            bgcolor="#00ffffff",
+            on_click=self.open_settings
         )
 
         self.content = WindowDragArea(
@@ -116,6 +117,9 @@ class TitleBar(Container):
     
     def close_app(self, event):
         self.title_button_state.state = WindowState.CLOSE
+    
+    def open_settings(self, event):
+        self.title_button_state.state = WindowState.SETTINGS
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:

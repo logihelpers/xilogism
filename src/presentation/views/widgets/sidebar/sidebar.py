@@ -96,7 +96,7 @@ class SideBar(Container):
                     ],
                     expand=True,
                     spacing=0,
-                    scroll=True
+                    scroll=ScrollMode.HIDDEN,
                 )
             ],
             expand=True,
