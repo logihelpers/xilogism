@@ -26,7 +26,7 @@ class EditorView(Container):
 
         self.hidden_options = SlidablePanel(
             content_hidden=True,
-            content_width=72,
+            content_length=72,
             content=Container(
                 margin=margin.only(right = 8),
                 border=border.all(1, "black"),
