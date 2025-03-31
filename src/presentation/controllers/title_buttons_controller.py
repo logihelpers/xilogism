@@ -1,5 +1,5 @@
 from presentation.states.title_button_state import *
-from presentation.views.dialogs.settings_dialog import SettingsDialog
+from presentation.views.dialogs.settings.settings_dialog import SettingsDialog
 from flet import Page
 
 class TitleButtonsController:

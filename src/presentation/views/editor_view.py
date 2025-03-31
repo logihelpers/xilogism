@@ -295,6 +295,8 @@ class EditorView(Container):
             expand=True
         )
 
+        self.txt = Text("")
+
         self.content = Row(
             expand=True,
             controls=[
@@ -386,7 +388,8 @@ class EditorView(Container):
                                                         width=16,
                                                         height=16
                                                     )
-                                                )
+                                                ),
+                                                self.txt
                                             ]
                                         )
                                     ]
@@ -428,3 +431,5 @@ class EditorView(Container):
     
     def change(self, event):
         self.recuro = event.data
+        self.txt.value = self.recuro
+        self.txt.update()
