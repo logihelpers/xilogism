@@ -1,0 +1,171 @@
+{
+    "expressions": {
+        "a": {
+            "type": "add",
+            "input": [
+                "x",
+                "y"
+            ],
+            "output": [
+                "a"
+            ],
+            "operator": null,
+            "sub_expressions": [
+                {
+                    "type": "value",
+                    "input": [
+                        "x"
+                    ]
+                },
+                {
+                    "type": "value",
+                    "input": [
+                        "y"
+                    ]
+                }
+            ]
+        },
+        "b": {
+            "type": "subtract",
+            "input": [
+                "z",
+                "y"
+            ],
+            "output": [
+                "b"
+            ],
+            "operator": null,
+            "sub_expressions": [
+                {
+                    "type": "value",
+                    "input": [
+                        "y"
+                    ]
+                },
+                {
+                    "type": "value",
+                    "input": [
+                        "z"
+                    ]
+                }
+            ]
+        },
+        "c": {
+            "type": "multiply",
+            "input": [
+                "x",
+                "y"
+            ],
+            "output": [
+                "c"
+            ],
+            "operator": null,
+            "sub_expressions": [
+                {
+                    "type": "value",
+                    "input": [
+                        "x"
+                    ]
+                },
+                {
+                    "type": "value",
+                    "input": [
+                        "y"
+                    ]
+                }
+            ]
+        },
+        "d": {
+            "type": "divide",
+            "input": [
+                "z",
+                "y"
+            ],
+            "output": [
+                "d"
+            ],
+            "operator": null,
+            "sub_expressions": [
+                {
+                    "type": "value",
+                    "input": [
+                        "z"
+                    ]
+                },
+                {
+                    "type": "value",
+                    "input": [
+                        "y"
+                    ]
+                }
+            ]
+        },
+        "e": {
+            "type": "and",
+            "input": [
+                "x",
+                "y",
+                "10",
+                "z"
+            ],
+            "output": [
+                "e"
+            ],
+            "operator": null,
+            "sub_expressions": [
+                {
+                    "type": "condition",
+                    "input": [
+                        "x",
+                        "y"
+                    ],
+                    "operator": "<"
+                },
+                {
+                    "type": "condition",
+                    "input": [
+                        "z",
+                        "10"
+                    ],
+                    "operator": ">"
+                }
+            ]
+        },
+        "f": {
+            "type": "or",
+            "input": [
+                "x",
+                "15",
+                "y",
+                "z"
+            ],
+            "output": [
+                "f"
+            ],
+            "operator": null,
+            "sub_expressions": [
+                {
+                    "type": "condition",
+                    "input": [
+                        "x",
+                        "y"
+                    ],
+                    "operator": "<"
+                },
+                {
+                    "type": "condition",
+                    "input": [
+                        "z",
+                        "15"
+                    ],
+                    "operator": "=="
+                }
+            ]
+        }
+    },
+    "variables": {
+        "x": 10,
+        "y": 20,
+        "z": 30
+    }
+}

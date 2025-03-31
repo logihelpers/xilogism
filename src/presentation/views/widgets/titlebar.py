@@ -48,7 +48,7 @@ class TitleBar(Container):
                 height=16 * self.widget_scale,
             ),
             bgcolor="#00ffffff",
-            on_click=self.open_settings
+            on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.SETTINGS)
         )
 
         self.content = WindowDragArea(
@@ -81,7 +81,7 @@ class TitleBar(Container):
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
-                                    on_click = self.minimize
+                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE)
                                 ),
                                 FilledButton(
                                     content = Image(
@@ -90,7 +90,7 @@ class TitleBar(Container):
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
-                                    on_click = self.maximize
+                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE)
                                 ),
                                 FilledButton(
                                     content = Image(
@@ -99,7 +99,7 @@ class TitleBar(Container):
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
-                                    on_click = self.close_app
+                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.CLOSE)
                                 ),
                             ]
                         )
@@ -108,18 +108,6 @@ class TitleBar(Container):
                 )
             )
         )
-
-    def minimize(self, event):
-        self.title_button_state.state = WindowState.MINIMIZE
-
-    def maximize(self, event):
-        self.title_button_state.state = WindowState.MAXIMIZE
-    
-    def close_app(self, event):
-        self.title_button_state.state = WindowState.CLOSE
-    
-    def open_settings(self, event):
-        self.title_button_state.state = WindowState.SETTINGS
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:

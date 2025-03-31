@@ -11,7 +11,7 @@ class SideBarButton(FilledButton):
             self.tooltip = path
 
             self.on_hover = self.__hover
-            self.on_click = self._on_button_press
+            self.on_click = lambda event: self.on_button_press(event)
             self.on_button_press = on_button_press
 
             self.style = ButtonStyle(
@@ -49,9 +49,6 @@ class SideBarButton(FilledButton):
 
             button.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
             button.update()
-        
-        def _on_button_press(self, event: ControlEvent):
-            self.on_button_press(event)
         
         def on_button_press(self, event: ControlEvent):
             pass
