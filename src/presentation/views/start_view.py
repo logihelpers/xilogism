@@ -68,7 +68,8 @@ class StartView(Container):
                                 width=480 * self.widget_scale,
                                 height=128 * self.widget_scale,
                                 content = FilledButton(
-                                    on_click=self.switch_new,
+                                    key = "New Xilogism",
+                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
                                     content=Container(
                                         padding = padding.all(16 * self.widget_scale),
                                         content = Row(
@@ -114,6 +115,7 @@ class StartView(Container):
                                 width=480 * self.widget_scale,
                                 height=48 * self.widget_scale,
                                 content = FilledButton(
+                                    key = "Open Xilogism",
                                     content=Container(
                                         padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
                                         content = Row(
@@ -134,7 +136,7 @@ class StartView(Container):
                                         )
                                     ),
                                     bgcolor="#26191f51",
-                                    on_click=self.switch_existing
+                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key)
                                 )
                             )
                         ]
@@ -144,12 +146,6 @@ class StartView(Container):
         )
 
         super().build()
-    
-    def switch_existing(self, event: ControlEvent):
-        self.active_sidebar_button_state.active = "Open Xilogism"
-    
-    def switch_new(self, event):
-        self.active_sidebar_button_state.active = "New Xilogism"
     
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:

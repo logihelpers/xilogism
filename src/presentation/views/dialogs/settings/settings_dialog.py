@@ -6,6 +6,17 @@ from presentation.views.dialogs.settings.appearance_settings import AppearanceSe
 from presentation.views.dialogs.settings.accessibility_settings import AccessibilitySettings
 from presentation.views.dialogs.settings.language_settings import LanguageSettings
 
+from dataclasses import dataclass
+
+@dataclass
+class SettingsButtonStyle:
+    bgcolor: str
+    shadow_color: str
+    border_color: str
+
+ACTIVE_STYLE = SettingsButtonStyle(bgcolor="#d9fafafa", shadow_color="#191f51", border_color="#191f51")
+INACTIVE_STYLE = SettingsButtonStyle(bgcolor="#fafafa", shadow_color="#6b6b6b", border_color="#6b6b6b")
+
 class SettingsDialog(AlertDialog):
     def __init__(self):
         super().__init__()
@@ -38,7 +49,7 @@ class SettingsDialog(AlertDialog):
             ]
         )
 
-        self.title = SettingsNavigator(self.switcher)
+        self.title = WindowDragArea(content=SettingsNavigator(self))
         self.actions = [
             FilledButton(
                 "Close", 
@@ -57,25 +68,20 @@ class SettingsDialog(AlertDialog):
         self.actions_padding = padding.only(right=16, bottom=16)
 
         self.modal = True
-        self.content=WindowDragArea(
+        self.content=Container(
+            padding = 8,
             height=600,
             width=620,
             expand=True,
-            content = Container(
-                padding = 8,
-                height=600,
-                width=620,
-                expand=True,
-                content = Column(
-                    horizontal_alignment=CrossAxisAlignment.STRETCH,
-                    controls=[
-                        Container(
-                            padding = padding.only(left=16, bottom=16, right=16),
-                            expand=True,
-                            content = self.switcher
-                        )
-                    ]
-                )
+            content = Column(
+                horizontal_alignment=CrossAxisAlignment.STRETCH,
+                controls=[
+                    Container(
+                        padding = padding.only(left=16, bottom=16, right=16),
+                        expand=True,
+                        content = self.switcher
+                    )
+                ]
             )
         )
 
@@ -91,11 +97,11 @@ class SettingsNavigator(Container):
             MIDDLE = 1
             END = 2
 
-        def __init__(self, name: str, pos: Position, switcher: XiloSwitcher):
+        def __init__(self, name: str, pos: Position, dialog: SettingsDialog):
             super().__init__()
             self.name = name
             self.pos = pos
-            self.switcher = switcher
+            self.dialog = dialog
 
             self.animate=animation.Animation(250, AnimationCurve.BOUNCE_OUT)
             self.content = Text(name, size=14)
@@ -119,39 +125,32 @@ class SettingsNavigator(Container):
             
             SettingsNavigator.Button.refs.append(self)
         
+        def apply_button_style(self, button: Container, style: SettingsButtonStyle, position: Position):
+            button.bgcolor = style.bgcolor
+            button.shadow = BoxShadow(0.1, 2, style.shadow_color)
+            
+            match position:
+                case SettingsNavigator.Button.Position.START:
+                    button.border = border.all(1, style.border_color)
+                    button.border_radius = border_radius.only(4, 0, 4, 0)
+                case SettingsNavigator.Button.Position.MIDDLE:
+                    button.border = border.symmetric(vertical=BorderSide(1, style.border_color))
+                case SettingsNavigator.Button.Position.END:
+                    button.border = border.all(1, style.border_color)
+                    button.border_radius = border_radius.only(0, 4, 0, 4)
+
         def switch(self, event: ControlEvent):
-            button: SettingsNavigator.Button = None
+            clicked_name = event.control.name
+            
             for index, button in enumerate(SettingsNavigator.Button.refs):
-                if button.name == event.control.name:
-                    button.bgcolor = "#d9fafafa"
-                    button.shadow=BoxShadow(0.1, 2, "#191f51")
-                    match button.pos:
-                        case SettingsNavigator.Button.Position.START:
-                            button.border = border.all(1, "#191f51")
-                            button.border_radius = border_radius.only(4, 0, 4, 0)
-                        case SettingsNavigator.Button.Position.MIDDLE:
-                            button.border= border.symmetric(vertical = BorderSide(1, "#191f51"))
-                        case SettingsNavigator.Button.Position.END:
-                            button.border=border.all(1, "#191f51")
-                            button.border_radius=border_radius.only(0, 4, 0, 4)
-
-                    switcher: XiloSwitcher = button.switcher
-                    switcher.switch(index)
-
-                else:
-                    button.bgcolor="#fafafa"
-                    button.shadow=BoxShadow(0.1, 2, "#6b6b6b")
-
-                    match button.pos:
-                        case SettingsNavigator.Button.Position.START:
-                            button.border = border.all(1, "#6b6b6b")
-                            button.border_radius = border_radius.only(4, 0, 4, 0)
-                        case SettingsNavigator.Button.Position.MIDDLE:
-                            button.border= border.symmetric(vertical = BorderSide(1, "#6b6b6b"))
-                        case SettingsNavigator.Button.Position.END:
-                            button.border=border.all(1, "#6b6b6b")
-                            button.border_radius=border_radius.only(0, 4, 0, 4)
-
+                is_active = button.name == clicked_name
+                style = ACTIVE_STYLE if is_active else INACTIVE_STYLE
+                
+                self.apply_button_style(button, style, button.pos)
+                
+                if is_active:
+                    button.dialog.switcher.switch(index)
+                
                 button.update()
 
     def __init__(self, switcher: XiloSwitcher):
