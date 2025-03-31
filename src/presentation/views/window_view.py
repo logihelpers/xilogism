@@ -34,7 +34,7 @@ class WindowView(Row):
 
         self.switcher = XiloSwitcher(
             expand=True,
-            orientation=XiloSwitcher.Orientation.HORIZONTAL,
+            orientation=XiloSwitcher.Orientation.VERTICAL,
             controls=[
                 self.start_view,
                 self.editor_view,
