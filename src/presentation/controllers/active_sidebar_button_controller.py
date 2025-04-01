@@ -4,7 +4,8 @@ from presentation.states.active_file_state import ActiveFileState
 from presentation.views.widgets.sidebar.button import SideBarButton
 from presentation.views.widgets.titlebar import TitleBar
 
-from models.xilo_file import XiloFile
+from models.xilofile_model import XiloFile
+from data.files import Files
 
 from flet import Page
 
@@ -33,7 +34,7 @@ class ActiveSideBarButtonController:
                 widget.bgcolor = "#4d191f51"
                 widget.active = True
 
-                self.af_state.active = XiloFile.parse(name)
+                self.af_state.active = Files.parse(name)
 
                 if active == "Start" or active == "Open Xilogism" or active == "New Xilogism":
                     self.af_state.active = active
@@ -41,7 +42,7 @@ class ActiveSideBarButtonController:
                     continue
                 
                 # TODO: TEMPORARY
-                if not XiloFile.parse(name):
+                if not Files.parse(name):
                     self.af_state.active = index + 3
 
                 widget.update()
