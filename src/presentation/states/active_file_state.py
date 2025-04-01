@@ -2,7 +2,7 @@ from enum import Enum
 from flet import *
 
 from services.singleton import Singleton
-from models.xilo_file import XiloFile
+from models.xilofile_model import XiloFile
 
 class ActiveFileState(metaclass = Singleton):
     def __init__(self):

@@ -2,7 +2,7 @@ from flet import *
 import splash
 
 from presentation.controllers import InitControllers
-from services.fonts import InitFonts
+from services.init_fonts import InitFonts
 
 class Xilogism(Page):
     def __init__(self, page: Page):

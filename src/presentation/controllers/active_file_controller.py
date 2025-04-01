@@ -1,4 +1,4 @@
-from models.xilo_file import XiloFile
+from models.xilofile_model import XiloFile
 from presentation.states.active_file_state import ActiveFileState
 
 from presentation.views.window_view import WindowView

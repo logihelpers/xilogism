@@ -2,6 +2,7 @@ from flet import *
 from math import pi
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 
 from codeeditor import CodeEditor, EditorTheme
 from xilocanvas import Xilocanvas
@@ -61,85 +62,7 @@ class EditorView(Container):
             )
         )
 
-        self.font_family_chooser = DropdownM2(
-            on_change=self.change_font,
-            value=self.font_family,
-            border_radius=8,
-            width=160,
-            border_width=1,
-            border_color="black",
-            content_padding=padding.only(left=8,right=8),
-            select_icon=Container(
-                content = Image(
-                    src="/icons_light/arrow_down.png",
-                    width=16,
-                    height=16
-                )
-            ),
-            filled=True,
-            bgcolor={
-                ControlState.DEFAULT: "#1a191f51",
-                ControlState.DISABLED: "#1a191f51",
-                ControlState.DRAGGED: "#1a191f51",
-                ControlState.ERROR: "#1a191f51",
-                ControlState.FOCUSED: "#1a191f51",
-                ControlState.HOVERED: "#1a191f51",
-                ControlState.PRESSED: "#1a191f51",
-                ControlState.SELECTED: "#1a191f51"
-            },
-            fill_color={
-                ControlState.DEFAULT: "#1a191f51",
-                ControlState.DISABLED: "#1a191f51",
-                ControlState.DRAGGED: "#1a191f51",
-                ControlState.ERROR: "#1a191f51",
-                ControlState.FOCUSED: "#1a191f51",
-                ControlState.HOVERED: "#1a191f51",
-                ControlState.PRESSED: "#1a191f51",
-                ControlState.SELECTED: "#1a191f51"
-            },
-            options=[
-                DropdownOption(
-                    key="Fira Code",
-                    content=Text("Fira Code", style=TextStyle(font_family="Fira Code")),
-                ),
-                DropdownOption(
-                    key="Roboto Mono",
-                    content=Text("Roboto Mono", style=TextStyle(font_family="Roboto Mono"))
-                ),
-                DropdownOption(
-                    "IBM Plex Mono",
-                    content=Text("IBM Plex Mono", style=TextStyle(font_family="IBM Plex Mono"))
-                ),
-                DropdownOption(
-                    "Source Code Pro",
-                    content=Text("Source Code Pro", style=TextStyle(font_family="Source Code Pro"))
-                ),
-                DropdownOption(
-                    "JetBrains Mono",
-                    content=Text("JetBrains Mono", style=TextStyle(font_family="JetBrains Mono"))
-                ),
-                DropdownOption(
-                    "Fantasque Sans Mono",
-                    content=Text("Fantasque Sans Mono", style=TextStyle(font_family="Fantasque Sans Mono"))
-                ),
-                DropdownOption(
-                    "Inconsolata",
-                    content=Text("Inconsolata", style=TextStyle(font_family="Inconsolata"))
-                ),
-                DropdownOption(
-                    "Space Mono",
-                    content=Text("Space Mono", style=TextStyle(font_family="Space Mono"))
-                ),
-                DropdownOption(
-                    "Hasklig",
-                    content=Text("Hasklig", style=TextStyle(font_family="Hasklig"))
-                ),
-                DropdownOption(
-                    "Iosevka",
-                    content=Text("Iosevka", style=TextStyle(font_family="Iosevka"))
-                )
-            ]
-        )
+        self.font_family_chooser = FontFaceChooserButton()
 
         self.font_size_tf = Container(
             border=border.all(1, "black"),
