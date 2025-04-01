@@ -1,8 +1,9 @@
 from flet import *
 
 from presentation.views.editor_view import EditorView
+from presentation.states.active_font_state import ActiveFontState
 from data.fonts import Fonts
-from models.font_model import FontType, Font
+from models.font_model import FontType
 
 class EditorViewFontsController:
     def __init__(self, page: Page):
@@ -11,8 +12,21 @@ class EditorViewFontsController:
 
         self.editor_view: EditorView = page.session.get("editor_view")
 
+        self.af_state = ActiveFontState()
+
         self.load_font_options()
         self.load_default()
+
+        self.af_state.on_font_change = self.change_font
+        self.af_state.on_size_change = self.change_font
+    
+    def change_font(self):
+        self.editor_view.code_editor.font_family = self.af_state.active_font.font_name
+        self.editor_view.code_editor.font_size = self.af_state.font_size
+        self.editor_view.code_editor.update()
+
+        self.editor_view.font_size_tf.size_tf.value = self.af_state.font_size
+        self.editor_view.font_size_tf.size_tf.update()
     
     def load_default(self):
         default_font: str = None

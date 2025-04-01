@@ -7,6 +7,7 @@ from presentation.views.widgets.sidebar.title import SideBarTitle
 from presentation.views.widgets.sidebar.button import SideBarButton
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.states.dialogs_state import *
 
 class SideBar(Container):
     widget_scale: float = 1.0
@@ -25,6 +26,7 @@ class SideBar(Container):
         )
 
         self.active_sidebar_button_state = ActiveSideBarButtonState()
+        self.dia_state = DialogState()
 
         self.pinned_files = Column(
             expand=True,
@@ -77,7 +79,7 @@ class SideBar(Container):
                                     Text("Guest User", weight=FontWeight.W_700, color="black", size=18 * self.widget_scale)
                                 ]
                             ),
-                            on_click=self.open_account_settings_dialog
+                            on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.REGISTER)
                         )
                     )
                 ),
@@ -109,10 +111,6 @@ class SideBar(Container):
         control: SideBarButton = event.control
 
         self.active_sidebar_button_state.active = control.label
-    
-    def open_account_settings_dialog(self, event):
-        dialog = RegistrationDialog()
-        self.page.open(dialog)
 
     def scale_all(self, scale: float):
         if abs(scale - self.old_scale) > 0.05:

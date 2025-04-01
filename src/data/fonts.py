@@ -1,11 +1,10 @@
 from services.singleton import Singleton
-from typing import List
+from typing import List, Optional
 from models.font_model import Font, FontType
 
 class Fonts(metaclass = Singleton):
+    all_fonts: List[Font] = []
     def __init__(self):
-        self._all_fonts: List[Font] = []
-
         ui_fonts_list = [
             ("Product Sans", "/fonts/Product Sans Regular.ttf"),
             ("Inter", "/fonts/Inter.ttf")
@@ -33,8 +32,11 @@ class Fonts(metaclass = Singleton):
     def add_fonts(self, fonts_list: list, type: FontType):
         for current_font, current_font_location in fonts_list:
             font = Font(current_font, type, current_font_location)
-            self._all_fonts.append(font)
+            Fonts.all_fonts.append(font)
     
-    @property
-    def all_fonts(self) -> List[Font]:
-        return self._all_fonts
+    @staticmethod
+    def parse(name: str) -> Optional[Font]:
+        for font in Fonts.all_fonts:
+            if font.font_name == name:
+                return font
+        return None

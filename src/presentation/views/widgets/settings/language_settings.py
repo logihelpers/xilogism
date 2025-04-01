@@ -1,5 +1,5 @@
 from flet import *
-from presentation.views.widgets.settings_image_button import SettingsImageButton
+from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 
 class LanguageSettings(Column):
     def __init__(self):

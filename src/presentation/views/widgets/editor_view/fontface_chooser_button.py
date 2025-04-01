@@ -1,4 +1,5 @@
 from flet import *
+from presentation.states.active_font_state import ActiveFontState
 
 class FontFaceChooserButton(DropdownM2):
     def __init__(self):
@@ -10,6 +11,8 @@ class FontFaceChooserButton(DropdownM2):
         self.border_width=1
         self.border_color="black"
         self.content_padding=padding.only(left=8,right=8)
+
+        self.max_menu_height = 256
 
         self.select_icon=Container(
             content = Image(
@@ -40,3 +43,6 @@ class FontFaceChooserButton(DropdownM2):
             ControlState.PRESSED: "#1a191f51",
             ControlState.SELECTED: "#1a191f51"
         }
+
+        self.af_state = ActiveFontState()
+        self.on_change = lambda event: setattr(self.af_state, 'active_font', event.data)

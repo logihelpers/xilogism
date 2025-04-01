@@ -11,6 +11,10 @@ class Xilogism(Page):
         self.theme_mode = ThemeMode.LIGHT
         self.theme = Theme(
             color_scheme_seed = "#4169e1",
+            dialog_theme= DialogTheme(
+                bgcolor="#fafafa",
+                shape=RoundedRectangleBorder(radius=8)
+            )
         )
 
         InitFonts(self)

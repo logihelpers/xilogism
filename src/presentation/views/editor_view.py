@@ -3,6 +3,9 @@ from math import pi
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
+from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
+
+from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 
 from codeeditor import CodeEditor, EditorTheme
 from xilocanvas import Xilocanvas
@@ -21,9 +24,6 @@ class EditorView(Container):
 
         self.padding = padding.all(16)
         self.expand = True
-    
-    def build(self):
-        super().build()
 
         self.hidden_options = SlidablePanel(
             content_hidden=True,
@@ -64,87 +64,19 @@ class EditorView(Container):
 
         self.font_family_chooser = FontFaceChooserButton()
 
-        self.font_size_tf = Container(
-            border=border.all(1, "black"),
-            bgcolor="#1a191f51",
-            border_radius=8,
-            content=Row(
-                spacing=0,
-                controls=[
-                    TextField(
-                        input_filter=NumbersOnlyInputFilter(),
-                        value=self.font_size,
-                        border=0,
-                        border_color="#00000000",
-                        width=36,
-                        content_padding=padding.only(left=8, right=8),
-                        cursor_color=Colors.BLACK,
-                        on_submit=self.resize_font
-                    ),
-                    VerticalDivider(1, color="black"),
-                    Column(
-                        expand=True,
-                        spacing = 0,
-                        controls=[
-                            Container(
-                                expand=True,
-                                width=24,
-                                content=Image(
-                                    src="/icons_light/arrow_down.png",
-                                    width=12,
-                                    height=12,
-                                    rotate=Rotate(angle=pi)
-                                ),
-                                on_click=self.increase_font_size
-                            ),
-                            Container(
-                                expand=True,
-                                width=24,
-                                content=Image(
-                                    src="/icons_light/arrow_down.png",
-                                    width=12,
-                                    height=12,
-                                ),
-                                border=border.only(top=BorderSide(1, "black")),
-                                on_click=self.decrease_font_size
-                            )
-                        ]
-                    )
-                ]
-            )
+        self.code_editor = CodeEditor(
+            value=self.current_text,
+            expand=True,
+            editor_theme=EditorTheme.DEFAULT,
+            gutter_width=64,
+            font_family=self.font_family,
+            font_size=self.font_size,
+            on_change=self.change,
         )
 
-        self.undo_redo_button_group = Container(
-            border=border.all(1, "black"),
-            bgcolor="#1a191f51",
-            border_radius=8,
-            content=Row(
-                spacing=0,
-                controls=[
-                    Container(
-                        width = 32,
-                        height = 32,
-                        padding = 4,
-                        content=Image(
-                            src="/icons_light/undo.png",
-                            width=16,
-                            height=16
-                        )
-                    ),
-                    VerticalDivider(1, color="black"),
-                    Container(
-                        width = 32,
-                        height = 32,
-                        padding = 4,
-                        content=Image(
-                            src="/icons_light/redo.png",
-                            width=16,
-                            height=16
-                        )
-                    ),
-                ]
-            )
-        )
+        self.font_size_tf = FontSizeTextField()
+
+        self.undo_redo_button_group = UndoRedoButtons()
 
         self.export_button = Container(
             border=border.all(1, "black"),
@@ -215,7 +147,86 @@ class EditorView(Container):
         )
 
         self.canvas = Xilocanvas(
-            expand=True
+            expand=True,
+            top=0,
+            bottom=0,
+            right=0,
+            left=0
+        )
+
+        toolbar = Row(
+            height = 32,
+            spacing = 0,
+            controls = [
+                self.hidden_options,
+                Row(
+                    expand = True,
+                    height=32,
+                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                    controls=[
+                        Row(
+                            controls=[
+                                self.font_family_chooser,
+                                self.font_size_tf
+                            ]
+                        ),
+                        self.undo_redo_button_group
+                    ]
+                )
+            ]
+        )
+
+        code_editor_container = Container(
+            theme_mode=ThemeMode.LIGHT,
+            expand=True,
+            content=Row(
+                expand=True,
+                vertical_alignment=CrossAxisAlignment.STRETCH,
+                controls=[
+                    self.code_editor
+                ]
+            ),
+            border=border.all(1, "#6b6b6b"),
+            border_radius=8,
+            padding = 0 if self.bg_dark else 2,
+            clip_behavior=ClipBehavior.ANTI_ALIAS
+        )
+
+        preview_bar = Row(
+            height=32,
+            alignment=MainAxisAlignment.SPACE_BETWEEN,
+            controls= [
+                Row(
+                    controls=[
+                        Text("Viewing Mode:", color="black"),
+                        self.diagram_mode,
+                    ]
+                ),
+                self.export_button
+            ]
+        )
+
+        preview_view = Container(
+            expand=True,
+            content=Stack(
+                expand=True,
+                controls=[
+                    self.canvas,
+                    Container(
+                        top=8,
+                        right=8,
+                        content=Image(
+                            src="/icons_light/full-size.png",
+                            width=16,
+                            height=16
+                        )
+                    )
+                ]
+            ),
+            border=border.all(1, "#6b6b6b"),
+            border_radius=8,
+            padding=2,
+            bgcolor="#d9d9d9"
         )
 
         self.content = Row(
@@ -227,50 +238,8 @@ class EditorView(Container):
                         horizontal_alignment=CrossAxisAlignment.STRETCH,
                         expand=True,
                         controls=[
-                            Row(
-                                height = 32,
-                                spacing = 0,
-                                controls = [
-                                    self.hidden_options,
-                                    Row(
-                                        expand = True,
-                                        height=32,
-                                        alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                        controls=[
-                                            Row(
-                                                controls=[
-                                                    self.font_family_chooser,
-                                                    self.font_size_tf
-                                                ]
-                                            ),
-                                            self.undo_redo_button_group
-                                        ]
-                                    )
-                                ]
-                            ),
-                            Container(
-                                theme_mode=ThemeMode.LIGHT,
-                                expand=True,
-                                content=Row(
-                                    expand=True,
-                                    vertical_alignment=CrossAxisAlignment.STRETCH,
-                                    controls=[
-                                        CodeEditor(
-                                            value=self.current_text,
-                                            expand=True,
-                                            editor_theme=EditorTheme.DEFAULT,
-                                            gutter_width=64,
-                                            font_family=self.font_family,
-                                            font_size=self.font_size,
-                                            on_change=self.change,
-                                        )
-                                    ]
-                                ),
-                                border=border.all(1, "#6b6b6b"),
-                                border_radius=8,
-                                padding = 0 if self.bg_dark else 2,
-                                clip_behavior=ClipBehavior.ANTI_ALIAS
-                            )
+                            toolbar,
+                            code_editor_container
                         ]
                     )
                 ),
@@ -278,76 +247,13 @@ class EditorView(Container):
                     expand=True,
                     content=Column(
                         controls=[
-                            Row(
-                                height=32,
-                                alignment=MainAxisAlignment.SPACE_BETWEEN,
-                                controls= [
-                                    Row(
-                                        controls=[
-                                            Text("Viewing Mode:", color="black"),
-                                            self.diagram_mode,
-                                        ]
-                                    ),
-                                    self.export_button
-                                ]
-                            ),
-                            Container(
-                                expand=True,
-                                content=Row(
-                                    expand=True,
-                                    vertical_alignment=CrossAxisAlignment.STRETCH,
-                                    controls=[
-                                        Stack(
-                                            expand=True,
-                                            controls=[
-                                                self.canvas,
-                                                Container(
-                                                    top=8,
-                                                    right=8,
-                                                    content=Image(
-                                                        src="/icons_light/full-size.png",
-                                                        width=16,
-                                                        height=16
-                                                    )
-                                                )
-                                            ]
-                                        )
-                                    ]
-                                ),
-                                border=border.all(1, "#6b6b6b"),
-                                border_radius=8,
-                                padding=2,
-                                bgcolor="#d9d9d9"
-                            )
+                            preview_bar,
+                            preview_view
                         ]
                     )
                 )
             ]
         )
-    
-    def increase_font_size(self, event):
-        self.font_size += 1
-        self.current_text = self.recuro
-        self.build()
-        self.update()
-    
-    def resize_font(self, event):
-        self.font_size = int(event.data)
-        self.current_text = self.recuro
-        self.build()
-        self.update()
-    
-    def decrease_font_size(self, event):
-        self.font_size -= 1
-        self.current_text = self.recuro
-        self.build()
-        self.update()
-    
-    def change_font(self, event):
-        self.font_family = event.data
-        self.current_text = self.recuro
-        self.build()
-        self.update()
     
     def change(self, event):
         self.recuro = event.data

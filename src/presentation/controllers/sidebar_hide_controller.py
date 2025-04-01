@@ -1,4 +1,3 @@
-import asyncio
 from presentation.states.sidebar_hide_state import *
 from presentation.views.window_view import WindowView
 
