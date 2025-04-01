@@ -7,6 +7,14 @@ class SettingsImageButton(Container):
         super().__init__()
         self.group_id = group_id
         self.text = text
+        self.check_box = Container(
+            content = Text(""),
+            width=16,
+            height=16, 
+            bgcolor="#00191f51", 
+            border_radius=16, 
+            border=border.all(0.5, "black")
+        )
 
         self.label = Text(
             value = text,
@@ -14,12 +22,18 @@ class SettingsImageButton(Container):
         )
 
         self.content = Column(
+            width = 280 * image_scale,
             controls = [
-                Image(
-                    src=image,
-                    width=240 * image_scale,
-                    height=135 * image_scale,
-                    anti_alias=True
+                Row(
+                    controls = [
+                        self.check_box,
+                        Image(
+                            src=image,
+                            width=240 * image_scale,
+                            height=135 * image_scale,
+                            anti_alias=True
+                        )
+                    ]
                 ),
                 self.label
             ],
@@ -42,6 +56,7 @@ class SettingsImageButton(Container):
             self.bgcolor = "#1a191f51"
             self.border = border.all(1, "#191f51")
             self.label.weight = FontWeight.BOLD
+            self.check_box.bgcolor = "#af191f51"
 
             SettingsImageButton.refs[self.group_id] = [self]
         

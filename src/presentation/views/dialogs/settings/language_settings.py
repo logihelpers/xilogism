@@ -10,18 +10,19 @@ class LanguageSettings(Column):
         self.spacing = 16
 
         self.controls=[
-            Text("English", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
-            Text("Tagalog", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
-            Text("Cebuano", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
-            Text("Spanish", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
-            Text("French", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
-            Text("Japanese", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
-            Text("Mandarin", weight=FontWeight.BOLD),
-            SettingsImageButton("/screenshot_light.png", None, "language", 0.75),
+            Text("Language", weight=FontWeight.BOLD),
+            Row(
+                spacing = 16,
+                wrap=True,
+                controls = [
+                    SettingsImageButton("/icons_light/language_english.png", "English", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_tagalog.png", "Tagalog", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_cebuano.png", "Cebuano", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_spanish.png", "Spanish", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_french.png", "French", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_japanese.png", "Japanese", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_chinese.png", "Mandarin", "language", 0.75),
+                    SettingsImageButton("/icons_light/language_brainrot.png", "Brainrot", "language", 0.75),
+                ]
+            )
         ]
