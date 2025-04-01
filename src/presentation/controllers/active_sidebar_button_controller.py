@@ -18,7 +18,7 @@ class ActiveSideBarButtonController:
 
         self.asbb_state.on_change = self.change_active
 
-        self.titlebar: TitleBar = self.page.session.get("window").titlebar
+        self.titlebar: TitleBar = self.page.session.get("titlebar")
     
     def change_active(self):
         active: str = self.asbb_state.active

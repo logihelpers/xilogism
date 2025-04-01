@@ -1,5 +1,6 @@
 from presentation.states.title_button_state import *
-from presentation.views.dialogs.settings.settings_dialog import SettingsDialog
+from presentation.views.dialogs.settings_dialog import SettingsDialog
+from presentation.states.dialogs_state import *
 from flet import Page
 
 class TitleButtonsController:
@@ -7,6 +8,7 @@ class TitleButtonsController:
         self.page = page
 
         self.tb_state = TitleButtonState()
+        self.dia_state = DialogState()
 
         self.tb_state.on_change = self.control_buttons
     
@@ -21,6 +23,7 @@ class TitleButtonsController:
             case WindowState.MINIMIZE:
                 self.page.window.minimized = True
             case WindowState.SETTINGS:
-                self.page.open(SettingsDialog())
+                # self.page.open(SettingsDialog())
+                self.dia_state.state = Dialogs.SETTINGS
         
         self.page.update()

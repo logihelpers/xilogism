@@ -1,6 +1,9 @@
 from flet import *
+from services.singleton import Singleton
 
-class LoginDialog(AlertDialog):
+from presentation.states.dialogs_state import *
+
+class LoginDialog(AlertDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
     FIELD_RADIUS: float = 100
     
@@ -9,6 +12,9 @@ class LoginDialog(AlertDialog):
         self.bgcolor = "#FFFFFF"
         self.width = 320
         self.height = 720
+
+        self.dia_state = DialogState()
+        self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
         
     def build(self):
         self.content = Container(

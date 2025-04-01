@@ -1,6 +1,9 @@
 from flet import *
+from services.singleton import Singleton
 
-class RegistrationDialog(AlertDialog):
+from presentation.states.dialogs_state import *
+
+class RegistrationDialog(AlertDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
     FIELD_RADIUS: float = 100
     
@@ -9,6 +12,9 @@ class RegistrationDialog(AlertDialog):
         self.bgcolor = "#f4f4f4"
         self.width = 320
         self.height = 720
+
+        self.dia_state = DialogState()
+        self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
         
     def build(self):
         self.content = Container(

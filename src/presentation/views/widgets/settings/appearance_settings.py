@@ -1,7 +1,7 @@
 from flet import *
 from slidablepanel import SlidablePanel
 
-from presentation.views.widgets.settings_image_button import SettingsImageButton
+from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 
 class AppearanceSettings(Column):
     def __init__(self):

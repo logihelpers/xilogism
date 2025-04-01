@@ -5,12 +5,14 @@ from services.singleton import Singleton
 class Files(metaclass=Singleton):
     all_files: List[XiloFile] = []
 
+    def retrieve_files_local(self):
+        pass
+
+    def retrieve_files_gdrive(self):
+        pass
+
     def append(self, file: XiloFile):
         self.all_files.append(file)
-        self.file_added(file)
-    
-    def file_added(self, file: XiloFile):
-        pass
 
     @staticmethod
     def parse(title: str) -> Optional['XiloFile']:

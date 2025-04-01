@@ -4,6 +4,8 @@ from presentation.controllers.sidebar_hide_controller import SideBarHideControll
 from presentation.controllers.active_sidebar_button_controller import ActiveSideBarButtonController
 from presentation.controllers.active_file_controller import ActiveFileController
 from presentation.controllers.editor_view_fonts_controller import EditorViewFontsController
+from presentation.controllers.settings_navigator_controller import SettingsNavigatorController
+from presentation.controllers.dialog_state_controller import DialogStateController
 
 from flet import Page
 
@@ -14,3 +16,5 @@ def InitControllers(target: Page = None):
     ActiveSideBarButtonController(target)
     ActiveFileController(target)
     EditorViewFontsController(target)
+    SettingsNavigatorController(target)
+    DialogStateController(target)
