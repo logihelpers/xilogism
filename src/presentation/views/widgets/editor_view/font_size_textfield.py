@@ -37,6 +37,8 @@ class FontSizeTextField(Container):
                             key="SIZE_INCREASE",
                             expand=True,
                             width=24,
+                            bgcolor = "#1a191f51",
+                            on_hover=self._hover__,
                             content=Image(
                                 src="/icons_light/arrow_down.png",
                                 width=12,
@@ -49,6 +51,8 @@ class FontSizeTextField(Container):
                             key="SIZE_DECREASE",
                             expand=True,
                             width=24,
+                            bgcolor = "#1a191f51",
+                            on_hover=self._hover__,
                             content=Image(
                                 src="/icons_light/arrow_down.png",
                                 width=12,
@@ -61,3 +65,8 @@ class FontSizeTextField(Container):
                 )
             ]
         )
+    
+    def _hover__(self, event: ControlEvent):
+        button: Container = event.control
+        button.bgcolor = "#4d191f51" if event.data == "true" else "#1a191f51"
+        button.update()

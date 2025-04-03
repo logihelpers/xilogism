@@ -1,19 +1,15 @@
 from flet import *
-from presentation.states.active_font_state import ActiveFontState
 
-class FontFaceChooserButton(DropdownM2):
+class DiagramModeChooser(DropdownM2):
     def __init__(self):
         super().__init__()
 
+        self.value="Logic Diagram"
         self.border_radius=8
-        self.filled = True
-        self.width=160
+        self.width=148
         self.border_width=1
         self.border_color="black"
         self.content_padding=padding.only(left=8,right=4)
-
-        self.max_menu_height = 256
-
         self.select_icon=Container(
             content = Image(
                 src="/icons_light/arrow_down.png",
@@ -25,6 +21,7 @@ class FontFaceChooserButton(DropdownM2):
             on_hover=self._hover__
         )
 
+        self.filled=True
         self.bgcolor={
             ControlState.DEFAULT: "#1a191f51",
             ControlState.DISABLED: "#1a191f51",
@@ -47,8 +44,16 @@ class FontFaceChooserButton(DropdownM2):
             ControlState.SELECTED: "#1a191f51"
         }
 
-        self.af_state = ActiveFontState()
-        self.on_change = lambda event: setattr(self.af_state, 'active_font', event.data)
+        self.options=[
+            DropdownOption(
+                key="Logic Diagram",
+                content=Text("Logic Diagram")
+            ),
+            DropdownOption(
+                key="Circuit Diagram",
+                content=Text("Circuit Diagram")
+            )
+        ]
     
     def _hover__(self, event: ControlEvent):
         button: Container = event.control
