@@ -1,5 +1,5 @@
 from flet import *
-from slidablepanel import SlidablePanel
+from xilowidgets import Revealer
 
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.states.dark_mode_state import DarkModeState
@@ -14,8 +14,8 @@ class AppearanceSettings(Column):
         self.expand=True
         self.spacing = 16
 
-        self.dark_mode_options = SlidablePanel(
-            orientation=SlidablePanel.Orientation.VERTICAL,
+        self.dark_mode_options = Revealer(
+            orientation=Revealer.Orientation.VERTICAL,
             content_length=200,
             content = Row(
                 spacing = 24,

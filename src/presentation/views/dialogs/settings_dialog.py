@@ -1,5 +1,5 @@
 from flet import *
-from xiloswitcher import XiloSwitcher
+from xilowidgets import Switcher
 
 from presentation.views.widgets.settings.appearance_settings import AppearanceSettings
 from presentation.views.widgets.settings.accessibility_settings import AccessibilitySettings
@@ -28,8 +28,8 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
         self.accessibility_settings = AccessibilitySettings()
         self.language_settings = LanguageSettings()
 
-        self.switcher = XiloSwitcher(
-            orientation = XiloSwitcher.Orientation.HORIZONTAL,
+        self.switcher = Switcher(
+            orientation = Switcher.Orientation.HORIZONTAL,
             controls = [
                 self.appearance_settings,
                 self.accessibility_settings,

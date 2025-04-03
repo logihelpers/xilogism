@@ -1,7 +1,5 @@
 from flet import *
 
-from mediaquerycontainer import MediaQueryContainer as MediaQuery
-
 from presentation.views.widgets.sidebar.sidebar import SideBar
 from presentation.views.widgets.titlebar import TitleBar
 
@@ -9,8 +7,7 @@ from presentation.views.start_view import StartView
 from presentation.views.editor_view import EditorView
 from presentation.views.open_existing_view import OpenExistingView
 
-from slidablepanel import SlidablePanel
-from xiloswitcher import XiloSwitcher
+from xilowidgets import MediaQuery, Revealer, Switcher
 
 class WindowView(Row):
     def __init__(self):
@@ -27,14 +24,14 @@ class WindowView(Row):
         self.editor_view = EditorView()
         self.open_view = OpenExistingView()
 
-        self.slidable_panel = SlidablePanel(
+        self.slidable_panel = Revealer(
             content=self.sidebar,
             content_hidden=False,
         )
 
-        self.switcher = XiloSwitcher(
+        self.switcher = Switcher(
             expand=True,
-            orientation=XiloSwitcher.Orientation.VERTICAL,
+            orientation=Switcher.Orientation.VERTICAL,
             controls=[
                 self.start_view,
                 self.editor_view,
