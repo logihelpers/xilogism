@@ -2,8 +2,12 @@ from flet import *
 from math import pi
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.states.editor_content_state import EditorContentState
+
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
+from presentation.views.widgets.editor_view.diagram_mode_chooser import DiagramModeChooser
+from presentation.views.widgets.editor_view.export_button import ExportButton
 
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 
@@ -16,7 +20,6 @@ class EditorView(Container):
     old_scale: float = 1.0
     font_size = 16
     font_family = "Iosevka"
-    current_text = ""
     bg_dark: bool = False
     def __init__(self):
         super().__init__()
@@ -24,6 +27,8 @@ class EditorView(Container):
 
         self.padding = padding.all(16)
         self.expand = True
+
+        self.ec_state = EditorContentState()
 
         self.hidden_options = SlidablePanel(
             content_hidden=True,
@@ -65,86 +70,22 @@ class EditorView(Container):
         self.font_family_chooser = FontFaceChooserButton()
 
         self.code_editor = CodeEditor(
-            value=self.current_text,
+            value=self.ec_state.content,
             expand=True,
             editor_theme=EditorTheme.DEFAULT,
             gutter_width=64,
             font_family=self.font_family,
             font_size=self.font_size,
-            on_change=self.change,
+            on_change=lambda event: setattr(self.ec_state, 'content', event.data),
         )
 
         self.font_size_tf = FontSizeTextField()
 
         self.undo_redo_button_group = UndoRedoButtons()
 
-        self.export_button = Container(
-            border=border.all(1, "black"),
-            border_radius=8,
-            bgcolor="#73191f51",
-            height=32,
-            padding=padding.symmetric(4, 8),
-            content=Row(
-                controls=[
-                    Text(
-                        value="Export",
-                        weight=FontWeight.BOLD
-                    ),
-                    Image(
-                        src="/icons_light/export.png",
-                        width=16,
-                        height=16
-                    )
-                ]
-            )
-        )
+        self.export_button = ExportButton()
 
-        self.diagram_mode = DropdownM2(
-            value="Logic Diagram",
-            border_radius=8,
-            width=148,
-            border_width=1,
-            border_color="black",
-            content_padding=padding.only(left=8,right=8),
-            select_icon=Container(
-                content = Image(
-                    src="/icons_light/arrow_down.png",
-                    width=16,
-                    height=16
-                )
-            ),
-            filled=True,
-            bgcolor={
-                ControlState.DEFAULT: "#1a191f51",
-                ControlState.DISABLED: "#1a191f51",
-                ControlState.DRAGGED: "#1a191f51",
-                ControlState.ERROR: "#1a191f51",
-                ControlState.FOCUSED: "#1a191f51",
-                ControlState.HOVERED: "#1a191f51",
-                ControlState.PRESSED: "#1a191f51",
-                ControlState.SELECTED: "#1a191f51"
-            },
-            fill_color={
-                ControlState.DEFAULT: "#1a191f51",
-                ControlState.DISABLED: "#1a191f51",
-                ControlState.DRAGGED: "#1a191f51",
-                ControlState.ERROR: "#1a191f51",
-                ControlState.FOCUSED: "#1a191f51",
-                ControlState.HOVERED: "#1a191f51",
-                ControlState.PRESSED: "#1a191f51",
-                ControlState.SELECTED: "#1a191f51"
-            },
-            options=[
-                DropdownOption(
-                    key="Logic Diagram",
-                    content=Text("Logic Diagram")
-                ),
-                DropdownOption(
-                    key="Circuit Diagram",
-                    content=Text("Circuit Diagram")
-                )
-            ]
-        )
+        self.diagram_mode = DiagramModeChooser()
 
         self.canvas = Xilocanvas(
             expand=True,
@@ -254,6 +195,3 @@ class EditorView(Container):
                 )
             ]
         )
-    
-    def change(self, event):
-        self.recuro = event.data

@@ -14,6 +14,7 @@ class UndoRedoButtons(Container):
                     width = 32,
                     height = 32,
                     padding = 4,
+                    on_hover = self._hover__, 
                     content=Image(
                         src="/icons_light/undo.png",
                         width=16,
@@ -25,6 +26,7 @@ class UndoRedoButtons(Container):
                     width = 32,
                     height = 32,
                     padding = 4,
+                    on_hover = self._hover__,
                     content=Image(
                         src="/icons_light/redo.png",
                         width=16,
@@ -33,3 +35,8 @@ class UndoRedoButtons(Container):
                 ),
             ]
         )
+    
+    def _hover__(self, event: ControlEvent):
+        button: Container = event.control
+        button.bgcolor = "#4d191f51" if event.data == "true" else "#00191f51"
+        button.update()

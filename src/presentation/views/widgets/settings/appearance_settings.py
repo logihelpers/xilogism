@@ -2,10 +2,13 @@ from flet import *
 from slidablepanel import SlidablePanel
 
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
+from presentation.states.dark_mode_state import DarkModeState
 
 class AppearanceSettings(Column):
     def __init__(self):
         super().__init__()
+
+        self.dm_state = DarkModeState()
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -17,8 +20,8 @@ class AppearanceSettings(Column):
             content = Row(
                 spacing = 24,
                 controls = [
-                    SettingsImageButton("/screenshot_light.png", "Default", "theme_mode"),
-                    SettingsImageButton("/screenshot_dark.png", "Dark", "theme_mode")
+                    SettingsImageButton("/screenshot_light.png", "Default", "theme_mode", on_button_press=self.switch_active),
+                    SettingsImageButton("/screenshot_dark.png", "Dark", "theme_mode", on_button_press=self.switch_active)
                 ]
             )
         )
@@ -54,13 +57,19 @@ class AppearanceSettings(Column):
             Row(
                 spacing = 24,
                 controls = [
-                    SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos"),
-                    SettingsImageButton("/sidebar_right_light.png", "Right", "sidebar_pos")
+                    SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos", on_button_press=self.switch_active),
+                    SettingsImageButton("/sidebar_right_light.png", "Right", "sidebar_pos", on_button_press=self.switch_active)
                 ]
             ),
         ]
     
     def hide_panel(self, event: ControlEvent):
-        self.dark_mode_options.content_hidden = True if event.data == "true" else False
+        self.dark_mode_options.content_hidden = (event.data == "true")
         self.update()
+
+        self.dm_state.follow_system_active = (event.data == "true")
                 
+    def switch_active(self, event: ControlEvent):
+        button: SettingsImageButton = event.control
+
+        self.dm_state.active = (button.text == "Dark") if button.group_id == "theme_mode" else self.dm_state.active

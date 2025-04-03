@@ -3,6 +3,7 @@ from flet import *
 class RecentsButton(Container):
     def __init__(self):
         super().__init__()
+
         self.bgcolor = "#00191f51"
 
         self.content = Row(
