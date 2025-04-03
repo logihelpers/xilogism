@@ -3,7 +3,10 @@ from presentation.states.sidebar_hide_state import *
 
 from flet import *
 
-class WindowController:
+from presentation.controllers.controller import *
+
+class WindowController(Controller):
+    priority = Priority.ENTRY_POINT
     def __init__(self, page: Page):
         self.page = page
 

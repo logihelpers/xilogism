@@ -3,7 +3,10 @@ from presentation.views.window_view import WindowView
 
 from flet import Page
 
-class SideBarHideController:
+from presentation.controllers.controller import *
+
+class SideBarHideController(Controller):
+    priority = Priority.VIEW_BOUND
     def __init__(self, page: Page):
         self.page = page
 

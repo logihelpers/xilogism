@@ -5,7 +5,10 @@ from presentation.states.active_font_state import ActiveFontState
 from data.fonts import Fonts
 from models.font_model import FontType
 
-class EditorViewFontsController:
+from presentation.controllers.controller import Controller, Priority
+
+class EditorViewFontsController(Controller):
+    priority = Priority.VIEW_BOUND
     def __init__(self, page: Page):
         self.page = page
         self.fonts = Fonts()
