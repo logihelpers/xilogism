@@ -11,9 +11,7 @@ from presentation.views.widgets.editor_view.export_button import ExportButton
 
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 
-from codeeditor import CodeEditor, EditorTheme
-from xilocanvas import Xilocanvas
-from slidablepanel import SlidablePanel
+from xilowidgets import Editor, EditorTheme, Drawboard, Revealer
 
 class EditorView(Container):
     widget_scale: float = 1.0
@@ -30,7 +28,7 @@ class EditorView(Container):
 
         self.ec_state = EditorContentState()
 
-        self.hidden_options = SlidablePanel(
+        self.hidden_options = Revealer(
             content_hidden=True,
             content_length=72,
             content=Container(
@@ -69,7 +67,7 @@ class EditorView(Container):
 
         self.font_family_chooser = FontFaceChooserButton()
 
-        self.code_editor = CodeEditor(
+        self.code_editor = Editor(
             value=self.ec_state.content,
             expand=True,
             editor_theme=EditorTheme.DEFAULT,
@@ -87,7 +85,7 @@ class EditorView(Container):
 
         self.diagram_mode = DiagramModeChooser()
 
-        self.canvas = Xilocanvas(
+        self.canvas = Drawboard(
             expand=True,
             top=0,
             bottom=0,

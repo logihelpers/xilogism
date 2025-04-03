@@ -1,5 +1,3 @@
-import asyncio
-
 from enum import Enum
 from flet import *
 

@@ -9,11 +9,7 @@ authors = [
 ]
 dependencies = [
   "flet==0.26.0",
-  "xilocanvas @ git+https://github.com/logihelpers/xilocanvas.git",
-  "slidablepanel @ git+https://github.com/logihelpers/SlidablePanel.git",
-  "xiloswitcher @ git+https://github.com/logihelpers/xiloswitcher.git",
-  "codeeditor @ file://C:\\Users\\owen\\Desktop\\codeeditor",
-  "mediaquerycontainer @ git+https://github.com/logihelpers/MediaQueryContainer.git",
+  "xilowidgets @ git+https://github.com/logihelpers/xilowidgets.git"
 ]
 
 [tool.flet]
