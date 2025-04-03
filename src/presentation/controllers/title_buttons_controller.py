@@ -3,7 +3,10 @@ from presentation.views.dialogs.settings_dialog import SettingsDialog
 from presentation.states.dialogs_state import *
 from flet import Page
 
-class TitleButtonsController:
+from presentation.controllers.controller import *
+
+class TitleButtonsController(Controller):
+    priority = Priority.VIEW_BOUND
     def __init__(self, page: Page):
         self.page = page
 
@@ -23,7 +26,6 @@ class TitleButtonsController:
             case WindowState.MINIMIZE:
                 self.page.window.minimized = True
             case WindowState.SETTINGS:
-                # self.page.open(SettingsDialog())
                 self.dia_state.state = Dialogs.SETTINGS
         
         self.page.update()

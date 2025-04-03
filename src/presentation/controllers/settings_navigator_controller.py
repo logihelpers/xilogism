@@ -2,7 +2,10 @@ from flet import *
 from presentation.states.settings_navigator_state import SettingsNavigatorState
 from presentation.views.dialogs.settings_dialog import SettingsDialog
 
-class SettingsNavigatorController:
+from presentation.controllers.controller import Controller, Priority
+
+class SettingsNavigatorController(Controller):
+    priority: Priority.SETTINGS_BOUND
     def __init__(self, page: Page):
         self.page = page
 

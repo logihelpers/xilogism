@@ -4,7 +4,10 @@ from presentation.views.dialogs.settings_dialog import SettingsDialog
 from presentation.views.dialogs.login_dialog import LoginDialog
 from presentation.views.dialogs.registration_dialog import RegistrationDialog
 
-class DialogStateController:
+from presentation.controllers.controller import Controller, Priority
+
+class DialogStateController(Controller):
+    priority = Priority.DIALOG_BOUND
     def __init__(self, page: Page):
         self.page = page
 

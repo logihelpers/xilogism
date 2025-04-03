@@ -2,10 +2,12 @@ from models.xilofile_model import XiloFile
 from presentation.states.active_file_state import ActiveFileState
 
 from presentation.views.window_view import WindowView
+from presentation.controllers.controller import Controller, Priority
 
 from flet import *
 
-class ActiveFileController:
+class ActiveFileController(Controller):
+    priority = Priority.WIDGET_BOUND
     def __init__(self, page: Page):
         self.page = page
 

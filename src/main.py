@@ -1,7 +1,7 @@
 from flet import *
 import splash
 
-from presentation.controllers import InitControllers
+from presentation.controllers import Controller
 from services.init_fonts import InitFonts
 
 class Xilogism(Page):
@@ -30,7 +30,7 @@ class Xilogism(Page):
         self.spacing = 0
         self.bgcolor = "#ededed"
 
-        InitControllers(target=self)
+        Controller.initialize_controllers(target=self)
 
 # app(splash.app)
 app(Xilogism)

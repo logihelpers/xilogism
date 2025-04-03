@@ -3,9 +3,12 @@ from presentation.views.widgets.settings.settings_image_button import SettingsIm
 
 from flet import *
 
-class DarkModeController:
+from presentation.controllers.controller import Controller, Priority
+
+class DarkModeController(Controller):
     group_id: str = "theme_mode"
     previous_saved_mode: ThemeMode = None
+    priority = Priority.SETTINGS_BOUND
     def __init__(self, page: Page):
         self.page = page
 

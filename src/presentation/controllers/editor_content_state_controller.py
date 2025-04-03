@@ -1,7 +1,10 @@
 from flet import *
 from presentation.states.editor_content_state import EditorContentState
 
-class EditorContentStateController:
+from presentation.controllers.controller import Controller, Priority
+
+class EditorContentStateController(Controller):
+    priority = Priority.VIEW_BOUND
     def __init__(self, page: Page):
         self.page = page
 

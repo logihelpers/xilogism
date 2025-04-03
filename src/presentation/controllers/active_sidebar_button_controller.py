@@ -9,7 +9,10 @@ from data.files import Files
 
 from flet import Page
 
-class ActiveSideBarButtonController:
+from presentation.controllers.controller import Controller, Priority
+
+class ActiveSideBarButtonController(Controller):
+    priority = Priority.WIDGET_BOUND
     def __init__(self, page: Page):
         self.page = page
 
