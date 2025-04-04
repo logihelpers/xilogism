@@ -3,6 +3,7 @@ from math import pi
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.states.editor_content_state import EditorContentState
+from presentation.states.editor_theme_state import EditorThemeState
 
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
@@ -18,7 +19,6 @@ class EditorView(Container):
     old_scale: float = 1.0
     font_size = 16
     font_family = "Iosevka"
-    bg_dark: bool = False
     def __init__(self):
         super().__init__()
         self.widget_scale = 1.0
@@ -27,6 +27,8 @@ class EditorView(Container):
         self.expand = True
 
         self.ec_state = EditorContentState()
+        self.et_state = EditorThemeState()
+        self.et_state.on_theme_change = self.update_theme
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -70,7 +72,7 @@ class EditorView(Container):
         self.code_editor = Editor(
             value=self.ec_state.content,
             expand=True,
-            editor_theme=EditorTheme.DEFAULT,
+            editor_theme=self.et_state.editor_theme,
             gutter_width=64,
             font_family=self.font_family,
             font_size=self.font_size,
@@ -127,7 +129,7 @@ class EditorView(Container):
             ),
             border=border.all(1, "#6b6b6b"),
             border_radius=8,
-            padding = 0 if self.bg_dark else 2,
+            padding = 0,
             clip_behavior=ClipBehavior.ANTI_ALIAS
         )
 
@@ -145,6 +147,10 @@ class EditorView(Container):
             ]
         )
 
+        self.dummy_text = Text(
+            value="", top=0, right=0, bottom=0, left=0
+        )
+
         preview_view = Container(
             expand=True,
             content=Stack(
@@ -159,7 +165,8 @@ class EditorView(Container):
                             width=16,
                             height=16
                         )
-                    )
+                    ),
+                    self.dummy_text
                 ]
             ),
             border=border.all(1, "#6b6b6b"),
@@ -193,3 +200,7 @@ class EditorView(Container):
                 )
             ]
         )
+    
+    def update_theme(self):
+        self.code_editor.editor_theme = self.et_state.editor_theme
+        self.code_editor.update()

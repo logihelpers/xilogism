@@ -1,4 +1,4 @@
-import json
+import pickle
 import ast
 import re
 
@@ -7,10 +7,8 @@ class PseudocodeParser:
         self.expressions = {}
         self.variable_map = {}
 
-    def parse_pseudocode(self, pseudocode: str):
+    def parse_pseudocode(self, pseudocode):
         """Convert pseudocode into structured logical expressions"""
-        self.expressions = {}
-        self.variable_map = {}
         lines = pseudocode.strip().split('\n')
         
         for line in lines:
@@ -18,14 +16,14 @@ class PseudocodeParser:
             if not line or line.startswith('#'):  # Skip empty lines and comments
                 continue
                 
-            # Handle simple variable assignments (e.g., x = 10)
-            if '=' in line and not any(op in line for op in ['<', '>', '<=', '>=', '==', '!=', 'and', 'or', 'not', '+', '-', '*', '/']):
+            # Handle variable assignments without comparisons
+            if '=' in line and not any(op in line for op in ['<', '>', '<=', '>=', '==', '!=']) and not any(op in line for op in ['and', 'or', 'not']):
                 var, value = self._parse_assignment(line)
                 self.variable_map[var] = value
                 
-            # Handle conditionals, logical ops, or arithmetic
+            # Handle conditions and logical operations
             else:
-                self._parse_operation_line(line)
+                self._parse_logical_line(line)
 
         return self.expressions
 
@@ -40,24 +38,23 @@ class PseudocodeParser:
             value = value.strip("'").strip('"')
         return var, value
 
-    def _parse_operation_line(self, line):
-        """Parse conditionals, logical operations, and arithmetic"""
+    def _parse_logical_line(self, line):
+        """Parse logical operations and conditions into structured format"""
         if line.startswith('if'):
             line = line.replace('if ', '').replace('then', '').strip()
 
-        # Handle assignments (e.g., b = x < y)
+        # Handle assignments with expressions
         if '=' in line:
             output_var, expression = line.split('=', 1)
             output_var = output_var.strip()
-            expression = expression.strip()
+            line = expression.strip()
         else:
-            output_var = f'exp_{len(self.expressions)}'
-            expression = line
+            output_var = None
 
         # Parse nested expressions with parentheses
         def parse_expression(expr):
             expr = expr.strip()
-            # Handle parentheses for nested expressions
+            # Check for parentheses to handle nesting
             if expr.startswith('(') and expr.endswith(')'):
                 expr = expr[1:-1]
                 return parse_expression(expr)
@@ -72,68 +69,55 @@ class PseudocodeParser:
             elif 'not ' in expr:
                 op_type = 'not'
                 parts = [expr.replace('not ', '').strip()]
-            # Arithmetic operators
-            elif '+' in expr:
-                op_type = 'add'
-                parts = expr.split('+')
-            elif '-' in expr:
-                op_type = 'subtract'
-                parts = expr.split('-')
-            elif '*' in expr:
-                op_type = 'multiply'
-                parts = expr.split('*')
-            elif '/' in expr:
-                op_type = 'divide'
-                parts = expr.split('/')
             else:
                 # Comparison operators
                 comparison_ops = {'<': 'less_than', '>': 'greater_than', '<=': 'less_equal',
-                                 '>=': 'greater_equal', '==': 'equal', '!=': 'not_equal'}
+                                '>=': 'greater_equal', '==': 'equal', '!=': 'not_equal'}
                 for op, op_name in comparison_ops.items():
                     if op in expr:
-                        inputs = set(re.findall(r'[a-zA-Z0-9.]+', expr))
                         return {
                             'type': 'condition',
-                            'input': list(inputs),  # Convert set to list
+                            'input': set(re.findall(r'[a-zA-Z0-9.]+', expr)),
                             'operator': op
                         }
                 # If no operators, assume it's a variable or value
-                return {'type': 'value', 'input': [expr.strip()]}  # Store as list
+                return {'type': 'value', 'input': {expr.strip()}}
 
             # Recursively parse sub-expressions
             sub_expressions = [parse_expression(part) for part in parts]
-            inputs = set().union(*[set(sub['input']) for sub in sub_expressions])
             return {
                 'type': op_type,
-                'input': list(inputs),  # Convert set to list
+                'input': set().union(*[sub['input'] for sub in sub_expressions]),
                 'sub_expressions': sub_expressions
             }
 
-        # Parse the expression
-        parsed_expr = parse_expression(expression)
-        outputs = {output_var}
+        # Parse the line
+        parsed_expr = parse_expression(line)
+        inputs = parsed_expr.get('input', set())
+        outputs = {output_var} if output_var else {f'exp_{len(self.expressions)}'}
 
         # Structure the expression
-        self.expressions[output_var] = {
+        key = next(iter(outputs))
+        self.expressions[key] = {
             'type': parsed_expr['type'],
-            'input': parsed_expr.get('input', []),  # Already a list
-            'output': list(outputs),  # Convert set to list
+            'input': inputs,
+            'output': outputs,
             'operator': parsed_expr.get('operator'),
             'sub_expressions': parsed_expr.get('sub_expressions', [])
         }
 
     def evaluate_expression(self, key):
-        """Evaluate the expression (conditionals or arithmetic)"""
+        """Evaluate the boolean value of an expression using variable_map"""
         expr = self.expressions.get(key)
         if not expr:
             return None
 
         def eval_sub(expr_dict):
             if expr_dict['type'] == 'value':
-                value = expr_dict['input'][0]  # Now a list
-                return self.variable_map.get(value, float(value) if value.replace('.', '').isdigit() else value)
+                value = next(iter(expr_dict['input']))
+                return self.variable_map.get(value, value) if value in self.variable_map else value
             elif expr_dict['type'] == 'condition':
-                left, right = expr_dict['input']  # Now a list
+                left, right = list(expr_dict['input'])
                 left_val = self.variable_map.get(left, float(left) if left.replace('.', '').isdigit() else left)
                 right_val = self.variable_map.get(right, float(right) if right.replace('.', '').isdigit() else right)
                 if expr_dict['operator'] == '<':
@@ -154,79 +138,61 @@ class PseudocodeParser:
                 return any(eval_sub(sub) for sub in expr_dict['sub_expressions'])
             elif expr_dict['type'] == 'not':
                 return not eval_sub(expr_dict['sub_expressions'][0])
-            elif expr_dict['type'] == 'add':
-                values = [eval_sub(sub) for sub in expr_dict['sub_expressions']]
-                return sum(values)
-            elif expr_dict['type'] == 'subtract':
-                values = [eval_sub(sub) for sub in expr_dict['sub_expressions']]
-                return values[0] - values[1]
-            elif expr_dict['type'] == 'multiply':
-                values = [eval_sub(sub) for sub in expr_dict['sub_expressions']]
-                result = 1
-                for val in values:
-                    result *= val
-                return result
-            elif expr_dict['type'] == 'divide':
-                values = [eval_sub(sub) for sub in expr_dict['sub_expressions']]
-                return values[0] / values[1] if values[1] != 0 else float('inf')
-            return None
+            return False
 
         result = eval_sub(expr)
         if key in self.variable_map:
             self.variable_map[key] = result
         return result
 
-    def to_json(self, filename):
-        """Save the expressions and variable map to a JSON file"""
+    def to_pickle(self, filename):
+        """Save the expressions and variable map to a pickle file"""
         data = {
             'expressions': self.expressions,
             'variables': self.variable_map
         }
-        with open(filename, 'w') as f:
-            json.dump(data, f, indent=4)
+        with open(filename, 'wb') as f:
+            pickle.dump(data, f)
 
     @staticmethod
-    def from_json(filename):
-        """Load logical expressions from JSON file"""
-        with open(filename, 'r') as f:
-            data = json.load(f)
+    def from_pickle(filename):
+        """Load logical expressions from pickle file"""
+        with open(filename, 'rb') as f:
+            data = pickle.load(f)
         converter = PseudocodeParser()
         converter.expressions = data['expressions']
         converter.variable_map = data['variables']
         return converter
 
-# # Example usage
-if __name__ == "__main__":
-    # Sample pseudocode with conditionals and arithmetic
-    sample_pseudocode = """
-    INPUT INTEGER x
-    OUTPUT BOOLEAN Y
+# Example usage
+# if __name__ == "__main__":
+#     # Sample pseudocode with nested expressions
+#     sample_pseudocode = """
+#     x = 10
+#     y = 20
+#     z = 30
+#     IF (x < y) and (z > 10) THEN
+#     b = y < z
+#     c = (x < y) or (z == 15)
+#     """
 
-    if x < 10:
-        Y = X
-    else:
-        Y = 0     
-    """
+#     # Convert pseudocode
+#     converter = PseudocodeConverter()
+#     result = converter.parse_pseudocode(sample_pseudocode)
+#     print("Expressions:", result)
+#     print("Variables:", converter.variable_map)
 
-    # Convert pseudocode
-    converter = PseudocodeParser()
-    result = converter.parse_pseudocode(sample_pseudocode)
-    print("Expressions:", result)
-    print("Variables (initial):", converter.variable_map)
+#     # Evaluate expressions
+#     for key in result:
+#         print(f"Evaluating {key}: {converter.evaluate_expression(key)}")
 
-    # Evaluate expressions
-    for key in result:
-        print(f"Evaluating {key}: {converter.evaluate_expression(key)}")
+#     # Save to pickle
+#     converter.to_pickle('logic_expression.pkl')
 
-    print("Variables (final):", converter.variable_map)
-
-    # Save to JSON
-    converter.to_json('logic_expression.json')
-
-    # Load from JSON
-    loaded_converter = PseudocodeParser.from_json('logic_expression.json')
-    print("\nLoaded from JSON:")
-    print("Expressions:", loaded_converter.expressions)
-    print("Variables:", loaded_converter.variable_map)
-    for key in loaded_converter.expressions:
-        print(f"Evaluating {key}: {loaded_converter.evaluate_expression(key)}")
+#     # Load from pickle
+#     loaded_converter = PseudocodeConverter.from_pickle('logic_expression.pkl')
+#     print("\nLoaded from pickle:")
+#     print("Expressions:", loaded_converter.expressions)
+#     print("Variables:", loaded_converter.variable_map)
+#     for key in loaded_converter.expressions:
+#         print(f"Evaluating {key}: {loaded_converter.evaluate_expression(key)}")

@@ -9,3 +9,4 @@ from presentation.controllers.settings_navigator_controller import SettingsNavig
 from presentation.controllers.dialog_state_controller import DialogStateController
 from presentation.controllers.editor_content_state_controller import EditorContentStateController
 from presentation.controllers.dark_mode_controller import DarkModeController
+from presentation.controllers.editor_theme_controller import EditorThemeStateController

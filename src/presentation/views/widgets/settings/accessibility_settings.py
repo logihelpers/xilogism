@@ -23,11 +23,19 @@ class AccessibilitySettings(Column):
                 spacing = 16,
                 wrap=True,
                 controls = [
-                    SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.75),
-                    SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.75),
-                    SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranomaly", "vision", 0.75),
-                    SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanomaly", "vision", 0.75),
-                    SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanomaly", "vision", 0.75),
+                    SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.5),
+                    SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.5),
+                    SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranomaly", "vision", 0.5),
+                    SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanomaly", "vision", 0.5),
+                    SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanomaly", "vision", 0.5),
+                ]
+            ),
+            Text("Left-Handed Mode", weight=FontWeight.BOLD),
+            Row(
+                spacing = 24,
+                controls = [
+                    SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos"),
+                    SettingsImageButton("/sidebar_right_light.png", "Right", "sidebar_pos")
                 ]
             ),
             Text("Animation Settings", weight=FontWeight.BOLD),
