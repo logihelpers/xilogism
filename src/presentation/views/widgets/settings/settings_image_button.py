@@ -13,7 +13,7 @@ class SettingsImageButton(Container):
             height=16, 
             bgcolor="#00191f51", 
             border_radius=16, 
-            border=border.all(0.5, "black")
+            border=border.all(2, "#73191f51")
         )
 
         self.label = Text(
