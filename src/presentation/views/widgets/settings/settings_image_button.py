@@ -1,8 +1,9 @@
 from flet import *
+from typing import Dict, List
 
 class SettingsImageButton(Container):
     _active: bool = False
-    refs: dict = {}
+    refs: Dict[str, List['SettingsImageButton']] = {}
     def __init__(self, image: str = None, text: str = None, group_id: str= None, image_scale: float = 1.0, on_button_press = None):
         super().__init__()
         self.group_id = group_id
@@ -49,8 +50,7 @@ class SettingsImageButton(Container):
         self.on_button_press = on_button_press
 
         try:
-            group: list = SettingsImageButton.refs[self.group_id]
-            group.append(self)
+            SettingsImageButton.refs[self.group_id].append(self)
         except KeyError:
             self.active = True
             self.bgcolor = "#4d191f51"
@@ -85,12 +85,3 @@ class SettingsImageButton(Container):
     @active.setter
     def active(self, value: bool):
         self._active = value
-    
-    # def set_active(self, event: ControlEvent):
-    #     button: SettingsImageButton = event.control
-        
-    #     iter_button: SettingsImageButton = None
-    #     for iter_button in SettingsImageButton.refs[button.group_id]:
-    #         if iter_button.text == button.text:
-    #             if button.active:
-    #                 return

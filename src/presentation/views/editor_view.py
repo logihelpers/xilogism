@@ -120,12 +120,15 @@ class EditorView(Container):
         code_editor_container = Container(
             theme_mode=ThemeMode.LIGHT,
             expand=True,
-            content=Row(
-                expand=True,
-                vertical_alignment=CrossAxisAlignment.STRETCH,
-                controls=[
-                    self.code_editor
-                ]
+            content=Container(
+                Row(
+                    expand=True,
+                    vertical_alignment=CrossAxisAlignment.STRETCH,
+                    controls=[
+                        self.code_editor
+                    ]
+                ),
+                border_radius=8
             ),
             border=border.all(1, "#6b6b6b"),
             border_radius=8,
