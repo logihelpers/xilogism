@@ -27,8 +27,20 @@ class EditorThemeState(metaclass = Singleton):
         self._editor_theme = theme
         self.on_theme_change()
     
+    @property
+    def done_build(self) -> bool:
+        return self._done_build
+    
+    @done_build.setter
+    def done_build(self, done: bool):
+        self._done_build = done
+        self.on_done_build()
+    
     def on_change(self):
         pass
-
+    
     def on_theme_change(self):
+        pass
+
+    def on_done_build(self):
         pass
