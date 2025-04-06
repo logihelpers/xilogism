@@ -14,14 +14,16 @@ class DialogStateController(Controller):
         self.dia_state = DialogState()
         self.dia_state.on_change = self.control_dialogs
 
+        self.settings_dialog: SettingsDialog = self.page.session.get("window").settings_dialog
+
     def control_dialogs(self):
         active: Dialogs = self.dia_state.state
         
         match active:
             case Dialogs.CLOSE:
-                [self.page.close(overlay) for overlay in self.page.overlay]
+                [self.page.close(overlay) for overlay in self.page.overlay] # One liner close all dialogs
             case Dialogs.SETTINGS:
-                self.page.open(SettingsDialog())
+                self.page.open(self.settings_dialog)
             case Dialogs.LOGIN:
                 self.page.open(LoginDialog())
             case Dialogs.REGISTER:

@@ -7,6 +7,8 @@ from presentation.views.start_view import StartView
 from presentation.views.editor_view import EditorView
 from presentation.views.open_existing_view import OpenExistingView
 
+from presentation.views.dialogs.settings_dialog import SettingsDialog
+
 from xilowidgets import MediaQuery, Revealer, Switcher
 
 class WindowView(Row):
@@ -23,6 +25,8 @@ class WindowView(Row):
         self.start_view = StartView()
         self.editor_view = EditorView()
         self.open_view = OpenExistingView()
+
+        self.settings_dialog = SettingsDialog()
 
         self.slidable_panel = Revealer(
             content=self.sidebar,

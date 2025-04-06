@@ -6,7 +6,7 @@ from presentation.states.dark_mode_state import DarkModeState
 from presentation.states.editor_theme_state import EditorThemeState
 
 class AppearanceSettings(Column):
-    THEME_BUTTON_SCALE: float = 1.5
+    THEME_BUTTON_SCALE: float = 1
     def __init__(self):
         super().__init__()
 
@@ -59,6 +59,7 @@ class AppearanceSettings(Column):
             Text("Editor Theme", weight=FontWeight.BOLD),
             Row(
                 spacing = 16,
+                wrap=True,
                 scroll = ScrollMode.ALWAYS,
                 controls = [
                     SettingsImageButton("/editor_themes/DEFAULT.png", "Default", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
@@ -68,13 +69,13 @@ class AppearanceSettings(Column):
                     SettingsImageButton("/editor_themes/AGATE.png", "Agate", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/ANDROIDSTUDIO.png", "Android Studio", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/ARTA.png", "Arta", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/ASCETIC.png", "Ascetic", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/ATOM_ONE_DARK.png", "Atom One Dark", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/ATOM_ONE_LIGHT.png", "Atom One Light", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/IDEA.png", "Idea", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/MONOKAI.png", "Monokai", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/MONOKAI_SUBLIME.png", "Monokai Sublime", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/OBSIDIAN.png", "Obsidian", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
+                    SettingsImageButton("/editor_themes/SOLARIZED_LIGHT.png", "Solarized Light", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
+                    SettingsImageButton("/editor_themes/SOLARIZED_DARK.png", "Solarized Dark", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/VS2015.png", "VS2015", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                     SettingsImageButton("/editor_themes/XCODE.png", "XCode", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
                 ]
@@ -95,4 +96,4 @@ class AppearanceSettings(Column):
     def switch_theme(self, event: ControlEvent):
         button: SettingsImageButton = event.control
 
-        self.et_state.theme = button.text.lower().replace(" ", "-")
+        self.et_state.theme = button.text
