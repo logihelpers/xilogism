@@ -28,3 +28,5 @@ class DialogStateController(Controller):
                 self.page.open(LoginDialog())
             case Dialogs.REGISTER:
                 self.page.open(RegistrationDialog())
+        
+        self.dia_state.done_build = active

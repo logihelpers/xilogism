@@ -1,4 +1,6 @@
 from presentation.states.dark_mode_state import *
+from presentation.states.dialogs_state import *
+from presentation.states.media_query_state import MediaQueryState
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 
 from flet import *
@@ -7,23 +9,44 @@ from presentation.controllers.controller import Controller, Priority
 
 class DarkModeController(Controller):
     group_id: str = "theme_mode"
-    previous_saved_mode: ThemeMode = None
     priority = Priority.SETTINGS_BOUND
     def __init__(self, page: Page):
         self.page = page
 
         self.dm_state = DarkModeState()
+        self.dia_state = DialogState()
+        self.mq_state = MediaQueryState()
 
         self.dm_state.on_change = self.change_active
         self.dm_state.on_follow_system_change = self.follow_system_change
+        self.dia_state.on_done_build = self.update_view
+        self.mq_state.on_system_theme_change = self.handle_system_change
+
+        if not self.page.client_storage.contains_key("dark_mode"):
+            self.page.client_storage.set("dark_mode", False) # Default to Dark Mode
+
+        if not self.page.client_storage.contains_key("follow_sysdark_mode"):
+            self.page.client_storage.set("follow_sysdark_mode", False) # Default to Manual
     
+    def handle_system_change(self):
+        value: ThemeMode = self.mq_state.system_theme_mode
+    
+    def update_view(self):
+        if self.dia_state.done_build == Dialogs.SETTINGS:
+            self.dm_state.active = bool(self.page.client_storage.get("dark_mode"))
+            self.dm_state.follow_system_active = bool(self.page.client_storage.get("follow_sysdark_mode"))
+
     def follow_system_change(self):
         active: bool = self.dm_state.follow_system_active
 
-        self.previous_saved_mode = self.page.theme_mode if active else self.previous_saved_mode
-        self.page.theme_mode = ThemeMode.SYSTEM if active else self.previous_saved_mode
+        self.page.theme_mode = ThemeMode.SYSTEM if \
+            active else ThemeMode.DARK if bool(self.page.client_storage.get("dark_mode")) else \
+            ThemeMode.LIGHT
+        
+        self.page.client_storage.set("follow_sysdark_mode", active)
+
         self.page.update()
-    
+
     def change_active(self):
         active: bool = self.dm_state.active
 
@@ -51,3 +74,5 @@ class DarkModeController(Controller):
 
                 self.page.theme_mode = ThemeMode.LIGHT
                 self.page.update()
+        
+        self.page.client_storage.set("dark_mode", active)
