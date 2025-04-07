@@ -9,6 +9,8 @@ from presentation.views.open_existing_view import OpenExistingView
 
 from presentation.views.dialogs.settings_dialog import SettingsDialog
 
+from presentation.states.media_query_state import MediaQueryState
+
 from xilowidgets import MediaQuery, Revealer, Switcher
 
 class WindowView(Row):
@@ -18,7 +20,11 @@ class WindowView(Row):
     def build(self):
         super().build()
 
-        self.media_query = MediaQuery()
+        self.mq_state = MediaQueryState()
+
+        self.media_query = MediaQuery(
+            on_theme_mode_change=lambda event: setattr(self.mq_state, "system_theme_mode", event.theme_mode)
+        )
         self.sidebar = SideBar()
         self.titlebar = TitleBar()
 
