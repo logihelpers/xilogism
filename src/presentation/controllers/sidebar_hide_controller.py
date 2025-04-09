@@ -28,4 +28,7 @@ class SideBarHideController(Controller):
 
         self.window.titlebar.sidebar_hide_button.content.content = self.window.titlebar.sidebar_show_button_content if state.value else self.window.titlebar.sidebar_hide_button_content
         
+        self.window.titlebar.hidden_profile_button_revealer.content.content_hidden = not state.value
+        self.window.titlebar.hidden_profile_button_revealer.content.update()
+
         self.page.update()

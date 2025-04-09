@@ -2,6 +2,8 @@ from flet import *
 from presentation.states.title_button_state import *
 from presentation.states.sidebar_hide_state import *
 
+from xilowidgets import Revealer
+
 class TitleBar(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
@@ -51,6 +53,24 @@ class TitleBar(Container):
             on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.SETTINGS)
         )
 
+        self.hidden_profile_button_revealer = Container(
+            width=32,height=32,
+            content=Revealer(
+                content_hidden=True,
+                content_length=32,
+                orientation=Revealer.Orientation.HORIZONTAL,
+                content=FilledButton(
+                    content = Image(
+                        src="/icons_light/guest_user.png",
+                        width=16 * self.widget_scale,
+                        height=16 * self.widget_scale,
+                    ),
+                    bgcolor="#00ffffff",
+                    on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.PROFILE)
+                )
+            )
+        )
+
         self.content = WindowDragArea(
             content = Container(
                 padding=padding.symmetric(0, 8),
@@ -73,6 +93,7 @@ class TitleBar(Container):
                         Row(
                             spacing = 0,
                             controls=[
+                                self.hidden_profile_button_revealer,
                                 self.settings_button,
                                 FilledButton(
                                     content = Image(

@@ -5,6 +5,8 @@ class RecentsButton(Container):
         super().__init__()
 
         self.bgcolor = "#00191f51"
+        self.border_radius = 16
+        self.padding = 8
 
         self.content = Row(
             spacing=0,
