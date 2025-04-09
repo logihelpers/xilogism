@@ -24,8 +24,8 @@ class Xilogism(Page):
         self.window.center()
         self.padding = padding.all(0)
         self.window.min_height = 620
-        self.window.min_width = 980
-        self.window.width = 980
+        self.window.min_width = 1024
+        self.window.width = 1024
         self.window.height = 620
         self.spacing = 0
         self.bgcolor = "#ededed"

@@ -2,6 +2,7 @@ from flet import *
 from xilowidgets import Revealer
 
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
+from presentation.views.widgets.settings.accent_color_button import AccentColorButton
 from presentation.states.dark_mode_state import DarkModeState
 from presentation.states.editor_theme_state import EditorThemeState
 
@@ -48,12 +49,12 @@ class AppearanceSettings(Column):
             Text("Accent Color", weight=FontWeight.BOLD),
             Row(
                 controls = [
-                    Container(content = Text(""), width=32, height=32, bgcolor=Colors.random(), border_radius=16, border=border.all(0.5, "black")),
-                    Container(content = Text(""), width=32, height=32, bgcolor=Colors.random(), border_radius=16, border=border.all(0.5, "black")),
-                    Container(content = Text(""), width=32, height=32, bgcolor=Colors.random(), border_radius=16, border=border.all(0.5, "black")),
-                    Container(content = Text(""), width=32, height=32, bgcolor=Colors.random(), border_radius=16, border=border.all(0.5, "black")),
-                    Container(content = Text(""), width=32, height=32, bgcolor=Colors.random(), border_radius=16, border=border.all(0.5, "black")),
-                    Container(content = Text(""), width=32, height=32, bgcolor=Colors.random(), border_radius=16, border=border.all(0.5, "black"))
+                    AccentColorButton(color="#4d191f51"),
+                    AccentColorButton(color="#4d4d1c43"),
+                    AccentColorButton(color="#4d4d1f23"),
+                    AccentColorButton(color="#4d512e1c"),
+                    AccentColorButton(color="#4d1c512e"),
+                    AccentColorButton(color="#4d51431c")
                 ]
             ),
             Text("Editor Theme", weight=FontWeight.BOLD),
