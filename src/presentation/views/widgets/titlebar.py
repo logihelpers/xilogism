@@ -31,6 +31,8 @@ class TitleBar(Container):
         )
 
         self.sidebar_hide_button = FilledButton(
+            height=32,
+            width=32,
             bgcolor="#00ffffff",
             on_click=self.sidebar_hide_state.invert,
             content=AnimatedSwitcher(
@@ -44,6 +46,8 @@ class TitleBar(Container):
         )
 
         self.settings_button = FilledButton(
+            height=32,
+            width=32,
             content = Image(
                 src="/icons_light/setting.png",
                 width=16 * self.widget_scale,
@@ -54,10 +58,13 @@ class TitleBar(Container):
         )
 
         self.hidden_profile_button_revealer = Container(
-            width=32,height=32,
+            height=32,
+            width=32,
+            padding=0,
             content=Revealer(
                 content_hidden=True,
                 content_length=32,
+                padding=0,
                 orientation=Revealer.Orientation.HORIZONTAL,
                 content=FilledButton(
                     content = Image(
@@ -91,20 +98,24 @@ class TitleBar(Container):
                             expand=True
                         ),
                         Row(
-                            spacing = 0,
+                            spacing = 16,
                             controls=[
                                 self.hidden_profile_button_revealer,
                                 self.settings_button,
                                 FilledButton(
+                                    height=32,
+                                    width=32,
                                     content = Image(
                                         src="/icons_light/minimize_new.png",
                                         width=16 * self.widget_scale,
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
-                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE)
+                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE),
                                 ),
                                 FilledButton(
+                                    height=32,
+                                    width=32,
                                     content = Image(
                                         src="/icons_light/maximize_new.png",
                                         width=16 * self.widget_scale,
@@ -114,6 +125,8 @@ class TitleBar(Container):
                                     on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE)
                                 ),
                                 FilledButton(
+                                    height=32,
+                                    width=32,
                                     content = Image(
                                         src="/icons_light/close_new.png",
                                         width=16 * self.widget_scale,
