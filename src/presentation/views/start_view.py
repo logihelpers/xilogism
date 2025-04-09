@@ -26,7 +26,7 @@ class StartView(Container):
                         width=(320 * self.widget_scale) * 1.10,
                         height=(320 * self.widget_scale) * 1.10
                     ),
-                    expand=True
+                    expand=True,
                 ),
                 Container(
                     expand = True,
@@ -106,7 +106,8 @@ class StartView(Container):
                                     ),
                                     style=ButtonStyle(
                                         bgcolor="#26191f51",
-                                        shape=RoundedRectangleBorder(16 * self.widget_scale)
+                                        shape=RoundedRectangleBorder(16 * self.widget_scale),
+                                        side=BorderSide(1, "#1a191f51")
                                     )
                                 )
                             ),
@@ -138,7 +139,8 @@ class StartView(Container):
                                     on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
                                     style=ButtonStyle(
                                         bgcolor="#26191f51",
-                                        shape=RoundedRectangleBorder(16 * self.widget_scale)
+                                        shape=RoundedRectangleBorder(16 * self.widget_scale),
+                                        side=BorderSide(1, "#1a191f51")
                                     )
                                 ),
                             )

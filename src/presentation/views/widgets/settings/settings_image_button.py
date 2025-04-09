@@ -56,6 +56,7 @@ class SettingsImageButton(Container):
             self.bgcolor = "#4d191f51"
             self.label.weight = FontWeight.BOLD
             self.check_box.bgcolor = "#af191f51"
+            self.border = border.all(1, "#191f51")
 
             SettingsImageButton.refs[self.group_id] = [self]
     
@@ -66,11 +67,9 @@ class SettingsImageButton(Container):
         for iter_button in SettingsImageButton.refs[button.group_id]:
             if iter_button.text == button.text:
                 if button.active:
-                    button.bgcolor = "#4d191f51" if event.data == "true" else "#1a191f51"
-                    button.border = border.all(1, "#191f51") if event.data == "true" else border.all(1, "#006b6b6b")
-                    button.label.weight = FontWeight.BOLD if event.data == "true" else FontWeight.NORMAL
+                    continue
                 else:
-                    button.bgcolor = "#4d191f51" if event.data == "true" else "#006b6b6b"
+                    button.bgcolor = "#1a191f51" if event.data == "true" else "#006b6b6b"
                     button.border = border.all(1, "#191f51") if event.data == "true" else border.all(1, "#006b6b6b")
                     button.label.weight = FontWeight.BOLD if event.data == "true" else FontWeight.NORMAL
                 button.update()

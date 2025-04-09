@@ -7,7 +7,8 @@ class Fonts(metaclass = Singleton):
     def __init__(self):
         ui_fonts_list = [
             ("Product Sans", "/fonts/Product Sans Regular.ttf"),
-            ("Inter", "/fonts/Inter.ttf")
+            ("Inter", "/fonts/Inter.ttf"),
+            ("OpenDyslexic", "/fonts/OpenDyslexic.otf")
         ]
 
         mono_fonts_list = [
@@ -20,14 +21,12 @@ class Fonts(metaclass = Singleton):
             ("JetBrains Mono", "/fonts/JetBrainsMono.ttf"),
             ("Roboto Mono", "/fonts/RobotoMono.ttf"),
             ("Source Code Pro", "/fonts/SourceCodePro.ttf"),
-            ("Space Mono", "/fonts/SpaceMono.ttf")
+            ("Space Mono", "/fonts/SpaceMono.ttf"),
+            ("OpenDyslexic Mono", "/fonts/OpenDyslexicMono.otf")
         ]
-
-        dyslexic_fonts = []
 
         self.add_fonts(ui_fonts_list, FontType.UI)
         self.add_fonts(mono_fonts_list, FontType.MONOSPACE)
-        self.add_fonts(dyslexic_fonts, FontType.DYSLEXIA_FRIENDLY)
     
     def add_fonts(self, fonts_list: list, type: FontType):
         for current_font, current_font_location in fonts_list:

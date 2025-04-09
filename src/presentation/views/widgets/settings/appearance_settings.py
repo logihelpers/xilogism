@@ -5,6 +5,7 @@ from presentation.views.widgets.settings.settings_image_button import SettingsIm
 from presentation.views.widgets.settings.accent_color_button import AccentColorButton
 from presentation.states.dark_mode_state import DarkModeState
 from presentation.states.editor_theme_state import EditorThemeState
+from presentation.states.accent_color_state import AccentColorState, AccentColors
 
 class AppearanceSettings(Column):
     THEME_BUTTON_SCALE: float = 1
@@ -13,6 +14,7 @@ class AppearanceSettings(Column):
 
         self.dm_state = DarkModeState()
         self.et_state = EditorThemeState()
+        self.ac_state = AccentColorState()
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -48,14 +50,7 @@ class AppearanceSettings(Column):
             ),
             Text("Accent Color", weight=FontWeight.BOLD),
             Row(
-                controls = [
-                    AccentColorButton(color="#4d191f51"),
-                    AccentColorButton(color="#4d4d1c43"),
-                    AccentColorButton(color="#4d4d1f23"),
-                    AccentColorButton(color="#4d512e1c"),
-                    AccentColorButton(color="#4d1c512e"),
-                    AccentColorButton(color="#4d51431c")
-                ]
+                controls=[AccentColorButton(color, on_button_press=self.switch_accent) for color in AccentColors]
             ),
             Text("Editor Theme", weight=FontWeight.BOLD),
             Row(
@@ -92,9 +87,14 @@ class AppearanceSettings(Column):
     def switch_dark_mode(self, event: ControlEvent):
         button: SettingsImageButton = event.control
 
-        self.dm_state.active = (button.text == "Dark") if button.group_id == "theme_mode" else self.dm_state.active
+        self.dm_state.active = (button.text == "Dark")
     
     def switch_theme(self, event: ControlEvent):
         button: SettingsImageButton = event.control
 
         self.et_state.theme = button.text
+    
+    def switch_accent(self, event: ControlEvent):
+        button: AccentColorButton = event.control
+
+        self.ac_state.active = button.color

@@ -3,8 +3,7 @@ from enum import Enum
 
 class FontType(Enum):
     MONOSPACE = False
-    DYSLEXIA_FRIENDLY = True
-    UI = 2
+    UI = True
 
 @dataclass
 class Font:
