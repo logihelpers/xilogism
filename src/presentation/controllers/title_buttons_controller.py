@@ -27,5 +27,7 @@ class TitleButtonsController(Controller):
                 self.page.window.minimized = True
             case WindowState.SETTINGS:
                 self.dia_state.state = Dialogs.SETTINGS
+            case WindowState.PROFILE:
+                self.dia_state.state = Dialogs.LOGIN
         
         self.page.update()
