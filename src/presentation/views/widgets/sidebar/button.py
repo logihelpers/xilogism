@@ -25,8 +25,8 @@ class SideBarButton(FilledButton):
                 controls=[
                     Image(
                         src=self.path,
-                        width=16 * self.widget_scale,
-                        height=16 * self.widget_scale
+                        width=24 * self.widget_scale,
+                        height=24 * self.widget_scale
                     ),
                     Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale, no_wrap=False)
                 ],

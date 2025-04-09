@@ -42,6 +42,7 @@ class StartView(Container):
                                         text="GET YOUR HANDS DIRTY WITH\n",
                                         style=TextStyle(
                                             size=16 * self.widget_scale,
+                                            weight=FontWeight.W_600,
                                             italic=True
                                         )
                                     ),
@@ -53,7 +54,7 @@ class StartView(Container):
                                         )
                                     )
                                 ],
-                                text_align=TextAlign.START,
+                                text_align=TextAlign.CENTER,
                                 no_wrap=True
                             ),
                             Text(
@@ -64,7 +65,7 @@ class StartView(Container):
                             ),
                             Container(
                                 padding = padding.all(16 * self.widget_scale),
-                                margin = margin.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                                margin = margin.symmetric(8 * self.widget_scale, 0),
                                 width=480 * self.widget_scale,
                                 height=128 * self.widget_scale,
                                 content = FilledButton(
@@ -84,34 +85,33 @@ class StartView(Container):
                                                         TextSpan(
                                                             text="CREATE MY XILOGISM\n",
                                                             style=TextStyle(
-                                                                size=16 * self.widget_scale,
+                                                                size=18 * self.widget_scale,
                                                                 color="black",
-                                                                weight=FontWeight.W_600
+                                                                weight=FontWeight.W_700
                                                             )
                                                         ),
                                                         TextSpan(
                                                             text="Pseudocode Format",
                                                             style=TextStyle(
                                                                 size=12 * self.widget_scale,
-                                                                color="black",
-                                                                italic=True
+                                                                color="black"
                                                             )
                                                         )
                                                     ],
-                                                    text_align=TextAlign.CENTER,
+                                                    text_align=TextAlign.START,
                                                     expand=True
                                                 )
                                             ]
                                         )
                                     ),
                                     style=ButtonStyle(
-                                        bgcolor="#4d191f51",
+                                        bgcolor="#26191f51",
                                         shape=RoundedRectangleBorder(16 * self.widget_scale)
                                     )
                                 )
                             ),
                             Container(
-                                padding=padding.symmetric(0, 80 * self.widget_scale),
+                                padding=padding.only(left=96 * self.widget_scale, right=16 * self.widget_scale),
                                 width=480 * self.widget_scale,
                                 height=48 * self.widget_scale,
                                 content = FilledButton(
@@ -129,15 +129,18 @@ class StartView(Container):
                                                     value="OPEN EXISTING",
                                                     weight=FontWeight.W_600,
                                                     color="black",
-                                                    text_align=TextAlign.CENTER,
+                                                    text_align=TextAlign.START,
                                                     expand=True
                                                 )
                                             ],
                                         )
                                     ),
-                                    bgcolor="#26191f51",
-                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key)
-                                )
+                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+                                    style=ButtonStyle(
+                                        bgcolor="#26191f51",
+                                        shape=RoundedRectangleBorder(16 * self.widget_scale)
+                                    )
+                                ),
                             )
                         ]
                     )
