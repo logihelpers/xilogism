@@ -1,6 +1,8 @@
 from flet import *
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.views.widgets.existing_view.pinned_button import PinnedButton
+from presentation.views.widgets.existing_view.recents_button import RecentsButton
 
 class StartView(Container):
     widget_scale: float = 1.0
@@ -15,138 +17,291 @@ class StartView(Container):
         self.padding = padding.all(16)
         self.expand = True
         self.expand_loose = True
-        self.content = Row(
-            alignment=MainAxisAlignment.SPACE_AROUND,
-            vertical_alignment=CrossAxisAlignment.CENTER,
-            expand=True,
-            controls=[
+
+        self.logo = Row(
+            spacing=0,
+            controls = [
                 Container(
                     content = Image(
                         src="/icons_light/logo.png",
-                        width=(320 * self.widget_scale) * 1.10,
-                        height=(320 * self.widget_scale) * 1.10
-                    ),
-                    expand=True
+                        width=(96 * self.widget_scale),
+                        height=(96 * self.widget_scale)
+                    )
                 ),
                 Container(
-                    expand = True,
                     content = Column(
-                        expand=True,
                         alignment = MainAxisAlignment.CENTER,
                         horizontal_alignment = CrossAxisAlignment.CENTER,
                         spacing = 0,
                         controls = [
                             Text(
-                                spans=[
-                                    TextSpan(
-                                        text="GET YOUR HANDS DIRTY WITH\n",
-                                        style=TextStyle(
-                                            size=16 * self.widget_scale,
-                                            weight=FontWeight.W_600,
-                                            italic=True
-                                        )
-                                    ),
-                                    TextSpan(
-                                        text="XILOGISM",
-                                        style=TextStyle(
-                                            size=72 * self.widget_scale,
-                                            weight=FontWeight.W_800,
-                                        )
-                                    )
-                                ],
-                                text_align=TextAlign.CENTER,
+                                value = "XILOGISM",
+                                size=32*self.widget_scale,
+                                weight = FontWeight.W_800,
                                 no_wrap=True
                             ),
                             Text(
                                 value="CODES TO CIRCUITS, XILOGIZED!",
-                                size=20,
+                                size=9,
                                 weight=FontWeight.W_700,
-                                text_align=TextAlign.CENTER,
-                            ),
-                            Container(
-                                padding = padding.all(16 * self.widget_scale),
-                                margin = margin.symmetric(8 * self.widget_scale, 0),
-                                width=480 * self.widget_scale,
-                                height=128 * self.widget_scale,
-                                content = FilledButton(
-                                    key = "New Xilogism",
-                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
-                                    content=Container(
-                                        padding = padding.all(16 * self.widget_scale),
-                                        content = Row(
-                                            controls=[
-                                                Image(
-                                                    src="/icons_light/new.png",
-                                                    width=56 * self.widget_scale,
-                                                    height=56 * self.widget_scale
-                                                ),
-                                                Text(
-                                                    spans=[
-                                                        TextSpan(
-                                                            text="CREATE MY XILOGISM\n",
-                                                            style=TextStyle(
-                                                                size=18 * self.widget_scale,
-                                                                color="black",
-                                                                weight=FontWeight.W_700
-                                                            )
-                                                        ),
-                                                        TextSpan(
-                                                            text="Pseudocode Format",
-                                                            style=TextStyle(
-                                                                size=12 * self.widget_scale,
-                                                                color="black"
-                                                            )
-                                                        )
-                                                    ],
-                                                    text_align=TextAlign.START,
-                                                    expand=True
-                                                )
-                                            ]
-                                        )
-                                    ),
-                                    style=ButtonStyle(
-                                        bgcolor="#26191f51",
-                                        shape=RoundedRectangleBorder(16 * self.widget_scale)
-                                    )
-                                )
-                            ),
-                            Container(
-                                padding=padding.only(left=96 * self.widget_scale, right=16 * self.widget_scale),
-                                width=480 * self.widget_scale,
-                                height=48 * self.widget_scale,
-                                content = FilledButton(
-                                    key = "Open Xilogism",
-                                    content=Container(
-                                        padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
-                                        content = Row(
-                                            controls = [
-                                                Image(
-                                                    src="/icons_light/open.png",
-                                                    width=16 * self.widget_scale,
-                                                    height=16 * self.widget_scale
-                                                ),
-                                                Text(
-                                                    value="OPEN EXISTING",
-                                                    weight=FontWeight.W_600,
-                                                    color="black",
-                                                    text_align=TextAlign.START,
-                                                    expand=True
-                                                )
-                                            ],
-                                        )
-                                    ),
-                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
-                                    style=ButtonStyle(
-                                        bgcolor="#26191f51",
-                                        shape=RoundedRectangleBorder(16 * self.widget_scale)
-                                    )
-                                ),
                             )
                         ]
                     )
                 )
             ]
         )
+
+        self.control_buttons = Row(
+            height=96,
+            controls= [
+                Container(
+                    expand = True,
+                    height=48 * self.widget_scale,
+                    content = FilledButton(
+                        key = "New Xilogism",
+                        content=Container(
+                            padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                            content = Row(
+                                controls = [
+                                    Image(
+                                        src="/icons_light/new.png",
+                                        width=16 * self.widget_scale,
+                                        height=16 * self.widget_scale
+                                    ),
+                                    Text(
+                                        value="New Xilogism",
+                                        weight=FontWeight.W_600,
+                                        color="black",
+                                        text_align=TextAlign.START,
+                                        expand=True
+                                    )
+                                ],
+                            )
+                        ),
+                        on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+                        style=ButtonStyle(
+                            bgcolor="#4d191f51",
+                            shape=RoundedRectangleBorder(16 * self.widget_scale)
+                        )
+                    ),
+                ),
+                Container(
+                    expand = True,
+                    height=48 * self.widget_scale,
+                    content = FilledButton(
+                        key = "Open Xilogism",
+                        content=Container(
+                            padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                            content = Row(
+                                controls = [
+                                    Image(
+                                        src="/icons_light/open.png",
+                                        width=16 * self.widget_scale,
+                                        height=16 * self.widget_scale
+                                    ),
+                                    Text(
+                                        value="OPEN EXISTING",
+                                        weight=FontWeight.W_600,
+                                        color="black",
+                                        text_align=TextAlign.START,
+                                        expand=True
+                                    )
+                                ],
+                            )
+                        ),
+                        on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+                        style=ButtonStyle(
+                            bgcolor="#26191f51",
+                            shape=RoundedRectangleBorder(16 * self.widget_scale)
+                        )
+                    ),
+                )
+            ]
+        )
+
+        self.content = Row(
+            alignment=MainAxisAlignment.SPACE_AROUND,
+            vertical_alignment=CrossAxisAlignment.CENTER,
+            expand=True,
+            spacing = 24,
+            controls=[
+                Column(
+                    controls = [
+                        self.logo,
+                        Column(
+                            expand = True,
+                            scroll=ScrollMode.HIDDEN,
+                            controls = [
+                                PinnedButton(),
+                                PinnedButton(),
+                                PinnedButton(),
+                                PinnedButton(),
+                                PinnedButton(),
+                                PinnedButton()
+                            ],
+                        )
+                    ]
+                ),
+                Column(
+                    expand = True,
+                    controls = [
+                        self.control_buttons,
+                        Column(
+                            expand=True,
+                            scroll = ScrollMode.HIDDEN,
+                            spacing = 16,
+                            controls= [
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                                RecentsButton(),
+                            ]
+                        )
+                    ]
+                ),
+            ]
+        )
+
+        # self.content = Row(
+        #     alignment=MainAxisAlignment.SPACE_AROUND,
+        #     vertical_alignment=CrossAxisAlignment.CENTER,
+        #     expand=True,
+        #     controls=[
+                # Container(
+                #     content = Image(
+                #         src="/icons_light/logo.png",
+                #         width=(320 * self.widget_scale) * 1.10,
+                #         height=(320 * self.widget_scale) * 1.10
+                #     ),
+                #     expand=True
+                # ),
+                # Container(
+                #     expand = True,
+                #     content = Column(
+                #         expand=True,
+                #         alignment = MainAxisAlignment.CENTER,
+                #         horizontal_alignment = CrossAxisAlignment.CENTER,
+                #         spacing = 0,
+                #         controls = [
+                #             Text(
+                #                 spans=[
+                #                     TextSpan(
+                #                         text="GET YOUR HANDS DIRTY WITH\n",
+                #                         style=TextStyle(
+                #                             size=16 * self.widget_scale,
+                #                             weight=FontWeight.W_600,
+                #                             italic=True
+                #                         )
+                #                     ),
+                #                     TextSpan(
+                #                         text="XILOGISM",
+                #                         style=TextStyle(
+                #                             size=72 * self.widget_scale,
+                #                             weight=FontWeight.W_800,
+                #                         )
+                #                     )
+                #                 ],
+                #                 text_align=TextAlign.CENTER,
+                #                 no_wrap=True
+                #             ),
+                #             Text(
+                #                 value="CODES TO CIRCUITS, XILOGIZED!",
+                #                 size=20,
+                #                 weight=FontWeight.W_700,
+                #                 text_align=TextAlign.CENTER,
+                #             ),
+        #                     Container(
+        #                         padding = padding.all(16 * self.widget_scale),
+        #                         margin = margin.symmetric(8 * self.widget_scale, 0),
+        #                         width=480 * self.widget_scale,
+        #                         height=128 * self.widget_scale,
+        #                         content = FilledButton(
+        #                             key = "New Xilogism",
+        #                             on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+        #                             content=Container(
+        #                                 padding = padding.all(16 * self.widget_scale),
+        #                                 content = Row(
+        #                                     controls=[
+        #                                         Image(
+        #                                             src="/icons_light/new.png",
+        #                                             width=56 * self.widget_scale,
+        #                                             height=56 * self.widget_scale
+        #                                         ),
+        #                                         Text(
+        #                                             spans=[
+        #                                                 TextSpan(
+        #                                                     text="CREATE MY XILOGISM\n",
+        #                                                     style=TextStyle(
+        #                                                         size=18 * self.widget_scale,
+        #                                                         color="black",
+        #                                                         weight=FontWeight.W_700
+        #                                                     )
+        #                                                 ),
+        #                                                 TextSpan(
+        #                                                     text="Pseudocode Format",
+        #                                                     style=TextStyle(
+        #                                                         size=12 * self.widget_scale,
+        #                                                         color="black"
+        #                                                     )
+        #                                                 )
+        #                                             ],
+        #                                             text_align=TextAlign.START,
+        #                                             expand=True
+        #                                         )
+        #                                     ]
+        #                                 )
+        #                             ),
+        #                             style=ButtonStyle(
+        #                                 bgcolor="#26191f51",
+        #                                 shape=RoundedRectangleBorder(16 * self.widget_scale)
+        #                             )
+        #                         )
+        #                     ),
+                            # Container(
+                            #     padding=padding.only(left=96 * self.widget_scale, right=16 * self.widget_scale),
+                            #     width=480 * self.widget_scale,
+                            #     height=48 * self.widget_scale,
+                            #     content = FilledButton(
+                            #         key = "Open Xilogism",
+                            #         content=Container(
+                            #             padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                            #             content = Row(
+                            #                 controls = [
+                            #                     Image(
+                            #                         src="/icons_light/open.png",
+                            #                         width=16 * self.widget_scale,
+                            #                         height=16 * self.widget_scale
+                            #                     ),
+                            #                     Text(
+                            #                         value="OPEN EXISTING",
+                            #                         weight=FontWeight.W_600,
+                            #                         color="black",
+                            #                         text_align=TextAlign.START,
+                            #                         expand=True
+                            #                     )
+                            #                 ],
+                            #             )
+                            #         ),
+                            #         on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+                            #         style=ButtonStyle(
+                            #             bgcolor="#26191f51",
+                            #             shape=RoundedRectangleBorder(16 * self.widget_scale)
+                            #         )
+                            #     ),
+                            # )
+        #                 ]
+        #             )
+        #         )
+        #     ]
+        # )
 
         super().build()
     

@@ -86,7 +86,7 @@ class SideBar(Container):
                 Column(
                     controls = [
                         SideBarTitle("Home", is_home=True),
-                        SideBarButton("icons_light/start.png", "Start", on_button_press=self.active_changed),
+                        SideBarButton("icons_light/logo.png", "Start", on_button_press=self.active_changed),
                         SideBarButton("icons_light/new.png", "New Xilogism", on_button_press=self.active_changed),
                         SideBarButton("icons_light/open.png", "Open Xilogism", on_button_press=self.active_changed),
                         SideBarTitle("Pinned"),

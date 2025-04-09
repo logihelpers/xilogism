@@ -5,8 +5,10 @@ class PinnedButton(Container):
         super().__init__()
 
         self.bgcolor = "#00191f51"
-        self.width = 144
-        self.height = 200
+        self.width = 256
+        self.height = 180
+        self.padding = 12
+        self.animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT)
         self.content = Column(
             spacing=0,
             controls=[
@@ -15,7 +17,7 @@ class PinnedButton(Container):
                         controls=[
                             Image(
                                 src="/icons_light/white.jpg",
-                                width=144,
+                                width=256,
                                 height=180,
                                 border_radius=8
                             ),
@@ -68,5 +70,5 @@ class PinnedButton(Container):
         self.on_hover = self.__hover
     
     def __hover(self, event: ControlEvent):
-        event.control.bgcolor = "#4d191f51" if event.data == "true" else None
+        event.control.scale = 1.05 if event.data == "true" else 1
         event.control.update()

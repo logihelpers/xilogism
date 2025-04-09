@@ -1,43 +1,40 @@
 from flet import *
+from random_word import RandomWords
 
 class RecentsButton(Container):
     def __init__(self):
         super().__init__()
 
-        self.bgcolor = "#00191f51"
+        self.bgcolor = "#1a191f51"
+        self.padding = 8
+        self.border_radius = 16
+
+        r = RandomWords()
 
         self.content = Row(
             spacing=0,
             controls=[
                 Image(
                     src="/icons_light/Document.png",
-                    width=40,
-                    height=40,
+                    width=36,
+                    height=36,
                     fit=ImageFit.COVER
                 ),
                 Text(
                     expand=True,
                     spans=[
                         TextSpan(
-                            text="Untitled Design\n",
+                            text=f"{r.get_random_word()}.xlg\n",
                             style=TextStyle(
-                                size=12,
-                                weight=FontWeight.W_500,
+                                size=16,
+                                weight=FontWeight.W_400,
                                 color=Colors.BLACK
-                            )
-                        ),
-                        TextSpan(
-                            text="C:\\Users\\Arlecchino\\Downloads\n",
-                            style=TextStyle(
-                                size=10,
-                                weight=FontWeight.W_500,
-                                color="#6b6b6b"
                             )
                         ),
                         TextSpan(
                             text="Modified: 2/2/25 8:54 PM",
                             style=TextStyle(
-                                size=10,
+                                size=12,
                                 weight=FontWeight.W_500,
                                 color="#6b6b6b"
                             )
@@ -46,8 +43,8 @@ class RecentsButton(Container):
                 ),
                 Image(
                     src="/icons_light/settings_more.png",
-                    width=32,
-                    height=32
+                    width=24,
+                    height=24
                 ),
             ]
         )
