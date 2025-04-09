@@ -20,16 +20,12 @@ class DarkModeController(Controller):
         self.dm_state.on_change = self.change_active
         self.dm_state.on_follow_system_change = self.follow_system_change
         self.dia_state.on_done_build = self.update_view
-        self.mq_state.on_system_theme_change = self.handle_system_change
 
         if not self.page.client_storage.contains_key("dark_mode"):
             self.page.client_storage.set("dark_mode", False) # Default to Dark Mode
 
         if not self.page.client_storage.contains_key("follow_sysdark_mode"):
             self.page.client_storage.set("follow_sysdark_mode", False) # Default to Manual
-    
-    def handle_system_change(self):
-        value: ThemeMode = self.mq_state.system_theme_mode
     
     def update_view(self):
         if self.dia_state.done_build == Dialogs.SETTINGS:
