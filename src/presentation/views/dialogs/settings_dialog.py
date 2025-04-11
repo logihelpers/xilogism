@@ -4,7 +4,8 @@ from xilowidgets import Switcher
 from presentation.views.widgets.settings.appearance_settings import AppearanceSettings
 from presentation.views.widgets.settings.accessibility_settings import AccessibilitySettings
 from presentation.views.widgets.settings.language_settings import LanguageSettings
-from presentation.views.widgets.settings.settings_navigator import SettingsNavigator
+from presentation.views.widgets.dialog_navigator import DialogNavigator
+from presentation.views.widgets.navigator_button import NavigatorButton, Position
 
 from presentation.states.dialogs_state import DialogState, Dialogs
 
@@ -28,6 +29,8 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
         self.accessibility_settings = AccessibilitySettings()
         self.language_settings = LanguageSettings()
 
+        self.bgcolor = "#ededed"
+
         self.switcher = Switcher(
             orientation = Switcher.Orientation.HORIZONTAL,
             controls = [
@@ -37,7 +40,15 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
             ]
         )
 
-        self.title = WindowDragArea(content=SettingsNavigator())
+        navigator = DialogNavigator(
+            controls =  [
+                NavigatorButton("Appearance", Position.START),
+                NavigatorButton("Accessibility", Position.MIDDLE),
+                NavigatorButton("Language", Position.END)
+            ]
+        )
+
+        self.title = WindowDragArea(content=navigator)
         self.actions = [
             FilledButton(
                 "Close", 

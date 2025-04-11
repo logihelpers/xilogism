@@ -1,22 +1,16 @@
 from flet import *
-from presentation.views.widgets.settings.navigator_button import NavigatorButton, Position
+from typing import List
+from presentation.views.widgets.navigator_button import NavigatorButton, Position
 
-class SettingsNavigator(Container):
-    def __init__(self):
+class DialogNavigator(Container):
+    def __init__(self, controls: List[NavigatorButton] = None):
         super().__init__()
-
-        if len(NavigatorButton.refs) > 0:
-            NavigatorButton.refs = []
 
         self.alignment = alignment.center
         self.padding = 16
 
         self.content = Row(
-            controls = [
-                NavigatorButton("Appearance", Position.START),
-                NavigatorButton("Accessibility", Position.MIDDLE),
-                NavigatorButton("Language", Position.END)
-            ],
+            controls = controls,
             spacing = 0,
             alignment=MainAxisAlignment.CENTER
         )

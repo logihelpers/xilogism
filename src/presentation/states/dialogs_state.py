@@ -8,7 +8,7 @@ class Dialogs(Enum):
     LOGIN = 1
     REGISTER = 2
     SETTINGS = 3
-    PRINT = 4
+    EXPORT = 4
 
 class DialogState(metaclass=Singleton):
     def __init__(self):
