@@ -46,15 +46,6 @@ class WindowView(Row):
                 self.start_view,
                 self.editor_view,
                 self.open_view,
-                Container(Text("1"), bgcolor=Colors.random()),
-                Container(Text("2"), bgcolor=Colors.random()),
-                Container(Text("3"), bgcolor=Colors.random()),
-                Container(Text("4"), bgcolor=Colors.random()),
-                Container(Text("5"), bgcolor=Colors.random()),
-                Container(Text("6"), bgcolor=Colors.random()),
-                Container(Text("7"), bgcolor=Colors.random()),
-                Container(Text("8"), bgcolor=Colors.random()),
-                Container(Text("9"), bgcolor=Colors.random()),
             ]
         )
 

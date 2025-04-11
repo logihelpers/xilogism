@@ -21,28 +21,24 @@ class OpenExistingView(Container):
                             italic=True,
                             size=28
                         ),
-                        Container(
-                            padding = padding.symmetric(4, 24),
+                        TextField(
+                            content_padding=padding.symmetric(4, 24),
+                            width=256,
                             border_radius=32,
-                            bgcolor="#4d191f51",
+                            bgcolor="#26191f51",
                             border=border.all(1, "black"),
-                            content=Row(
-                                controls=[
-                                    Image(
-                                        src="/icons_light/search.png",
-                                        width=24,
-                                        height=24
-                                    ),
-                                    Text(
-                                        "Search",
-                                        color="black",
-                                        weight=FontWeight.W_500,
-                                        size=14,
-                                        width=128
-                                    )
-                                ]
+                            icon=Image(
+                                src="/icons_light/search.png",
+                                width=24,
+                                height=24
+                            ),
+                            hint_text="Search",
+                            hint_style=TextStyle(
+                                color="black",
+                                weight=FontWeight.W_500,
+                                size=14,
                             )
-                        )
+                        ),
                     ]
                 ),
                 Text(

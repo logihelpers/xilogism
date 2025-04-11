@@ -79,6 +79,63 @@ class ExportTab(Tab):
         super().__init__() 
         self.text = "Export"
         self.expand = True
+
+        self.extra_info = Revealer(
+            expand = True,
+            orientation=Revealer.Orientation.VERTICAL,
+            content = Container(
+                expand = True,
+                padding = padding.symmetric(8, 24),
+                border = border.all(1, "#73191f51"),
+                border_radius = 8,
+                content = Column(
+                    expand = True,
+                    scroll = ScrollMode.HIDDEN,
+                    controls = [
+                        Row(
+                            expand = True,
+                            height=36,
+                            controls = [
+                                Text("Project Name:", expand=True),
+                                TextField(
+                                    hint_text="e.g. Xilogism 1",
+                                    expand=True,
+                                    text_size=14,
+                                    content_padding=padding.symmetric(8, 12)
+                                )
+                            ]
+                        ),
+                        Row(
+                            expand = True,
+                            height=36,
+                            controls = [
+                                Text("Creator :", expand=True),
+                                TextField(
+                                    hint_text="e.g. User",
+                                    expand=True,
+                                    text_size=14,
+                                    content_padding=padding.symmetric(8, 12)
+                                )
+                            ]
+                        ),
+                        Row(
+                            expand = True,
+                            height=36,
+                            controls = [
+                                Text("Date:", expand=True),
+                                TextField(
+                                    hint_text="e.g. 04/07/2025",
+                                    expand=True,
+                                    text_size=14,
+                                    content_padding=padding.symmetric(8, 12)
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        )
+
         self.content = Container(
             padding=padding.symmetric(8, 0),
             content = Column(
@@ -129,67 +186,13 @@ class ExportTab(Tab):
                                 expand=True,
                                 alignment=MainAxisAlignment.START,
                                 controls = [
-                                    Switch("", value=True)
+                                    Switch("", value=True, on_change = self.hide)
                                 ]
                             )
                         ],
                         alignment=MainAxisAlignment.START
                     ),
-                    Container(
-                        expand = True,
-                        padding = padding.symmetric(8, 24),
-                        border = border.all(1, "#73191f51"),
-                        border_radius = 8,
-                        content = Revealer(
-                            expand = True,
-                            orientation=Revealer.Orientation.VERTICAL,
-                            content = Column(
-                                expand = True,
-                                scroll = ScrollMode.HIDDEN,
-                                controls = [
-                                    Row(
-                                        expand = True,
-                                        height=36,
-                                        controls = [
-                                            Text("Project Name:", expand=True),
-                                            TextField(
-                                                hint_text="e.g. Xilogism 1",
-                                                expand=True,
-                                                text_size=14,
-                                                content_padding=padding.symmetric(8, 12)
-                                            )
-                                        ]
-                                    ),
-                                    Row(
-                                        expand = True,
-                                        height=36,
-                                        controls = [
-                                            Text("Creator :", expand=True),
-                                            TextField(
-                                                hint_text="e.g. User",
-                                                expand=True,
-                                                text_size=14,
-                                                content_padding=padding.symmetric(8, 12)
-                                            )
-                                        ]
-                                    ),
-                                    Row(
-                                        expand = True,
-                                        height=36,
-                                        controls = [
-                                            Text("Date:", expand=True),
-                                            TextField(
-                                                hint_text="e.g. 04/07/2025",
-                                                expand=True,
-                                                text_size=14,
-                                                content_padding=padding.symmetric(8, 12)
-                                            )
-                                        ]
-                                    )
-                                ]
-                            )
-                        )
-                    ),
+                    self.extra_info,
                     Container(
                         padding = padding.symmetric(0, 8),
                         content = Row(
@@ -212,10 +215,70 @@ class ExportTab(Tab):
                 ]
             )
         )
+    
+    def hide(self, event: ControlEvent):
+        self.extra_info.content_hidden = not self.extra_info.content_hidden
+        self.extra_info.update()
 
 class PrintTab(Tab):
     def __init__(self, on_cancel = None):
         super().__init__()
+
+        self.extra_info = Revealer(
+            expand = True,
+            orientation=Revealer.Orientation.VERTICAL,
+            content = Container(
+                expand = True,
+                padding = padding.symmetric(8, 24),
+                border = border.all(1, "#73191f51"),
+                border_radius = 8,
+                content = Column(
+                    expand = True,
+                    scroll = ScrollMode.HIDDEN,
+                    controls = [
+                        Row(
+                            expand = True,
+                            height=36,
+                            controls = [
+                                Text("Project Name:", expand=True),
+                                TextField(
+                                    hint_text="e.g. Xilogism 1",
+                                    expand=True,
+                                    text_size=14,
+                                    content_padding=padding.symmetric(8, 12)
+                                )
+                            ]
+                        ),
+                        Row(
+                            expand = True,
+                            height=36,
+                            controls = [
+                                Text("Creator :", expand=True),
+                                TextField(
+                                    hint_text="e.g. User",
+                                    expand=True,
+                                    text_size=14,
+                                    content_padding=padding.symmetric(8, 12)
+                                )
+                            ]
+                        ),
+                        Row(
+                            expand = True,
+                            height=36,
+                            controls = [
+                                Text("Date:", expand=True),
+                                TextField(
+                                    hint_text="e.g. 04/07/2025",
+                                    expand=True,
+                                    text_size=14,
+                                    content_padding=padding.symmetric(8, 12)
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        )
 
         self.text = "Print"
         self.expand = True
@@ -280,73 +343,19 @@ class PrintTab(Tab):
                                 expand=True,
                                 alignment=MainAxisAlignment.START,
                                 controls = [
-                                    Switch("", value=True)
+                                    Switch("", value=True, on_change=self.hide)
                                 ]
                             )
                         ],
                         alignment=MainAxisAlignment.START
                     ),
-                    Container(
-                        expand = True,
-                        padding = padding.symmetric(8, 24),
-                        border = border.all(1, "#73191f51"),
-                        border_radius = 8,
-                        content = Revealer(
-                            expand = True,
-                            orientation=Revealer.Orientation.VERTICAL,
-                            content = Column(
-                                expand = True,
-                                scroll = ScrollMode.HIDDEN,
-                                controls = [
-                                    Row(
-                                        expand = True,
-                                        height=36,
-                                        controls = [
-                                            Text("Project Name:", expand=True),
-                                            TextField(
-                                                hint_text="e.g. Xilogism 1",
-                                                expand=True,
-                                                text_size=14,
-                                                content_padding=padding.symmetric(8, 12)
-                                            )
-                                        ]
-                                    ),
-                                    Row(
-                                        expand = True,
-                                        height=36,
-                                        controls = [
-                                            Text("Creator :", expand=True),
-                                            TextField(
-                                                hint_text="e.g. User",
-                                                expand=True,
-                                                text_size=14,
-                                                content_padding=padding.symmetric(8, 12)
-                                            )
-                                        ]
-                                    ),
-                                    Row(
-                                        expand = True,
-                                        height=36,
-                                        controls = [
-                                            Text("Date:", expand=True),
-                                            TextField(
-                                                hint_text="e.g. 04/07/2025",
-                                                expand=True,
-                                                text_size=14,
-                                                content_padding=padding.symmetric(8, 12)
-                                            )
-                                        ]
-                                    )
-                                ]
-                            )
-                        )
-                    ),
+                    self.extra_info,
                     Container(
                         padding = padding.symmetric(0, 8),
                         content = Row(
                             controls = [
                                 FilledButton(
-                                    "Export", 
+                                    "Print", 
                                     expand=True,
 
                                 ),
@@ -363,3 +372,7 @@ class PrintTab(Tab):
                 ]
             )
         )
+    
+    def hide(self, event: ControlEvent):
+        self.extra_info.content_hidden = not self.extra_info.content_hidden
+        self.extra_info.update()
