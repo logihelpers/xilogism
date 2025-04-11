@@ -33,9 +33,6 @@ class SideBar(Container):
             spacing=0,
             scroll=True,
             controls=[
-                SideBarButton("icons_light/document.png", "Xilogism 1", on_button_press=self.active_changed),
-                SideBarButton("icons_light/document.png", "Logic Circuit 1", on_button_press=self.active_changed),
-                SideBarButton("icons_light/document.png", "Xilogism 2", on_button_press=self.active_changed),
             ]
         )
 
@@ -44,9 +41,6 @@ class SideBar(Container):
             spacing=0,
             scroll=True,
             controls = [
-                SideBarButton("icons_light/document.png", "LCD - Lab 1", on_button_press=self.active_changed),
-                SideBarButton("icons_light/document.png", "LCD - Lab 2", on_button_press=self.active_changed),
-                SideBarButton("icons_light/document.png", "FMSS - CIRCUIT", on_button_press=self.active_changed)
             ]
         )
 
@@ -55,9 +49,6 @@ class SideBar(Container):
             spacing=0,
             scroll=True,
             controls = [
-                SideBarButton("icons_light/document.png", "LCD - Lab 4", on_button_press=self.active_changed),
-                SideBarButton("icons_light/document.png", "LCD - Lab 5", on_button_press=self.active_changed),
-                SideBarButton("icons_light/document.png", "FM CIRCUITS", on_button_press=self.active_changed)
             ]
         )
 
