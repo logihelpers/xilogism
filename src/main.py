@@ -12,9 +12,9 @@ class Xilogism(Page):
         self.theme = Theme(
             color_scheme_seed = "#4169e1",
             dialog_theme= DialogTheme(
-                bgcolor="#fafafa",
+                bgcolor="#ededed",
                 shape=RoundedRectangleBorder(radius=8)
-            )
+            ),
         )
 
         InitFonts(self)
@@ -23,10 +23,10 @@ class Xilogism(Page):
         self.window.title_bar_hidden = True
         self.window.center()
         self.padding = padding.all(0)
-        self.window.min_height = 620
+        self.window.min_height = 640
         self.window.min_width = 1024
         self.window.width = 1024
-        self.window.height = 620
+        self.window.height = 640
         self.spacing = 0
         self.bgcolor = "#ededed"
 

@@ -9,19 +9,18 @@ class RegistrationDialog(AlertDialog, metaclass=Singleton):
     
     def __init__(self):
         super().__init__()
-        self.bgcolor = "#f4f4f4"
+        self.bgcolor = "#ededed"
         self.width = 320
-        self.height = 720
+        self.height = 540
 
         self.dia_state = DialogState()
         self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
         
     def build(self):
         self.content = Container(
-            expand=True,
             padding=padding.only(0, 16),
-            border_radius=15,
-            bgcolor="lightgray",
+            border_radius=16,
+            height=540,
             width=320,
             content=Column(
                 alignment=MainAxisAlignment.START,
@@ -32,7 +31,7 @@ class RegistrationDialog(AlertDialog, metaclass=Singleton):
                         alignment=MainAxisAlignment.START,
                         controls=[
                             Image(
-                                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                                src="/user_icon.png",
                                 width=90,
                                 height=90
                             )

@@ -9,9 +9,9 @@ class LoginDialog(AlertDialog, metaclass=Singleton):
     
     def __init__(self):
         super().__init__()
-        self.bgcolor = "#FFFFFF"
+        self.bgcolor = "#ededed"
         self.width = 320
-        self.height = 720
+        self.height = 500
 
         self.dia_state = DialogState()
         self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
@@ -27,7 +27,7 @@ class LoginDialog(AlertDialog, metaclass=Singleton):
                         alignment=MainAxisAlignment.START,
                         controls=[
                             Image(
-                                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                                src="/user_icon.png",
                                 width=90,
                                 height=90
                             )
@@ -91,9 +91,9 @@ class LoginDialog(AlertDialog, metaclass=Singleton):
                 ]
             ),
             padding=padding.all(16),
-            border_radius=15,
-            bgcolor="lightgray",
-            width=320
+            border_radius=16,
+            width=320,
+            height=500,
         )
         super().build()
 
