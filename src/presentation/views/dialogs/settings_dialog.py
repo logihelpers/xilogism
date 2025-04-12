@@ -4,10 +4,10 @@ from xilowidgets import Switcher
 from presentation.views.widgets.settings.appearance_settings import AppearanceSettings
 from presentation.views.widgets.settings.accessibility_settings import AccessibilitySettings
 from presentation.views.widgets.settings.language_settings import LanguageSettings
-from presentation.views.widgets.dialog_navigator import DialogNavigator
-from presentation.views.widgets.navigator_button import NavigatorButton, Position
 
 from presentation.states.dialogs_state import DialogState, Dialogs
+
+from presentation.states.settings_navigator_state import SettingsNavigatorState
 
 from services.singleton import Singleton
 
@@ -16,6 +16,7 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
         super().__init__()
 
         self.dia_state = DialogState()
+        self.sn_state = SettingsNavigatorState()
 
         self.content_padding = 0
         self.title_padding = 0
@@ -40,15 +41,27 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
             ]
         )
 
-        navigator = DialogNavigator(
-            controls =  [
-                NavigatorButton("Appearance", Position.START),
-                NavigatorButton("Accessibility", Position.MIDDLE),
-                NavigatorButton("Language", Position.END)
-            ]
+        navigator = SegmentedButton(
+            padding=padding.symmetric(16, 128),
+            on_change=self.change_view,
+            selected={"0"},
+            segments=[
+                Segment(
+                    value="0",
+                    label=Text("Appearance"),
+                ),
+                Segment(
+                    value="1",
+                    label=Text("Accessibility"),
+                ),
+                Segment(
+                    value="2",
+                    label=Text("Language"),
+                )
+            ],
         )
 
-        self.title = WindowDragArea(content=navigator)
+        self.title = navigator
         self.actions = [
             FilledButton(
                 "Close", 
@@ -83,3 +96,6 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
                 ]
             )
         )
+    
+    def change_view(self, event: ControlEvent):
+        self.sn_state.active = int(event.data[2])
