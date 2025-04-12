@@ -12,25 +12,75 @@ class LanguageSettings(Column):
 
         self.lang_state = LanguageState()
 
+        self.preview_image = Image(
+            "/icons_light/language_english.png",
+            width=200,
+            height=180,
+            expand = True,
+            fit=ImageFit.FILL
+        )
+
         self.controls=[
             Text("Language", weight=FontWeight.BOLD),
             Row(
-                spacing = 16,
-                wrap=True,
+                vertical_alignment=CrossAxisAlignment.START,
+                alignment=MainAxisAlignment.CENTER,
                 controls = [
-                    SettingsImageButton("/icons_light/language_english.png", "English", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_tagalog.png", "Tagalog", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_cebuano.png", "Cebuano", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_spanish.png", "Spanish", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_french.png", "French", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_japanese.png", "Japanese", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_chinese.png", "Mandarin", "language", 0.75, on_button_press=self.switch_lang),
-                    SettingsImageButton("/icons_light/language_brainrot.png", "Brainrot", "language", 0.75, on_button_press=self.switch_lang),
+                    self.preview_image,
+                    Container(
+                        expand = True,
+                        margin = margin.only(right=16),
+                        border_radius = 8,
+                        content = ListView(
+                            expand = True,
+                            controls = [LanguageButton(language, self.switch_lang) for language in Languages],
+                            height=180,
+                            divider_thickness=1
+                        ),
+                        border=border.all(1, Colors.BLACK)
+                    )
                 ]
-            )
+            ),
         ]
     
     def switch_lang(self, event: ControlEvent):
-        button: SettingsImageButton = event.control
+        button: LanguageButton = event.control
+        self.lang_state.active = button.language
 
-        self.lang_state.active = Languages(button.text)
+        button.leading.opacity = 1
+        button.leading.update()
+
+        self.preview_image.src = f"/icons_light/language_{button.language.name.lower()}.png"
+        self.preview_image.update()
+
+class LanguageButton(ListTile):
+    refs: list = []
+    active: bool = False
+    def __init__(self, language: Languages = None, on_button_press = None):
+        super().__init__()
+
+        self.language = language
+
+        self.leading = Icon(
+            Icons.CHECK,
+            color=Colors.BLACK,
+            size=32,
+            opacity=0
+        )
+
+        self.title = Text(language.name)
+
+        self.on_click = lambda event: self.on_button_press(event)
+        self.on_button_press = on_button_press
+
+        if len(LanguageButton.refs) > 0:
+            LanguageButton.refs.append(self)
+        else:
+            self.active = True
+            
+            self.leading.opacity = 1
+
+            LanguageButton.refs.append(self)
+    
+    def on_button_press(self, event: ControlEvent):
+        pass

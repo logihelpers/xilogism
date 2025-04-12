@@ -22,6 +22,8 @@ class AccessibilitySettings(Column):
             Text("Dyslexia-Friendly Options", weight=FontWeight.BOLD),
             Row(
                 spacing = 16,
+                alignment=MainAxisAlignment.CENTER,
+                expand = True,
                 controls = [
                     SettingsImageButton("/mode_default.png", "Default", "dyslexia", 0.75, on_button_press=self.switch_readability),
                     SettingsImageButton("/mode_dyslexic_friendly.png", "Readable", "dyslexia", 0.75, on_button_press=self.switch_readability)
@@ -30,21 +32,25 @@ class AccessibilitySettings(Column):
             Text("Vision Friendly Settings", weight=FontWeight.BOLD),
             Row(
                 spacing = 16,
+                alignment=MainAxisAlignment.CENTER,
+                expand = True,
                 wrap=True,
                 controls = [
-                    SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.5, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.5, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.5, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.5, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.5, on_button_press=self.switch_vision),
+                    SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.6, on_button_press=self.switch_vision),
+                    SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.6, on_button_press=self.switch_vision),
+                    SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.6, on_button_press=self.switch_vision),
+                    SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.6, on_button_press=self.switch_vision),
+                    SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.6, on_button_press=self.switch_vision),
                 ]
             ),
             Text("Left-Handed Mode", weight=FontWeight.BOLD),
             Row(
                 spacing = 24,
+                alignment=MainAxisAlignment.CENTER,
+                expand = True,
                 controls = [
-                    SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos", on_button_press=self.toggle_left_handed),
-                    SettingsImageButton("/sidebar_right_light.png", "Left-Handed", "sidebar_pos", on_button_press=self.toggle_left_handed)
+                    SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos", 0.75, on_button_press=self.toggle_left_handed),
+                    SettingsImageButton("/sidebar_right_light.png", "Left-Handed", "sidebar_pos", 0.75, on_button_press=self.toggle_left_handed)
                 ]
             ),
             Text("Animation Settings", weight=FontWeight.BOLD),
