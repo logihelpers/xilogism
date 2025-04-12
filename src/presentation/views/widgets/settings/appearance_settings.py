@@ -85,7 +85,7 @@ class AppearanceSettings(Column):
                     Container(
                         expand = True,
                         margin = margin.only(right=16),
-                        border_radius = 12,
+                        border_radius = 8,
                         content = ListView(
                             expand = True,
                             controls = [ThemeButton(theme, theme.name, self.switch_theme) for theme in EditorTheme],

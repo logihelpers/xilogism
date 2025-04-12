@@ -36,12 +36,11 @@ class EditorThemeStateController(Controller):
                 button.active = True
 
                 button.leading.opacity = 1
-                button.update()
             else:
                 button.active = False
 
                 button.leading.opacity = 0
-                button.update()
+            button.update()
     
     def update_button_states(self):
         self.et_state.theme = EditorTheme(self.active_value)
