@@ -1,12 +1,11 @@
 from flet import *
 from presentation.states.editor_theme_state import EditorThemeState
-from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
+from presentation.views.widgets.settings.appearance_settings import ThemeButton
 
 from presentation.controllers.controller import Controller, Priority
 from xilowidgets import EditorTheme
 
 class EditorThemeStateController(Controller):
-    group_id: str = "editor_theme"
     priority = Priority.SETTINGS_BOUND
     def __init__(self, page: Page):
         self.page = page
@@ -24,37 +23,25 @@ class EditorThemeStateController(Controller):
         self.et_state.on_done_build = self.update_button_states
 
     def change_theme(self):
-        active: str = self.et_state.theme
+        active: EditorTheme = self.et_state.theme
 
-        active_value = active.lower().replace(" ", "-")
-        self.active_value = "androidstudio" if active_value == "android-studio" else active_value
+        self.active_value = active.value
 
-        for theme in EditorTheme:
-            if theme.value == active_value:
-                self.et_state.editor_theme = theme
-                self.page.client_storage.set("editor_theme", theme.value)
-                break
+        self.et_state.editor_theme = active
+        self.page.client_storage.set("editor_theme", self.active_value)
         
-        button: SettingsImageButton = None
-        for button in SettingsImageButton.refs[self.group_id]:
-            if button.text == active:
+        button: ThemeButton = None
+        for button in ThemeButton.refs:
+            if button.key == active:
                 button.active = True
 
-                button.bgcolor = "#4d191f51"
-                button.check_box.bgcolor = "#af191f51"
-                button.border = border.all(1, "#191f51")
-                button.label.weight = FontWeight.BOLD
+                button.leading.opacity = 1
                 button.update()
             else:
                 button.active = False
 
-                button.bgcolor = "#00191f51"
-                button.check_box.bgcolor = "#00191f51"
-                button.border = border.all(1, "#006b6b6b")
-                button.label.weight = FontWeight.NORMAL
+                button.leading.opacity = 0
                 button.update()
     
     def update_button_states(self):
-        self.et_state.theme = "Android Studio" if \
-            self.active_value == "androidstudio" else \
-            self.active_value.replace("-", " ").title()
+        self.et_state.theme = EditorTheme(self.active_value)
