@@ -6,15 +6,15 @@ from xilowidgets.editor import EditorTheme
 
 class EditorThemeState(metaclass = Singleton):
     def __init__(self):
-        self._theme__: str = ""
+        self._theme__: EditorTheme = EditorTheme.DEFAULT
         self._editor_theme: EditorTheme = EditorTheme.DEFAULT
     
     @property
-    def theme(self) -> str:
+    def theme(self) -> EditorTheme:
         return self._theme__
     
     @theme.setter
-    def theme(self, theme: str):
+    def theme(self, theme: EditorTheme):
         self._theme__ = theme
         self.on_change()
     

@@ -1,5 +1,5 @@
 from flet import *
-from xilowidgets import Revealer
+from xilowidgets import Revealer, Editor, EditorTheme
 
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.views.widgets.settings.accent_color_button import AccentColorButton
@@ -32,6 +32,14 @@ class AppearanceSettings(Column):
             )
         )
 
+        self.editor_sample = Editor(
+            value="Hi, from Xilogism!!!\n\nฅ՞•ﻌ•՞ฅ\n\n",
+            gutter_width=48,
+            font_family="Inter",
+            font_size=14,
+            editor_theme=EditorTheme.OBSIDIAN
+        )
+
         self.controls=[
             Text("Dark Mode", weight=FontWeight.BOLD),
             Column(
@@ -54,28 +62,40 @@ class AppearanceSettings(Column):
             ),
             Text("Editor Theme", weight=FontWeight.BOLD),
             Row(
-                spacing = 16,
-                wrap=True,
-                scroll = ScrollMode.ALWAYS,
+                vertical_alignment=CrossAxisAlignment.START,
+                alignment=MainAxisAlignment.CENTER,
                 controls = [
-                    SettingsImageButton("/editor_themes/DEFAULT.png", "Default", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/DARK.png", "Dark", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/A11Y_DARK.png", "A11y Dark", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/A11Y_LIGHT.png", "A11y Light", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/AGATE.png", "Agate", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/ANDROIDSTUDIO.png", "Android Studio", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/ARTA.png", "Arta", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/ATOM_ONE_DARK.png", "Atom One Dark", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/IDEA.png", "Idea", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/MONOKAI.png", "Monokai", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/MONOKAI_SUBLIME.png", "Monokai Sublime", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/OBSIDIAN.png", "Obsidian", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/SOLARIZED_LIGHT.png", "Solarized Light", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/SOLARIZED_DARK.png", "Solarized Dark", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/VS2015.png", "VS2015", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
-                    SettingsImageButton("/editor_themes/XCODE.png", "XCode", "editor_theme", self.THEME_BUTTON_SCALE, self.switch_theme),
+                    Container(
+                        expand = True,
+                        width=200,
+                        height=180,
+                        border=border.all(1, "black"),
+                        clip_behavior=ClipBehavior.ANTI_ALIAS,
+                        border_radius=8,
+                        content = Container(
+                            border_radius=8,
+                            content = Row(
+                                expand = True,
+                                controls = [
+                                    self.editor_sample
+                                ]
+                            )
+                        )
+                    ),
+                    Container(
+                        expand = True,
+                        margin = margin.only(right=16),
+                        border_radius = 12,
+                        content = ListView(
+                            expand = True,
+                            controls = [ThemeButton(theme, theme.name, self.switch_theme) for theme in EditorTheme],
+                            height=180,
+                            divider_thickness=1
+                        ),
+                        border=border.all(1, Colors.BLACK)
+                    )
                 ]
-            ),
+            )
         ]
     
     def hide_panel(self, event: ControlEvent):
@@ -90,11 +110,49 @@ class AppearanceSettings(Column):
         self.dm_state.active = (button.text == "Dark")
     
     def switch_theme(self, event: ControlEvent):
-        button: SettingsImageButton = event.control
+        button: ThemeButton = event.control
+        self.et_state.theme = button.key
 
-        self.et_state.theme = button.text
+        button.leading.opacity = 1
+        button.leading.update()
+
+        self.editor_sample.editor_theme = button.key
+        self.editor_sample.update()
     
     def switch_accent(self, event: ControlEvent):
         button: AccentColorButton = event.control
 
         self.ac_state.active = button.color
+
+class ThemeButton(ListTile):
+    refs: list = []
+    active: bool = False
+    def __init__(self, key: EditorTheme = None, name: str = None, on_button_press = None):
+        super().__init__()
+
+        self.key = key
+        self.name = name
+
+        self.leading = Icon(
+            Icons.CHECK,
+            color=Colors.BLACK,
+            size=32,
+            opacity=0
+        )
+
+        self.title = Text(name)
+
+        self.on_click = lambda event: self.on_button_press(event)
+        self.on_button_press = on_button_press
+
+        if len(ThemeButton.refs) > 0:
+            ThemeButton.refs.append(self)
+        else:
+            self.active = True
+            
+            self.leading.opacity = 1
+
+            ThemeButton.refs.append(self)
+    
+    def on_button_press(self, event: ControlEvent):
+        pass
