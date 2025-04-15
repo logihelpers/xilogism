@@ -34,6 +34,8 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
 
         self.switcher = Switcher(
             orientation = Switcher.Orientation.HORIZONTAL,
+            animation_curve=AnimationCurve.EASE_IN_OUT_CUBIC,
+            animation_duration=500,
             controls = [
                 self.appearance_settings,
                 self.accessibility_settings,

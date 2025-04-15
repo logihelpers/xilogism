@@ -9,6 +9,7 @@ authors = [
 ]
 dependencies = [
   "flet==0.26.0",
+  "flet_lottie",
   "xilowidgets @ git+https://github.com/logihelpers/xilowidgets.git"
 ]
 
