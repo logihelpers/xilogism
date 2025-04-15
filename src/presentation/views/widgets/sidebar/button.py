@@ -20,14 +20,19 @@ class SideBarButton(FilledButton):
         
         self.bgcolor = "#d9d9d9"
 
+        self._button_image = Image(
+            src=self.path,
+            width=24 * self.widget_scale,
+            height=24 * self.widget_scale,
+            rotate=transform.Rotate(0, alignment.center),
+            animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+            on_animation_end=self._revert_state
+        )
+
         self.content = Container(
             content = Row(
                 controls=[
-                    Image(
-                        src=self.path,
-                        width=24 * self.widget_scale,
-                        height=24 * self.widget_scale
-                    ),
+                    self._button_image,
                     Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale, no_wrap=False)
                 ],
                 vertical_alignment=CrossAxisAlignment.CENTER
@@ -43,11 +48,20 @@ class SideBarButton(FilledButton):
     
     def __hover(self, event: ControlEvent):
         button: SideBarButton = event.control
+
+        button._button_image.rotate.angle = 3.14159 / 6 if event.data == "true" else 0
+        button._button_image.update()
+
         if button.active:
             return
 
         button.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
         button.update()
+    
+    def _revert_state(self, event: ControlEvent):
+        image: Image = event.control
+        image.rotate.angle = 0
+        image.update()
     
     def on_button_press(self, event: ControlEvent):
         pass

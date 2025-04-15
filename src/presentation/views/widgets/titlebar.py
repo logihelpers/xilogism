@@ -1,4 +1,5 @@
 from flet import *
+from math import pi
 from presentation.states.title_button_state import *
 from presentation.states.sidebar_hide_state import *
 
@@ -34,7 +35,13 @@ class TitleBar(Container):
             height=32,
             width=32,
             bgcolor="#00ffffff",
+            scale = 1,
+            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            rotate=transform.Rotate(0, alignment.center),
+            animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+            on_animation_end=self._rerotate,
             on_click=self.sidebar_hide_state.invert,
+            on_hover=self._rotate_buttons,
             content=AnimatedSwitcher(
                 content=self.sidebar_hide_button_content,
                 transition=AnimatedSwitcherTransition.FADE,
@@ -54,7 +61,13 @@ class TitleBar(Container):
                 height=16 * self.widget_scale,
             ),
             bgcolor="#00ffffff",
-            on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.SETTINGS)
+            scale = 1,
+            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            rotate=transform.Rotate(0, alignment.center),
+            animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+            on_animation_end=self._rerotate,
+            on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.SETTINGS),
+            on_hover=self._rotate_buttons,
         )
 
         self.hidden_profile_button_revealer = Container(
@@ -73,7 +86,13 @@ class TitleBar(Container):
                         height=16 * self.widget_scale,
                     ),
                     bgcolor="#00ffffff",
-                    on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.PROFILE)
+                    scale = 1,
+                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                    rotate=transform.Rotate(0, alignment.center),
+                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+                    on_animation_end=self._rerotate,
+                    on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.PROFILE),
+                    on_hover=self._rotate_buttons,
                 )
             )
         )
@@ -111,7 +130,13 @@ class TitleBar(Container):
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
+                                    scale = 1,
+                                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                                    rotate=transform.Rotate(0, alignment.center),
+                                    on_animation_end=self._rerotate,
+                                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
                                     on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE),
+                                    on_hover=self._rotate_buttons,
                                 ),
                                 FilledButton(
                                     height=32,
@@ -122,7 +147,13 @@ class TitleBar(Container):
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
-                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE)
+                                    scale = 1,
+                                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                                    rotate=transform.Rotate(0, alignment.center),
+                                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+                                    on_animation_end=self._rerotate,
+                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE),
+                                    on_hover=self._rotate_buttons,
                                 ),
                                 FilledButton(
                                     height=32,
@@ -133,7 +164,13 @@ class TitleBar(Container):
                                         height=16 * self.widget_scale,
                                     ),
                                     bgcolor="#00ffffff",
-                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.CLOSE)
+                                    scale = 1,
+                                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                                    rotate=transform.Rotate(0, alignment.center),
+                                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+                                    on_animation_end=self._rerotate,
+                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.CLOSE),
+                                    on_hover=self._rotate_buttons,
                                 ),
                             ]
                         )
@@ -150,3 +187,17 @@ class TitleBar(Container):
             self.update()
 
             self.old_scale = scale
+    
+    def _rotate_buttons(self, event: ControlEvent):
+        button: FilledButton = event.control
+
+        button.rotate.angle = pi / 6 if event.data == "true" else 0
+        button.scale = 1.25 if event.data == "true" else 1
+        button.update()
+    
+    def _rerotate(self, event: ControlEvent):
+        button: FilledButton = event.control
+
+        button.rotate.angle = 0
+        button.scale = 1
+        button.update()

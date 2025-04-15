@@ -22,9 +22,7 @@ class WindowView(Row):
 
         self.mq_state = MediaQueryState()
 
-        self.media_query = MediaQuery(
-            on_theme_mode_change=lambda event: setattr(self.mq_state, "system_theme_mode", event.theme_mode)
-        )
+        self.media_query = MediaQuery()
         self.sidebar = SideBar()
         self.titlebar = TitleBar()
 
@@ -42,6 +40,8 @@ class WindowView(Row):
         self.switcher = Switcher(
             expand=True,
             orientation=Switcher.Orientation.VERTICAL,
+            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC,
+            animation_duration=500,
             controls=[
                 self.start_view,
                 self.editor_view,

@@ -13,6 +13,7 @@ class FontFaceChooserButton(DropdownM2):
         self.content_padding=padding.only(left=8,right=4)
 
         self.max_menu_height = 256
+        self.text_size = 14
 
         self.select_icon=Container(
             content = Image(

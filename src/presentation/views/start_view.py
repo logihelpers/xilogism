@@ -1,6 +1,7 @@
 from flet import *
-
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+
+import flet_lottie as fl
 
 class StartView(Container):
     widget_scale: float = 1.0
@@ -15,6 +16,85 @@ class StartView(Container):
         self.padding = padding.all(16)
         self.expand = True
         self.expand_loose = True
+
+        self.new_button = FilledButton(
+            # key = "New Xilogism",
+            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+            scale=transform.Scale(scale=1),
+            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            content=Container(
+                padding = padding.all(16 * self.widget_scale),
+                content = Row(
+                    controls=[
+                        Image(
+                            src="/icons_light/new.png",
+                            width=56 * self.widget_scale,
+                            height=56 * self.widget_scale
+                        ),
+                        Text(
+                            spans=[
+                                TextSpan(
+                                    text="CREATE MY XILOGISM\n",
+                                    style=TextStyle(
+                                        size=18 * self.widget_scale,
+                                        color="black",
+                                        weight=FontWeight.W_700
+                                    )
+                                ),
+                                TextSpan(
+                                    text="Pseudocode Format",
+                                    style=TextStyle(
+                                        size=12 * self.widget_scale,
+                                        color="black"
+                                    )
+                                )
+                            ],
+                            text_align=TextAlign.START,
+                            expand=True
+                        )
+                    ]
+                )
+            ),
+            style=ButtonStyle(
+                bgcolor="#26191f51",
+                shape=RoundedRectangleBorder(16 * self.widget_scale),
+                side=BorderSide(1, "#1a191f51")
+            ),
+            on_hover=self._hover
+        )
+
+        self.open_button = FilledButton(
+            # key = "Open Xilogism",
+            scale=transform.Scale(scale=1),
+            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            content=Container(
+                padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                content = Row(
+                    controls = [
+                        Image(
+                            src="/icons_light/open.png",
+                            width=16 * self.widget_scale,
+                            height=16 * self.widget_scale
+                        ),
+                        Text(
+                            value="OPEN EXISTING",
+                            weight=FontWeight.W_600,
+                            color="black",
+                            text_align=TextAlign.START,
+                            expand=True
+                        )
+                    ],
+                )
+            ),
+            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+            style=ButtonStyle(
+                bgcolor="#26191f51",
+                shape=RoundedRectangleBorder(16 * self.widget_scale),
+                side=BorderSide(1, "#1a191f51")
+            ),
+            on_hover=self._hover
+        )
+
         self.content = Row(
             alignment=MainAxisAlignment.SPACE_AROUND,
             vertical_alignment=CrossAxisAlignment.CENTER,
@@ -22,9 +102,9 @@ class StartView(Container):
             controls=[
                 Container(
                     content = Image(
-                        src="/icons_light/logo.png",
+                        src="light_mode_cropped.gif",
                         width=(320 * self.widget_scale) * 1.10,
-                        height=(320 * self.widget_scale) * 1.10
+                        height=(320 * self.widget_scale) * 1.10,
                     ),
                     expand=True,
                 ),
@@ -68,81 +148,13 @@ class StartView(Container):
                                 margin = margin.symmetric(8 * self.widget_scale, 0),
                                 width=480 * self.widget_scale,
                                 height=128 * self.widget_scale,
-                                content = FilledButton(
-                                    key = "New Xilogism",
-                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
-                                    content=Container(
-                                        padding = padding.all(16 * self.widget_scale),
-                                        content = Row(
-                                            controls=[
-                                                Image(
-                                                    src="/icons_light/new.png",
-                                                    width=56 * self.widget_scale,
-                                                    height=56 * self.widget_scale
-                                                ),
-                                                Text(
-                                                    spans=[
-                                                        TextSpan(
-                                                            text="CREATE MY XILOGISM\n",
-                                                            style=TextStyle(
-                                                                size=18 * self.widget_scale,
-                                                                color="black",
-                                                                weight=FontWeight.W_700
-                                                            )
-                                                        ),
-                                                        TextSpan(
-                                                            text="Pseudocode Format",
-                                                            style=TextStyle(
-                                                                size=12 * self.widget_scale,
-                                                                color="black"
-                                                            )
-                                                        )
-                                                    ],
-                                                    text_align=TextAlign.START,
-                                                    expand=True
-                                                )
-                                            ]
-                                        )
-                                    ),
-                                    style=ButtonStyle(
-                                        bgcolor="#26191f51",
-                                        shape=RoundedRectangleBorder(16 * self.widget_scale),
-                                        side=BorderSide(1, "#1a191f51")
-                                    )
-                                )
+                                content = self.new_button
                             ),
                             Container(
                                 padding=padding.only(left=96 * self.widget_scale, right=16 * self.widget_scale),
                                 width=480 * self.widget_scale,
                                 height=48 * self.widget_scale,
-                                content = FilledButton(
-                                    key = "Open Xilogism",
-                                    content=Container(
-                                        padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
-                                        content = Row(
-                                            controls = [
-                                                Image(
-                                                    src="/icons_light/open.png",
-                                                    width=16 * self.widget_scale,
-                                                    height=16 * self.widget_scale
-                                                ),
-                                                Text(
-                                                    value="OPEN EXISTING",
-                                                    weight=FontWeight.W_600,
-                                                    color="black",
-                                                    text_align=TextAlign.START,
-                                                    expand=True
-                                                )
-                                            ],
-                                        )
-                                    ),
-                                    on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
-                                    style=ButtonStyle(
-                                        bgcolor="#26191f51",
-                                        shape=RoundedRectangleBorder(16 * self.widget_scale),
-                                        side=BorderSide(1, "#1a191f51")
-                                    )
-                                ),
+                                content = self.open_button,
                             )
                         ]
                     )
@@ -159,3 +171,9 @@ class StartView(Container):
             self.update()
 
             self.old_scale = scale
+    
+    def _hover(self, event: ControlEvent):
+        button: FilledButton = event.control
+
+        button.scale = 1.10 if event.data == "true" else 1
+        button.update()

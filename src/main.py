@@ -18,10 +18,11 @@ class Xilogism(Page):
         )
 
         InitFonts(self)
-        
+
+        Controller.initialize_controllers(target=self)
+
         self.theme = Theme(color_scheme_seed = "#4169e1", font_family="Inter")
         self.window.title_bar_hidden = True
-        self.window.center()
         self.padding = padding.all(0)
         self.window.min_height = 640
         self.window.min_width = 1024
@@ -29,8 +30,7 @@ class Xilogism(Page):
         self.window.height = 640
         self.spacing = 0
         self.bgcolor = "#ededed"
-
-        Controller.initialize_controllers(target=self)
+        self.window.center()
 
 # app(splash.app)
 app(Xilogism)
