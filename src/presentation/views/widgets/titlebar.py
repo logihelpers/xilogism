@@ -97,86 +97,88 @@ class TitleBar(Container):
             )
         )
 
-        self.content = WindowDragArea(
-            content = Container(
-                padding=padding.symmetric(0, 8),
-                content = Row(
-                    controls=[
-                        Row(
-                            controls=[
-                                self.sidebar_hide_button,
-                                Container(
+        self.content = Container(
+            padding=padding.symmetric(0, 8),
+            content = Row(
+                controls=[
+                    Row(
+                        controls=[
+                            self.sidebar_hide_button,
+                            WindowDragArea(
+                                expand = True,
+                                content = Container(
                                     Text(
                                         value=self.title,
                                         weight=FontWeight.W_600,
                                         size=16 * self.widget_scale,
                                     ),
+                                    expand = True,
                                     padding=padding.only(left=16 * self.widget_scale),
                                 )
-                            ],
-                            expand=True
-                        ),
-                        Row(
-                            spacing = 16,
-                            controls=[
-                                self.hidden_profile_button_revealer,
-                                self.settings_button,
-                                FilledButton(
-                                    height=32,
-                                    width=32,
-                                    content = Image(
-                                        src="/icons_light/minimize_new.png",
-                                        width=16 * self.widget_scale,
-                                        height=16 * self.widget_scale,
-                                    ),
-                                    bgcolor="#00ffffff",
-                                    scale = 1,
-                                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
-                                    rotate=transform.Rotate(0, alignment.center),
-                                    on_animation_end=self._rerotate,
-                                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
-                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE),
-                                    on_hover=self._rotate_buttons,
+                            )
+                        ],
+                        expand=True
+                    ),
+                    Row(
+                        spacing = 16,
+                        controls=[
+                            self.hidden_profile_button_revealer,
+                            self.settings_button,
+                            FilledButton(
+                                height=32,
+                                width=32,
+                                content = Image(
+                                    src="/icons_light/minimize_new.png",
+                                    width=16 * self.widget_scale,
+                                    height=16 * self.widget_scale,
                                 ),
-                                FilledButton(
-                                    height=32,
-                                    width=32,
-                                    content = Image(
-                                        src="/icons_light/maximize_new.png",
-                                        width=16 * self.widget_scale,
-                                        height=16 * self.widget_scale,
-                                    ),
-                                    bgcolor="#00ffffff",
-                                    scale = 1,
-                                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
-                                    rotate=transform.Rotate(0, alignment.center),
-                                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
-                                    on_animation_end=self._rerotate,
-                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE),
-                                    on_hover=self._rotate_buttons,
+                                bgcolor="#00ffffff",
+                                scale = 1,
+                                animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                                rotate=transform.Rotate(0, alignment.center),
+                                on_animation_end=self._rerotate,
+                                animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+                                on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE),
+                                on_hover=self._rotate_buttons,
+                            ),
+                            FilledButton(
+                                height=32,
+                                width=32,
+                                content = Image(
+                                    src="/icons_light/maximize_new.png",
+                                    width=16 * self.widget_scale,
+                                    height=16 * self.widget_scale,
                                 ),
-                                FilledButton(
-                                    height=32,
-                                    width=32,
-                                    content = Image(
-                                        src="/icons_light/close_new.png",
-                                        width=16 * self.widget_scale,
-                                        height=16 * self.widget_scale,
-                                    ),
-                                    bgcolor="#00ffffff",
-                                    scale = 1,
-                                    animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
-                                    rotate=transform.Rotate(0, alignment.center),
-                                    animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
-                                    on_animation_end=self._rerotate,
-                                    on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.CLOSE),
-                                    on_hover=self._rotate_buttons,
+                                bgcolor="#00ffffff",
+                                scale = 1,
+                                animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                                rotate=transform.Rotate(0, alignment.center),
+                                animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+                                on_animation_end=self._rerotate,
+                                on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE),
+                                on_hover=self._rotate_buttons,
+                            ),
+                            FilledButton(
+                                height=32,
+                                width=32,
+                                content = Image(
+                                    src="/icons_light/close_new.png",
+                                    width=16 * self.widget_scale,
+                                    height=16 * self.widget_scale,
                                 ),
-                            ]
-                        )
-                    ],
-                    alignment=MainAxisAlignment.SPACE_BETWEEN
-                )
+                                bgcolor="#00ffffff",
+                                scale = 1,
+                                animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+                                rotate=transform.Rotate(0, alignment.center),
+                                animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+                                on_animation_end=self._rerotate,
+                                on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.CLOSE),
+                                on_hover=self._rotate_buttons,
+                            ),
+                        ]
+                    )
+                ],
+                alignment=MainAxisAlignment.SPACE_BETWEEN
             )
         )
     
