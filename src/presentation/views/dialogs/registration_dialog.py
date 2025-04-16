@@ -1,9 +1,10 @@
 from flet import *
 from services.singleton import Singleton
+from xilowidgets import XDialog
 
 from presentation.states.dialogs_state import *
 
-class RegistrationDialog(AlertDialog, metaclass=Singleton):
+class RegistrationDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
     FIELD_RADIUS: float = 100
     
@@ -12,6 +13,7 @@ class RegistrationDialog(AlertDialog, metaclass=Singleton):
         self.bgcolor = "#ededed"
         self.width = 320
         self.height = 540
+        self.open_duration = 300
 
         self.dia_state = DialogState()
         self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)

@@ -1,15 +1,17 @@
 from flet import *
+from xilowidgets import XDialog
 from services.singleton import Singleton
 
 from presentation.states.dialogs_state import *
 
-class LoginDialog(AlertDialog, metaclass=Singleton):
+class LoginDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
     FIELD_RADIUS: float = 100
     
     def __init__(self):
         super().__init__()
         self.bgcolor = "#ededed"
+        self.open_duration = 300
         self.width = 320
         self.height = 500
 

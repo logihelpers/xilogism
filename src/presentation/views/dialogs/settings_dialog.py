@@ -1,5 +1,5 @@
 from flet import *
-from xilowidgets import Switcher
+from xilowidgets import Switcher, XDialog
 
 from presentation.views.widgets.settings.appearance_settings import AppearanceSettings
 from presentation.views.widgets.settings.accessibility_settings import AccessibilitySettings
@@ -11,7 +11,7 @@ from presentation.states.settings_navigator_state import SettingsNavigatorState
 
 from services.singleton import Singleton
 
-class SettingsDialog(AlertDialog, metaclass = Singleton):
+class SettingsDialog(XDialog, metaclass = Singleton):
     def __init__(self):
         super().__init__()
 
@@ -25,6 +25,8 @@ class SettingsDialog(AlertDialog, metaclass = Singleton):
         self.actions = []
         self.actions_padding = 0
         self.clip_behavior = ClipBehavior.HARD_EDGE
+        self.open_duration = 300
+        self.animation_curve = AnimationCurve.ELASTIC_IN_OUT
 
         self.appearance_settings = AppearanceSettings()
         self.accessibility_settings = AccessibilitySettings()
