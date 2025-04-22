@@ -18,8 +18,7 @@ class StartView(Container):
         self.expand_loose = True
 
         self.new_button = FilledButton(
-            # key = "New Xilogism",
-            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', "New Xilogism"),
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
@@ -64,7 +63,6 @@ class StartView(Container):
         )
 
         self.open_button = FilledButton(
-            # key = "Open Xilogism",
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
@@ -86,7 +84,7 @@ class StartView(Container):
                     ],
                 )
             ),
-            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', event.control.key),
+            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', "Open Xilogism"),
             style=ButtonStyle(
                 bgcolor="#26191f51",
                 shape=RoundedRectangleBorder(16 * self.widget_scale),
