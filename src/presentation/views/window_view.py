@@ -35,6 +35,8 @@ class WindowView(Row):
         self.slidable_panel = Revealer(
             content=self.sidebar,
             content_hidden=False,
+            animation_curve=AnimationCurve.EASE_IN_OUT_CUBIC,
+            animation_duration=500
         )
 
         self.switcher = Switcher(
@@ -54,14 +56,14 @@ class WindowView(Row):
             self.slidable_panel,
             Container(
                 expand = True,
-                padding = padding.symmetric(8, 0),
+                padding = padding.only(top=8),
                 content=Column(
                     expand = True,
                     controls=[
                         self.titlebar,
                         self.switcher
                     ]
-                )
+                ),
             )
         ]
 
