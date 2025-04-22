@@ -8,9 +8,9 @@ authors = [
     { name = "treppenwitz03", email = "owendavidmalicsi@gmail.com" }
 ]
 dependencies = [
-  "flet==0.26.0",
-  "flet_lottie",
-  "xilowidgets @ git+https://github.com/logihelpers/xilowidgets.git"
+  "flet==0.27.6",
+  "xilowidgets @ git+https://github.com/logihelpers/xilowidgets.git",
+  "lark"
 ]
 
 [tool.flet]
@@ -33,11 +33,11 @@ path = "src"
 
 [tool.uv]
 dev-dependencies = [
-    "flet[all]==0.26.0",
+    "flet[all]==0.27.6",
 ]
 
 [tool.poetry]
 package-mode = false
 
 [tool.poetry.group.dev.dependencies]
-flet = {extras = ["all"], version = "0.26.0"}
+flet = {extras = ["all"], version = "0.27.6"}
