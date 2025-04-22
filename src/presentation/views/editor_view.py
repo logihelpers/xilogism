@@ -79,6 +79,18 @@ class EditorView(Container):
             on_change=lambda event: setattr(self.ec_state, 'content', event.data),
         )
 
+        self.edit_status_icon = Container(
+            shape=BoxShape.CIRCLE,
+            border=border.all(1, "black"),
+            width=32,
+            height=32,
+            padding=8,
+            image=DecorationImage(
+                "/icons_light/blank.png",
+            ),
+            tooltip="Content is currently blank..."
+        )
+
         self.font_size_tf = FontSizeTextField()
 
         self.undo_redo_button_group = UndoRedoButtons()
@@ -111,7 +123,12 @@ class EditorView(Container):
                                 self.font_size_tf
                             ]
                         ),
-                        self.undo_redo_button_group
+                        Row(
+                            controls = [
+                                self.edit_status_icon,
+                                self.undo_redo_button_group
+                            ]
+                        )
                     ]
                 )
             ]
