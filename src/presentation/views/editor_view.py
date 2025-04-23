@@ -2,7 +2,7 @@ from flet import *
 from math import pi
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
-from presentation.states.editor_content_state import EditorContentState
+from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.editor_theme_state import EditorThemeState
 
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
@@ -27,6 +27,8 @@ class EditorView(Container):
         self.expand = True
 
         self.ec_state = EditorContentState()
+        self.ec_state.on_code_state_change = self.update_status_icon
+
         self.et_state = EditorThemeState()
         self.et_state.on_theme_change = self.update_theme
 
@@ -224,3 +226,17 @@ class EditorView(Container):
     def update_theme(self):
         self.code_editor.editor_theme = self.et_state.editor_theme
         self.code_editor.update()
+    
+    def update_status_icon(self):
+        match self.ec_state.code_state:
+            case CodeState.BLANK:
+                self.edit_status_icon.image.src = "/icons_light/blank.png"
+                self.edit_status_icon.tooltip = "Content is currently blank..."
+            case CodeState.CORRECT:
+                self.edit_status_icon.image.src = "/icons_light/correct.png"
+                self.edit_status_icon.tooltip = "Content is correct..."
+            case CodeState.WRONG:
+                self.edit_status_icon.image.src = "/icons_light/wrong.png"
+                self.edit_status_icon.tooltip = "Content is containing errors..."
+        
+        self.edit_status_icon.update()
