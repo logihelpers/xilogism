@@ -22,7 +22,7 @@ class AccessibilitySettings(Column):
             Text("Dyslexia-Friendly Options", weight=FontWeight.BOLD),
             Row(
                 spacing = 16,
-                alignment=MainAxisAlignment.CENTER,
+                # alignment=MainAxisAlignment.CENTER,
                 expand = True,
                 controls = [
                     SettingsImageButton("/mode_default.png", "Default", "dyslexia", 0.75, on_button_press=self.switch_readability),
@@ -32,7 +32,7 @@ class AccessibilitySettings(Column):
             Text("Vision Friendly Settings", weight=FontWeight.BOLD),
             Row(
                 spacing = 16,
-                alignment=MainAxisAlignment.CENTER,
+                # alignment=MainAxisAlignment.CENTER,
                 expand = True,
                 wrap=True,
                 controls = [
@@ -46,7 +46,7 @@ class AccessibilitySettings(Column):
             Text("Left-Handed Mode", weight=FontWeight.BOLD),
             Row(
                 spacing = 24,
-                alignment=MainAxisAlignment.CENTER,
+                # alignment=MainAxisAlignment.CENTER,
                 expand = True,
                 controls = [
                     SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos", 0.75, on_button_press=self.toggle_left_handed),

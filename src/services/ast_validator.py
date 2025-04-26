@@ -96,12 +96,8 @@ class ASTValidator:
         # Now perform deeper validation with proper declared variables
         errors = self._validate_tree(ast, declared_variables, inputs)
         if errors:
-            message = ""
             for error in errors:
-                message = f"Validation Error: {error.message}"
-                if error.node:
-                    message += f"  (At node: {error.node})"
-                    mistakes.append(message)
+                mistakes.append(f"Validation Error: {error.message}")
             return False, mistakes
         return True, None
 
