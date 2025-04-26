@@ -28,5 +28,5 @@ class WindowController(Controller):
         self.page.spacing = 0
     
     def handle_keyboard_events(self, event: KeyboardEvent):
-        if (event.key == "\\" and event.control):
+        if (event.key == "\\" and event.ctrl):
             self.sbh_state.invert(event)

@@ -78,7 +78,7 @@ class EditorView(Container):
             gutter_width=64,
             font_family=self.font_family,
             font_size=self.font_size,
-            on_change=lambda event: setattr(self.ec_state, 'content', event.data),
+            on_change=lambda event: setattr(self.ec_state, 'content', event.data)
         )
 
         self.edit_status_icon = Container(

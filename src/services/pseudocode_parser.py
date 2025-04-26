@@ -139,6 +139,7 @@ class PseudocodeParser(Transformer):
         return result
         
     def expr(self, children):
+        print("EXPR", children)
         if len(children) == 1:
             return children[0]
         result = children[0]

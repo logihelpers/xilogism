@@ -9,6 +9,9 @@ class DiagramModeChooser(DropdownM2):
         self.width=148
         self.border_width=1
         self.border_color="black"
+
+        self.text_size = 14
+
         self.content_padding=padding.only(left=8,right=4)
         self.select_icon=Container(
             content = Image(
