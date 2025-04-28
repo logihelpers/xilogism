@@ -197,7 +197,8 @@ class ExportPrintDialog(XDialog):
             )
         )
 
-        self.margin_tf = TextField(hint_text="e.g. 1.00", value="1", expand = True, on_change=self.update_margin)
+        self.margin_switch = Switch("", value=True, on_change = self.update_margin)
+        self.titleblock_switch = Switch("", value=True, on_change = self.update_titleblock)
 
         self.main_options = Container(
             expand=True,
@@ -212,8 +213,7 @@ class ExportPrintDialog(XDialog):
                             Row(
                                 expand = True,
                                 controls = [
-                                    Checkbox("", value=True, on_change=self.update_margin),
-                                    self.margin_tf
+                                    self.margin_switch
                                 ]
                             )
                         ]
@@ -225,7 +225,7 @@ class ExportPrintDialog(XDialog):
                                 expand=True,
                                 alignment=MainAxisAlignment.START,
                                 controls = [
-                                    Switch("", value=True, on_change = self.update_titleblock)
+                                    self.titleblock_switch
                                 ]
                             )
                         ],
@@ -340,30 +340,35 @@ class ExportPrintDialog(XDialog):
         match event.data:
             case "png":
                 self.export_state.format = FileFormat.PNG
+                self.disable_buttons(False)
+                self.proceed_button.disabled = True
             case "pdf":
                 self.export_state.format = FileFormat.PDF
+                self.disable_buttons(False)
+                self.proceed_button.disabled = True
             case "docx":
                 self.export_state.format = FileFormat.DOCX
+                self.disable_buttons(False)
+                self.proceed_button.disabled = True
             case "raw_png":
                 self.export_state.format = FileFormat.RAW_PNG
+                self.disable_buttons(True)
+                self.proceed_button.disabled = False
+
+        self.proceed_button.update()
+    
+    def disable_buttons(self, state: bool):
+        self.margin_switch.disabled = state
+        self.titleblock_switch.disabled = state
+        self.project_name_tf.disabled = state
+        self.creator_tf.disabled = state
+        self.date_tf.disabled = state
+
+        self.update()
     
     def update_margin(self, event: ControlEvent):
-        if event.data == "false" or event.data == "0":
-            self.export_state.margin = (0, 0, 0, 0)
-            self.proceed_button.disabled = False
-        elif event.data == "":
-            self.proceed_button.disabled = True
-        elif event.data == "true" and self.margin_tf.value == "":
-            self.proceed_button.disabled = True
-        else:
-            try:
-                margin = int(event.data)
-            except:
-                margin = 1
-            
-            self.export_state.margin = (margin, margin, margin, margin)
-            self.proceed_button.disabled = False
-
+        self.export_state.margin = (event.data == "true")
+        self.proceed_button.disabled = not (event.data == "true")
         self.proceed_button.update()
     
     def update_fields(self, event: ControlEvent):

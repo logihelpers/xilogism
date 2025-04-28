@@ -1,6 +1,5 @@
 from flet import *
 from enum import Enum
-from typing import Tuple
 
 from services.singleton import Singleton
 
@@ -13,7 +12,7 @@ class FileFormat:
 class ExportState(metaclass=Singleton):
     def __init__(self):
         self._format: FileFormat = FileFormat.PDF
-        self._margin: Tuple[int, int, int, int] = (1, 1, 1, 1)
+        self._margin: bool = True
         self._titleblock_enable: bool = True
         self._proj_name: str = "Sample"
         self._creator: str = "Xilogism"
@@ -29,11 +28,11 @@ class ExportState(metaclass=Singleton):
         self.on_change()
 
     @property
-    def margin(self) -> Tuple[int, int, int, int]:
+    def margin(self) -> bool:
         return self._margin
 
     @margin.setter
-    def margin(self, margin: Tuple[int, int, int, int]):
+    def margin(self, margin: bool):
         self._margin = margin
         self.on_change()
 
