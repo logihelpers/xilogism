@@ -1,11 +1,8 @@
 from flet import *
-from presentation.states.dialogs_state import DialogState, Dialogs
 
 class ExportButton(Container):
     def __init__(self):
         super().__init__()
-
-        self.dia_state = DialogState()
 
         self.border=border.all(1, "black")
         self.border_radius=8
@@ -27,7 +24,6 @@ class ExportButton(Container):
         )
 
         self.on_hover = self._hover__
-        self.on_click = lambda e: setattr(self.dia_state, 'state', Dialogs.EXPORT)
     
     def _hover__(self, event: ControlEvent):
         button: Container = event.control

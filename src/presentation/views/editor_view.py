@@ -1,18 +1,25 @@
 from flet import *
 from math import pi
+import json
 
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.editor_theme_state import EditorThemeState
+from presentation.states.dialogs_state import DialogState, Dialogs
 
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
 from presentation.views.widgets.editor_view.diagram_mode_chooser import DiagramModeChooser
 from presentation.views.widgets.editor_view.export_button import ExportButton
+from presentation.views.widgets.editor_view.expand_button import ExpandButton
+
+from presentation.views.widgets.logic_circuit.canvas import LogicCanvas
 
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
+from presentation.states.render_state import RenderState
 
-from xilowidgets import Editor, EditorTheme, Drawboard, Revealer
+from xilowidgets import Editor, Revealer, Zoomer
+from flet_layoutbuilder import LayoutBuilder
 
 class EditorView(Container):
     widget_scale: float = 1.0
@@ -31,6 +38,11 @@ class EditorView(Container):
 
         self.et_state = EditorThemeState()
         self.et_state.on_theme_change = self.update_theme
+
+        self.render_state = RenderState()
+        self.render_state.on_output_change = self.update_canvas
+
+        self.dia_state = DialogState()
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -98,16 +110,21 @@ class EditorView(Container):
         self.undo_redo_button_group = UndoRedoButtons()
 
         self.export_button = ExportButton()
+        self.export_button.on_click = self.update_dialog
 
         self.diagram_mode = DiagramModeChooser()
 
-        self.canvas = Drawboard(
-            expand=True,
-            top=0,
-            bottom=0,
-            right=0,
-            left=0
+        self.expand_button = ExpandButton(
+            top=8,
+            right=8
         )
+
+        self.canvas = LogicCanvas(
+            expand=True,
+        )
+        self.canvas.height = 1000
+        self.canvas.width = 1000
+        self.canvas.on_capture = lambda e: setattr(self.render_state, "image", e.data)
 
         toolbar = Row(
             height = 32,
@@ -169,26 +186,13 @@ class EditorView(Container):
             ]
         )
 
-        self.dummy_text = Text(
-            value="", top=0, right=0, bottom=0, left=0
-        )
-
         preview_view = Container(
             expand=True,
             content=Stack(
                 expand=True,
                 controls=[
-                    self.canvas,
-                    Container(
-                        top=8,
-                        right=8,
-                        content=Image(
-                            src="/icons_light/full-size.png",
-                            width=16,
-                            height=16
-                        )
-                    ),
-                    self.dummy_text
+                    Row(controls = [Zoomer(self.canvas, 0.1, 100.0, expand=True)], top=0, bottom=0, right=0, left=0, expand=True),
+                    self.expand_button
                 ]
             ),
             border=border.all(1, "#6b6b6b"),
@@ -197,31 +201,50 @@ class EditorView(Container):
             bgcolor="#d9d9d9"
         )
 
-        self.content = Row(
-            expand=True,
-            controls=[
-                Container(
+        self.code_pane = Revealer(
+            content_length=384.6,
+            content_fill=True,
+            content=Container(
+                Column(
+                    horizontal_alignment=CrossAxisAlignment.STRETCH,
                     expand=True,
-                    content=Column(
-                        horizontal_alignment=CrossAxisAlignment.STRETCH,
-                        expand=True,
-                        controls=[
-                            toolbar,
-                            code_editor_container
-                        ]
-                    )
+                    controls=[
+                        toolbar,
+                        code_editor_container
+                    ]
                 ),
-                Container(
-                    expand=True,
-                    content=Column(
-                        controls=[
-                            preview_bar,
-                            preview_view
-                        ]
-                    )
-                )
-            ]
+                animate_opacity=animation.Animation(300, AnimationCurve.EASE_IN_OUT_CIRC)
+            ),
+            animation_duration=500,
+            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
         )
+
+        self.content = LayoutBuilder(
+            content = Row(
+                expand=True,
+                controls=[
+                    self.code_pane,
+                    Container(
+                        expand=True,
+                        content=Column(
+                            controls=[
+                                preview_bar,
+                                preview_view
+                            ]
+                        ),
+                    )
+                ]
+            ),
+            update_size_on_init=True,
+            alignment=alignment.center,
+            on_change=self.update_codepane_length
+        )
+    
+    def update_codepane_length(self, event: ControlEvent):
+        if not self.code_pane.content_hidden:
+            dictio = json.loads(event.data)
+            self.code_pane.content_length = (int(dictio["width"]) / 2) - 10
+            self.code_pane.update()
     
     def update_theme(self):
         self.code_editor.editor_theme = self.et_state.editor_theme
@@ -240,3 +263,15 @@ class EditorView(Container):
                 self.edit_status_icon.tooltip = "Content is containing errors..."
         
         self.edit_status_icon.update()
+    
+    def update_canvas(self):
+        output = self.render_state.output
+
+        self.canvas.clear()
+
+        [self.canvas.add_to_canvas(gate) for gate in output]
+        self.canvas.update()
+    
+    def update_dialog(self, event: ControlEvent):
+        self.canvas.capture(600, 600)
+        self.dia_state.state = Dialogs.EXPORT

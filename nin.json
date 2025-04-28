@@ -1,146 +1,46 @@
 {
-    "x": {
+    "token": {
         "type": "INPUT_NODE",
         "hierarchy": 0
     },
-    "xi": {
-        "type": "INPUT_NODE",
-        "hierarchy": 0
-    },
-    "xil": {
-        "type": "INPUT_NODE",
-        "hierarchy": 0
-    },
-    "xilo": {
-        "type": "INPUT_NODE",
-        "hierarchy": 0
-    },
-    "xilon": {
-        "type": "INPUT_NODE",
-        "hierarchy": 0
-    },
-    "xilone": {
-        "type": "INPUT_NODE",
-        "hierarchy": 0
-    },
-    "xilonen": {
-        "type": "INPUT_NODE",
-        "hierarchy": 0
-    },
-    "k": {
+    "kento": {
         "type": "OUTPUT_NODE",
         "hierarchy": -1
-    },
-    "ka": {
-        "type": "OUTPUT_NODE",
-        "hierarchy": -1
-    },
-    "kaz": {
-        "type": "OUTPUT_NODE",
-        "hierarchy": -1
-    },
-    "kazu": {
-        "type": "OUTPUT_NODE",
-        "hierarchy": -1
-    },
-    "kazuh": {
-        "type": "OUTPUT_NODE",
-        "hierarchy": -1
-    },
-    "kazuha": {
-        "type": "OUTPUT_NODE",
-        "hierarchy": -1
-    },
-    "wire_1": {
-        "type": "WIRE",
-        "from": "",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_2": {
-        "type": "WIRE",
-        "from": "",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_3": {
-        "type": "WIRE",
-        "from": "x",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_4": {
-        "type": "WIRE",
-        "from": "xi",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_5": {
-        "type": "WIRE",
-        "from": "xil",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_6": {
-        "type": "WIRE",
-        "from": "xilo",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_7": {
-        "type": "WIRE",
-        "from": "xilon",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_8": {
-        "type": "WIRE",
-        "from": "xilone",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_9": {
-        "type": "WIRE",
-        "from": "xilonen",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "wire_10": {
-        "type": "WIRE",
-        "from": "xilonen",
-        "to": "kazuha",
-        "hierarchy": 2
     },
     "multiplier_1": {
         "type": "BLOCK",
         "block_type": "MULTIPLIER",
         "inputs": [
-            "xilonen",
-            ""
+            "(token",
+            "5) / 2"
         ],
         "output": "multiplier_1",
         "hierarchy": 1
     },
-    "wire_11": {
+    "wire_1": {
         "type": "WIRE",
         "from": "multiplier_1",
-        "to": "kazuha",
+        "to": "kyoto",
         "hierarchy": 2
     },
-    "multiplier_2": {
-        "type": "BLOCK",
-        "block_type": "MULTIPLIER",
-        "inputs": [
-            "xilonen",
-            ""
-        ],
-        "output": "multiplier_2",
-        "hierarchy": 1
+    "constant_0": {
+        "type": "CONSTANT",
+        "value": 0,
+        "hierarchy": 0
     },
-    "wire_12": {
+    "wire_2": {
         "type": "WIRE",
-        "from": "multiplier_2",
-        "to": "kazuha",
+        "from": "constant_0",
+        "to": "kyoto",
+        "hierarchy": 2
+    },
+    "comparator_1": {
+        "type": "BLOCK",
+        "block_type": "COMPARATOR",
+        "condition": "kyoto < 0",
+        "true_path": "-1",
+        "false_path": null,
+        "output": "kento",
         "hierarchy": 2
     },
     "constant_1": {
@@ -148,41 +48,13 @@
         "value": 1,
         "hierarchy": 0
     },
-    "multiplier_3": {
+    "comparator_2": {
         "type": "BLOCK",
-        "block_type": "MULTIPLIER",
-        "inputs": [
-            "xilonen",
-            "constant_1"
-        ],
-        "output": "multiplier_3",
-        "hierarchy": 1
-    },
-    "wire_13": {
-        "type": "WIRE",
-        "from": "multiplier_3",
-        "to": "kazuha",
-        "hierarchy": 2
-    },
-    "constant_10": {
-        "type": "CONSTANT",
-        "value": 10,
-        "hierarchy": 0
-    },
-    "multiplier_4": {
-        "type": "BLOCK",
-        "block_type": "MULTIPLIER",
-        "inputs": [
-            "xilonen",
-            "constant_10"
-        ],
-        "output": "multiplier_4",
-        "hierarchy": 1
-    },
-    "wire_14": {
-        "type": "WIRE",
-        "from": "multiplier_4",
-        "to": "kazuha",
+        "block_type": "COMPARATOR",
+        "condition": "kyoto > 0",
+        "true_path": "constant_1",
+        "false_path": null,
+        "output": "kento",
         "hierarchy": 2
     }
 }
