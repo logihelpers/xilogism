@@ -1,162 +1,90 @@
-from lark import Lark, Transformer, v_args
-import operator
+from collections import defaultdict
+from typing import List
 
-grammar = r"""
-start: program
-program: statement*
-
-statement: input_decl
-         | output_decl
-         | assign_stmt
-         | conditional_block
-         
-conditional_block: if_stmt [elif_block*] [else_clause]
-
-input_decl: "INPUT" ident_list
-output_decl: "OUTPUT" ident_list
-assign_stmt: "assign" IDENT "=" expr
-
-if_stmt: "IF" condition "THEN" block
-elif_block: "ELIF" condition "THEN" block
-else_clause: "ELSE" block
-
-block: statement+
-
-condition: expr comp_op expr
-        | condition logic_op condition  -> logic_cond
-        | "NOT" condition -> not_cond
-        | "(" condition ")" -> paren_cond
-
-comp_op: "==" -> eq
-       | ">=" -> ge
-       | "<" -> lt
-       | ">" -> gt
-       | "<=" -> le
-       | "!=" -> ne
-
-logic_op: "AND" -> and_op
-        | "OR" -> or_op
-
-expr: term ( ("+" | "-") term )*
-term: factor ( ("*" | "/") factor )*
-factor: atom ( "%" atom )? -> mod_op
-atom: NUMBER | IDENT | "-" atom -> neg_atom | "(" expr ")" -> paren_expr
-ident_list: IDENT ("," IDENT)*
-
-IDENT: /[a-zA-Z][a-zA-Z0-9_]*/
-NUMBER: /[0-9]+(\.[0-9]+)?/
-COMMENT: /\/\/[^\n]*/
-      | /\/\*([^*]|\*[^\/])*\*\//
-
-%ignore /[ \t\f\r\n]+/
-%ignore COMMENT
-"""
-
-class PseudocodeParser(Transformer):
+class PseudocodeParser:
     def __init__(self):
-        self.ast = {
-            'inputs': [],
-            'outputs': [],
-            'variables': set(),
-            'statements': []
-        }
-    
-    def clear(self):
-        self.ast["inputs"] = []
-        self.ast["outputs"] = []
-        self.ast["variables"] = set()
-        self.ast["statements"] = []
+        self.errors = []
 
-    @v_args(inline=True)
-    def NUMBER(self, token):
-        return float(token.value)
+    @property
+    def errors(self) -> List:
+        return self._errors
 
-    @v_args(inline=True)
-    def IDENT(self, token):
-        self.ast['variables'].add(token.value)
-        return token.value
+    @errors.setter
+    def errors(self, errs: List):
+        self._errors = errs
 
-    def ident_list(self, children):
-        return children
+    def parse(self, pseudocode: str):
+        self.errors = []
+        lines = pseudocode.strip().splitlines()
+        inputs = set()
+        outputs = set()
+        assignments = defaultdict(list)
+        current_conditions = []
 
-    def input_decl(self, children):
-        vars_list = children[0]
-        self.ast['inputs'].extend(vars_list)
-        return {'type': 'input_decl', 'vars': vars_list}
+        def get_indent(line):
+            return len(line) - len(line.lstrip())
 
-    def output_decl(self, children):
-        vars_list = children[0]
-        self.ast['outputs'].extend(vars_list)
-        return {'type': 'output_decl', 'vars': vars_list}
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            if not line:
+                i += 1
+                continue
 
-    def assign_stmt(self, children):
-        var, expr = children
-        return {'type': 'assign', 'var': var, 'expr': expr}
+            if line.startswith("INPUT "):
+                parts = line.split(" ", 1)
+                if len(parts) != 2 or not parts[1].isidentifier():
+                    self.errors.append(f"Invalid INPUT syntax at line {i+1}: '{line}'")
+                else:
+                    inputs.add(parts[1])
 
-    def if_stmt(self, children):
-        cond, block = children
-        return {'type': 'if', 'condition': cond, 'block': block}
+            elif line.startswith("OUTPUT "):
+                parts = line.split(" ", 1)
+                if len(parts) != 2 or not parts[1].isidentifier():
+                    self.errors.append(f"Invalid OUTPUT syntax at line {i+1}: '{line}'")
+                else:
+                    outputs.add(parts[1])
 
-    def elif_block(self, children):
-        cond, block = children
-        return {'type': 'elif', 'condition': cond, 'block': block}
+            elif line.startswith("IF ") or line.startswith("ELIF "):
+                if not line.endswith(" THEN"):
+                    self.errors.append(f"Missing 'THEN' at line {i+1}: '{line}'")
+                condition = line.split(" ", 1)[1].rsplit(" THEN", 1)[0]
+                if not condition:
+                    self.errors.append(f"Empty condition at line {i+1}: '{line}'")
+                current_conditions = [condition]
 
-    def else_clause(self, children):
-        return {'type': 'else', 'block': children[0]}
+            elif line.startswith("ELSE"):
+                if line != "ELSE":
+                    self.errors.append(f"Invalid ELSE syntax at line {i+1}: '{line}'")
+                current_conditions = ["else"]
 
-    def conditional_block(self, children):
-        return {'type': 'conditional_block', 'parts': children}
+            elif line.startswith("assign "):
+                assign_part = line[len("assign "):]
+                if "=" not in assign_part:
+                    self.errors.append(f"Invalid assignment syntax at line {i+1}: '{line}'")
+                    i += 1
+                    continue
+                var_val = assign_part.split("=", 1)
+                var = var_val[0].strip()
+                val = var_val[1].strip()
+                if val.startswith("=") or val.endswith("="):
+                    self.errors.append(f"Too much '=' at line {i+1}: '{var}'")
+                if not var.isidentifier():
+                    self.errors.append(f"Invalid variable name at line {i+1}: '{var}'")
+                if not val:
+                    self.errors.append(f"Empty value in assignment at line {i+1}: '{line}'")
+                condition = current_conditions[-1] if current_conditions else ""
+                if condition == "else":
+                    assignments[var].append(("else", val))
+                else:
+                    assignments[var].append((" and ".join(current_conditions), val))
+            else:
+                self.errors.append(f"Unknown statement at line {i+1}: '{line}'")
 
-    def program(self, children):
-        self.ast['statements'] = children
-        return self.ast
+            # check if next line has less indentation (ending IF block)
+            if i + 1 < len(lines) and get_indent(lines[i + 1]) < get_indent(lines[i]):
+                current_conditions = []
 
-    # Operator methods
-    def eq(self, _=None): return operator.eq
-    def ge(self, _=None): return operator.ge
-    def lt(self, _=None): return operator.lt
-    def gt(self, _=None): return operator.gt
-    def le(self, _=None): return operator.le
-    def ne(self, _=None): return operator.ne
-    def and_op(self, _=None): return operator.and_
-    def or_op(self, _=None): return operator.or_
+            i += 1
 
-    # Expression handlers
-    def neg_atom(self, children): return {'op': '-', 'arg': children[0]}
-    def paren_expr(self, children): return children[0]
-    def mod_op(self, children):
-        if len(children) == 1: return children[0]
-        return {'op': '%', 'left': children[0], 'right': children[1]}
-    
-    def term(self, children):
-        if len(children) == 1:
-            return children[0]
-        result = children[0]
-        for i in range(1, len(children), 2):
-            if i+1 >= len(children):
-                break
-            result = {'op': children[i], 'left': result, 'right': children[i+1]}
-        return result
-        
-    def expr(self, children):
-        print("EXPR", children)
-        if len(children) == 1:
-            return children[0]
-        result = children[0]
-        for i in range(1, len(children), 2):
-            if i+1 >= len(children):
-                break
-            result = {'op': children[i], 'left': result, 'right': children[i+1]}
-        return result
-        
-    # Condition handlers
-    def logic_cond(self, children): 
-        left, op, right = children
-        return {'op': op, 'left': left, 'right': right}
-    def not_cond(self, children): return {'op': 'NOT', 'arg': children[0]}
-    def paren_cond(self, children): return children[0]
-    def condition(self, children): 
-        if len(children) == 3:
-            left, op, right = children
-            return {'op': op, 'left': left, 'right': right}
-        return children[0]
+        return {"inputs": inputs, "outputs": outputs, "assignments": dict(assignments)}

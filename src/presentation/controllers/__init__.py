@@ -16,3 +16,6 @@ from presentation.controllers.color_blind_mode_controller import ColorBlindModeC
 from presentation.controllers.dyslexia_friendly_controller import DyslexiaFriendlyController
 from presentation.controllers.left_handed_controller import LeftHandedController
 from presentation.controllers.language_controller import LanguageController
+from presentation.controllers.render_controller import RenderController
+from presentation.controllers.expand_canvas_controller import ExpandCanvasController
+from presentation.controllers.export_controller import ExportController

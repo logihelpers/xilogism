@@ -26,6 +26,9 @@ class WindowController(Controller):
 
         self.page.add(dummy_kb_receiver)
         self.page.spacing = 0
+
+        import os
+        print(os.getcwd())
     
     def handle_keyboard_events(self, event: KeyboardEvent):
         if (event.key == "\\" and event.ctrl):
