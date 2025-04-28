@@ -2,7 +2,6 @@ from presentation.states.export_state import ExportState, FileFormat
 from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from typing import Tuple
 import base64
 import io
 import os
@@ -33,7 +32,7 @@ class ExportController(Controller):
 
     def export(self):
         file_format: FileFormat = self.export_state.format
-        margin: Tuple[int, int, int, int] = self.export_state.margin
+        margin: bool = self.export_state.margin
         titleblock_enable: bool = self.export_state.titleblock_enable
         proj_name: str = self.export_state.proj_name
         creator: str = self.export_state.creator
@@ -66,12 +65,12 @@ class ExportController(Controller):
                 )
             )
     
-    def export_to_file(self, margin: Tuple[int, int, int, int], titleblock_enable: bool, proj_name: str, creator: str, date: str, is_pdf = 0):
+    def export_to_file(self, margin: bool, titleblock_enable: bool, proj_name: str, creator: str, date: str, is_pdf = 0):
         image_data = base64.b64decode(self.render_state.image)
         image_stream = io.BytesIO(image_data)
         
         doc: Document = None
-        if margin != (0, 0, 0, 0) and titleblock_enable:
+        if margin and titleblock_enable:
             doc = Document("src/assets/full.docx")
 
             table = doc.tables[0]
@@ -87,7 +86,7 @@ class ExportController(Controller):
             table.cell(1, 0).text = table.cell(1, 0).text.replace('{TITLE}', proj_name)
             table.cell(1, 1).text = table.cell(1, 1).text.replace('{CREATOR}', creator)
             table.cell(2, 1).text = table.cell(2, 1).text.replace('{DATE}', date)
-        elif margin == (0, 0, 0, 0) and titleblock_enable:
+        elif not margin and titleblock_enable:
             doc = Document("src/assets/no_margin.docx")
 
             paragraph = doc.add_paragraph()
@@ -103,7 +102,7 @@ class ExportController(Controller):
             table.cell(0, 0).text = table.cell(0, 0).text.replace('{TITLE}', proj_name)
             table.cell(0, 1).text = table.cell(0, 1).text.replace('{CREATOR}', creator)
             table.cell(1, 1).text = table.cell(1, 1).text.replace('{DATE}', date)
-        elif margin != (0, 0, 0, 0) and not titleblock_enable:
+        elif margin and not titleblock_enable:
             doc = Document("src/assets/no_titlebar.docx")
 
             table = doc.tables[0]
