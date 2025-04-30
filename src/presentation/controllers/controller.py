@@ -8,6 +8,7 @@ class Priority(Enum):
     DIALOG_BOUND = 3
     SETTINGS_BOUND = 4
     NONE = 5
+    LAST = 6
 
 class Controller:
     priority: Priority = Priority.NONE

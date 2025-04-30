@@ -3,6 +3,7 @@ import splash
 
 from presentation.controllers import Controller
 from services.init_fonts import InitFonts
+from services.init_files import InitFiles
 
 class Xilogism(Page):
     def __init__(self, page: Page):
@@ -18,6 +19,7 @@ class Xilogism(Page):
         )
 
         InitFonts(self)
+        InitFiles(self)
 
         Controller.initialize_controllers(target=self)
 

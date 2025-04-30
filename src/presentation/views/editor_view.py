@@ -1,8 +1,7 @@
 from flet import *
-from math import pi
 import json
 
-from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.dialogs_state import DialogState, Dialogs
@@ -26,23 +25,20 @@ class EditorView(Container):
     old_scale: float = 1.0
     font_size = 16
     font_family = "Iosevka"
-    def __init__(self):
+    instances: list = []
+    def __init__(self, key_name: str):
         super().__init__()
         self.widget_scale = 1.0
-
+        self.key_name = key_name
+        
         self.padding = padding.all(16)
         self.expand = True
 
         self.ec_state = EditorContentState()
-        self.ec_state.on_code_state_change = self.update_status_icon
-
         self.et_state = EditorThemeState()
-        self.et_state.on_theme_change = self.update_theme
-
         self.render_state = RenderState()
-        self.render_state.on_output_change = self.update_canvas
-
         self.dia_state = DialogState()
+        self.af_state = ActiveFileState()
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -84,13 +80,13 @@ class EditorView(Container):
         self.font_family_chooser = FontFaceChooserButton()
 
         self.code_editor = Editor(
-            value=self.ec_state.content,
+            value=self.ec_state.content[self.key_name],
             expand=True,
             editor_theme=self.et_state.editor_theme,
             gutter_width=64,
             font_family=self.font_family,
             font_size=self.font_size,
-            on_change=lambda event: setattr(self.ec_state, 'content', event.data)
+            on_change=self.update_content
         )
 
         self.edit_status_icon = Container(
@@ -124,7 +120,7 @@ class EditorView(Container):
         )
         self.canvas.height = 1000
         self.canvas.width = 1000
-        self.canvas.on_capture = lambda e: setattr(self.render_state, "image", e.data)
+        self.canvas.on_capture = self.capture_image
 
         toolbar = Row(
             height = 32,
@@ -239,6 +235,13 @@ class EditorView(Container):
             alignment=alignment.center,
             on_change=self.update_codepane_length
         )
+
+        self.ec_state.on_code_state_change = self.update_status_icon
+        self.et_state.on_theme_change = self.update_theme
+        self.render_state.on_output_change = self.update_canvas
+
+        if self not in EditorView.instances:
+            EditorView.instances.append(self)
     
     def update_codepane_length(self, event: ControlEvent):
         if not self.code_pane.content_hidden:
@@ -251,27 +254,55 @@ class EditorView(Container):
         self.code_editor.update()
     
     def update_status_icon(self):
-        match self.ec_state.code_state:
-            case CodeState.BLANK:
-                self.edit_status_icon.image.src = "/icons_light/blank.png"
-                self.edit_status_icon.tooltip = "Content is currently blank..."
-            case CodeState.CORRECT:
-                self.edit_status_icon.image.src = "/icons_light/correct.png"
-                self.edit_status_icon.tooltip = "Content is correct..."
-            case CodeState.WRONG:
-                self.edit_status_icon.image.src = "/icons_light/wrong.png"
-                self.edit_status_icon.tooltip = "Content is containing errors..."
+        if not self.af_state.active or type(self.af_state.active) != XiloFile or (type(self.af_state.active) == XiloFile and self.af_state.active.title != self.key_name):
+            return
         
-        self.edit_status_icon.update()
-    
-    def update_canvas(self):
-        output = self.render_state.output
+        key_name = self.af_state.active.title
 
-        self.canvas.clear()
+        active_instance: EditorView = None
+        instance: EditorView = None
+        for instance in EditorView.instances:
+            if instance.key_name == key_name:
+                active_instance = instance
+                break
 
-        [self.canvas.add_to_canvas(gate) for gate in output]
-        self.canvas.update()
+        match active_instance.ec_state.code_state[key_name]:
+            case CodeState.BLANK:
+                active_instance.edit_status_icon.image.src = "/icons_light/blank.png"
+                active_instance.edit_status_icon.tooltip = "Content is currently blank..."
+            case CodeState.CORRECT:
+                active_instance.edit_status_icon.image.src = "/icons_light/correct.png"
+                active_instance.edit_status_icon.tooltip = "Content is correct..."
+            case CodeState.WRONG:
+                active_instance.edit_status_icon.image.src = "/icons_light/wrong.png"
+                active_instance.edit_status_icon.tooltip = "Content is containing errors..."
+        
+        active_instance.edit_status_icon.update()
+  
+    def update_canvas(self, output_dict: dict):
+        if len(output_dict.items()) <= 0:
+            return
+
+        key_name, output_dict = output_dict.popitem()
+
+        active_instance: EditorView = None
+        instance: EditorView = None
+        for instance in EditorView.instances:
+            if instance.key_name == key_name:
+                active_instance = instance
+                break
+
+        active_instance.canvas.clear()
+
+        [active_instance.canvas.add_to_canvas(gate) for gate in output_dict]
+        active_instance.canvas.update()
     
     def update_dialog(self, event: ControlEvent):
         self.canvas.capture(600, 600)
         self.dia_state.state = Dialogs.EXPORT
+    
+    def update_content(self, event: ControlEvent):
+        self.ec_state.content[self.key_name] = event.data
+    
+    def capture_image(self, event: ControlEvent):
+        self.render_state.image[self.key_name] = event.data
