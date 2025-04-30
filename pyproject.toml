@@ -14,7 +14,8 @@ dependencies = [
   "python-docx",
   "docx2pdf",
   "pypdfium2",
-  "pillow"
+  "pillow",
+  "flet-lottie (>=0.1.0,<0.2.0)"
 ]
 
 [tool.flet]
