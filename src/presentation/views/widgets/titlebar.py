@@ -104,7 +104,8 @@ class TitleBar(Container):
             fit_parent_size=True,
             border=InputBorder.NONE,
             multiline=False,
-            width=180,
+            expand=True,
+            expand_loose= True,
             disabled=True,
             color="#000000",
             on_change = lambda e: setattr(self.title_button_state, 'title', e.data)

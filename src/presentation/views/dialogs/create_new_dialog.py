@@ -100,8 +100,12 @@ class CreateNewDialog(XDialog, metaclass = Singleton):
     
     def trigger_save(self, event: ControlEvent):
         if event.control.text == "Save":
+            self.ns_state.filename = self.file_path_tf.value
+            self.ns_state.project_name = self.proj_name_tf.value
             self.ns_state.state = True
         else:
+            self.ns_state.filename = ""
+            self.ns_state.project_name = ""
             self.ns_state.state = False
         
         self.dia_state.state = Dialogs.CLOSE

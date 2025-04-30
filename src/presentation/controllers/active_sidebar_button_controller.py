@@ -32,9 +32,6 @@ class ActiveSideBarButtonController(Controller):
     def change_active(self):
         active: str = self.asbb_state.active
 
-        self.titlebar.filename_tf.value = active.upper()
-        self.titlebar.filename_tf.update()
-
         name: str = ""
         widget: SideBarButton = None
         for name, widget in SideBarButton.refs:
@@ -87,3 +84,6 @@ class ActiveSideBarButtonController(Controller):
                 pass
         
         self.page.update()
+
+        self.titlebar.filename_tf.value = active.upper()
+        self.titlebar.filename_tf.update()

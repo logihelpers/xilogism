@@ -3,17 +3,19 @@ from presentation.states.editor_content_state import EditorContentState, CodeSta
 from presentation.states.sidebar_hide_state import *
 from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.render_state import *
-from presentation.states.title_button_state import TitleButtonState
+from presentation.states.new_save_state import NewSaveState
 
 from services.pseudocode_parser import PseudocodeParser
 from services.pygenerator import PythonGenerator
 from services.validator import PythonValidator
 from services.boolean_converter import BooleanConverter
+from services.init_files import InitFiles
 
 from presentation.controllers.controller import Controller, Priority
 from presentation.views.editor_view import EditorView
 
 import json
+from pathlib import Path
 
 class EditorContentStateController(Controller):
     instances: dict[str, "EditorContentStateController"] = {}
@@ -33,12 +35,57 @@ class EditorContentStateController(Controller):
         self.sbh_state = SideBarHideState()
         self.render_state = RenderState()
         self.af_state = ActiveFileState()
+        self.ns_state = NewSaveState()
+        
+        self.ns_state.on_change = self.save_file
         self.ec_state.on_change = self.parse_content
 
         self.parser = PseudocodeParser()
         self.pygen = PythonGenerator()
         self.validator = PythonValidator()
         self.boolean_converter = BooleanConverter()
+    
+    def save_file(self):
+        save: bool = self.ns_state.state
+        content: str = self.ec_state.content[self.key_name]
+        if save:
+            file_content: dict = {
+                'name': self.ns_state.project_name,
+                'content': content
+            }
+
+            documents_dir = Path.home() / "Documents"
+            file_path = documents_dir.absolute() / (self.ns_state.filename + '.xlg')
+            with open(file_path, "x") as f:
+                json.dump(file_content, f, indent=4)
+
+            self.page.open(
+                SnackBar(
+                    content=Text(f"Your xilogism is now saved in {file_path}."), 
+                    behavior=SnackBarBehavior.FLOATING, 
+                    duration=10000,
+                    show_close_icon=True,
+                    margin=margin.all(12) if not self.sbh_state.state.value else margin.only(left=212, top=12, right=12, bottom=12)
+                )
+            )
+
+            self.page.run_thread(self.run, self.page, file_path)
+
+    def run(self, page: Page, file_path):
+        try:
+            self.page.open(
+                SnackBar(
+                    content=Text(f"Your xilogism is now saved in {file_path}."), 
+                    behavior=SnackBarBehavior.FLOATING, 
+                    duration=10000,
+                    show_close_icon=True,
+                    margin=margin.all(12) if not self.sbh_state.state.value else margin.only(left=212, top=12, right=12, bottom=12)
+                )
+            )
+        except:
+            pass
+
+        InitFiles(page)
 
     def parse_content(self):
         active: str = self.ec_state.content[self.key_name]

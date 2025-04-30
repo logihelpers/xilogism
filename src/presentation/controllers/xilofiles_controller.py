@@ -31,6 +31,9 @@ class XiloFilesController(Controller):
         self.sidebar: SideBar = self.page.session.get("sidebar")
 
     def load_views(self):
+        if len(XiloFilesController.extra_controllers) / 3 != len(self.xf_state.files):
+            XiloFilesController.already_loaded = False
+
         if XiloFilesController.already_loaded:
             return
 
