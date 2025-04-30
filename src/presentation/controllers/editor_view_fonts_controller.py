@@ -52,7 +52,7 @@ class EditorViewFontsController(Controller):
         except:
             pass
 
-        target_font_type = FontType.DYSLEXIA_FRIENDLY if dyslexic_friendly_mode else FontType.MONOSPACE
+        target_font_type = FontType.UI if dyslexic_friendly_mode else FontType.MONOSPACE
 
         self.editor_view.font_family_chooser.options = [
             DropdownOption(

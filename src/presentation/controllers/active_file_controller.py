@@ -7,8 +7,6 @@ from presentation.controllers.controller import Controller, Priority
 
 from flet import *
 
-import json
-
 class ActiveFileController(Controller):
     old_active: str = ""
     priority = Priority.NONE
@@ -35,9 +33,6 @@ class ActiveFileController(Controller):
                 self.window.switcher.switch(2)
             case "New Xilogism":
                 self.window.switcher.switch(1)
-                pass
-            case _:
-                print("HOW DID WE EVEN REACH THIS POINT???")
             
         self.window.update()
     

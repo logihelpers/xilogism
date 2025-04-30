@@ -4,7 +4,6 @@ from presentation.states.active_file_state import ActiveFileState
 from presentation.views.widgets.sidebar.button import SideBarButton
 from presentation.views.widgets.titlebar import TitleBar
 
-from models.xilofile_model import XiloFile
 from data.files import Files
 
 from flet import Page
@@ -43,6 +42,8 @@ class ActiveSideBarButtonController(Controller):
                 if active == "Start" or active == "Open Xilogism" or active == "New Xilogism":
                     self.titlebar.filename_tf.disabled = True
                     self.titlebar.filename_tf.suffix_icon = None
+                    self.titlebar.filename_tf.border=InputBorder.NONE
+                    self.titlebar.filename_tf.content_padding = None
                     self.titlebar.filename_tf.update()
 
                     self.af_state.active = active
@@ -52,6 +53,8 @@ class ActiveSideBarButtonController(Controller):
                     self.af_state.active = Files.parse(name)
 
                 self.titlebar.filename_tf.disabled = False
+                self.titlebar.filename_tf.border=InputBorder.OUTLINE
+                self.titlebar.filename_tf.content_padding = padding.only(left=8, top=4, right=4, bottom=4)
                 self.titlebar.filename_tf.suffix_icon = Icons.EDIT
                 self.titlebar.filename_tf.update()
             else:

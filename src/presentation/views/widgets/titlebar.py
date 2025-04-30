@@ -109,7 +109,8 @@ class TitleBar(Container):
             multiline=False,
             width=180,
             disabled=True,
-            color="#000000"
+            color="#000000",
+            on_change = lambda e: setattr(self.title_button_state, 'title', e.data)
         )
 
         self.content = Container(

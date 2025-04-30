@@ -16,6 +16,7 @@ import json
 from presentation.controllers.controller import Controller, Priority
 
 class XiloFilesController(Controller):
+    extra_controllers: list = []
     priority = Priority.NONE
     def __init__(self, page: Page):
         self.page = page
@@ -32,7 +33,7 @@ class XiloFilesController(Controller):
         xilo_files: List[XiloFile] = self.xf_state.files
         self.switcher.controls = self.switcher.controls[:3]
         self.sidebar.recent_files.controls = []
-        extra_controllers = []
+        XiloFilesController.extra_controllers = []
         for xilofile in xilo_files:
             with open(xilofile.path, "r", encoding="utf-8") as f:
                 json_file = json.load(f)
@@ -47,9 +48,9 @@ class XiloFilesController(Controller):
                 self.switcher.controls.append(editor)
                 self.switcher.update()
 
-                extra_controllers.append(EditorViewFontsController(self.page, editor))
-                extra_controllers.append(ExpandCanvasController(self.page, editor))
-                extra_controllers.append(EditorContentStateController(self.page, name, editor))
+                XiloFilesController.extra_controllers.append(EditorViewFontsController(self.page, editor))
+                XiloFilesController.extra_controllers.append(ExpandCanvasController(self.page, editor))
+                XiloFilesController.extra_controllers.append(EditorContentStateController(self.page, name, editor))
 
                 button = SideBarButton(
                     "icons_light/document.png",
