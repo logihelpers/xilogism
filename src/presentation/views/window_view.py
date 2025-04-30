@@ -21,9 +21,12 @@ class WindowView(Row):
         super().build()
 
         self.mq_state = MediaQueryState()
-
         self.media_query = MediaQuery()
-        self.sidebar = SideBar()
+
+        self.sidebar = SideBar(self.page)
+        if hasattr(self, "page"):
+            self.page.sidebar = self.sidebar
+        
         self.titlebar = TitleBar()
 
         self.start_view = StartView()

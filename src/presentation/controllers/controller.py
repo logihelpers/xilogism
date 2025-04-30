@@ -11,6 +11,8 @@ class Priority(Enum):
 
 class Controller:
     priority: Priority = Priority.NONE
+    _instances = []
+
     def __init__(self, target: Page = None):
         self.target = target
         self.call_subclasses()
@@ -19,11 +21,18 @@ class Controller:
         subclasses = [(subclass, getattr(subclass, 'priority', Priority.NONE)) for subclass in self.__class__.__subclasses__()]
         subclasses.sort(key=lambda x: x[1].value)
 
-        self.instances = []
+        Controller._instances.clear()
         for subclass, priority in subclasses:
             instance = subclass(self.target)
-            self.instances.append(instance)
+            Controller._instances.append(instance)
 
     @staticmethod
     def initialize_controllers(target: Page = None):
         Controller(target)
+
+    @staticmethod
+    def get(controller_type):
+        for instance in Controller._instances:
+            if isinstance(instance, controller_type):
+                return instance
+        raise ValueError(f"Controller of type {controller_type.__name__} not found.")
