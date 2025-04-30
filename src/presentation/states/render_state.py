@@ -1,19 +1,23 @@
 from services.singleton import Singleton
+from typing import Tuple
 
 class RenderDict(dict):
     def __init__(self, on_change_callback=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._on_change_callback = on_change_callback
+        self._suppress_callback = False
 
     def __setitem__(self, key, value):
         super().__setitem__(key, value)
-        if self._on_change_callback:
+        if self._on_change_callback and not self._suppress_callback:
             self._on_change_callback({key: value})
-
-    def __delitem__(self, key):
-        if self._on_change_callback:
-            self._on_change_callback({key: self[key]})
-        super().__delitem__(key)
+    
+    def update_without_callback(self, content: dict):
+        self._suppress_callback = True
+        try:
+            self.update(content)
+        finally:
+            self._suppress_callback = False
 
 class RenderState(metaclass = Singleton):
     def __init__(self):
@@ -29,27 +33,51 @@ class RenderState(metaclass = Singleton):
         return self._input
     
     @input.setter
-    def input(self, input: RenderDict[str, dict]):
-        self._input.update(input)
-        self.call_input_change_callbacks(input)
+    def input(self, input: RenderDict[str, dict] | Tuple[RenderDict[str, dict], bool]):
+        if isinstance(input, RenderDict):
+            self._input.update(input)
+            self.call_input_change_callbacks()
+        elif isinstance(input, tuple):
+            data, suppress_callback = input
+            if suppress_callback:
+                self._input.update_without_callback(data)
+            else:
+                self._input.update(data)
+                self.call_input_change_callbacks()
     
     @property
     def output(self) -> RenderDict[str, list]:
         return self._output
     
     @output.setter
-    def output(self, output: RenderDict[str, list]):
-        self._output.update(output)
-        self.call_output_change_callbacks(output)
+    def output(self, output: RenderDict[str, list] | Tuple[RenderDict[str, list], bool]):
+        if isinstance(output, RenderDict):
+            self._output.update(output)
+            self.call_output_change_callbacks()
+        elif isinstance(output, tuple):
+            data, suppress_callback = output
+            if suppress_callback:
+                self._output.update_without_callback(data)
+            else:
+                self._output.update(data)
+                self.call_output_change_callbacks()
     
     @property
     def image(self) -> RenderDict[str, str]:
         return self._image
     
     @image.setter
-    def image(self, image: RenderDict[str, str]):
-        self._image.update(image)
-        self.call_image_change_callbacks(image)
+    def image(self, image: RenderDict[str, str] | Tuple[RenderDict[str, str], bool]):
+        if isinstance(image, RenderDict):
+            self._image.update(image)
+            self.call_image_change_callbacks()
+        elif isinstance(image, tuple):
+            data, suppress_callback = image
+            if suppress_callback:
+                self._image.update_without_callback(data)
+            else:
+                self._image.update(data)
+                self.call_image_change_callbacks()
     
     @property
     def on_input_change(self):

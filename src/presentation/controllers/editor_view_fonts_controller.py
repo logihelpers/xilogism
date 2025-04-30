@@ -8,7 +8,7 @@ from models.font_model import FontType
 from presentation.controllers.controller import Controller, Priority
 
 class EditorViewFontsController(Controller):
-    priority = Priority.NONE
+    priority = Priority.LAST
     def __init__(self, page: Page, editor_view: EditorView = None):
         self.page = page
         self.fonts = Fonts()

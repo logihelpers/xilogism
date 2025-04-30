@@ -98,7 +98,7 @@ class StartView(Container):
             controls=[
                 Container(
                     content = Image(
-                        src="light_mode_cropped.gif",
+                        src="light_mode.gif",
                         width=(320 * self.widget_scale) * 1.10,
                         height=(320 * self.widget_scale) * 1.10,
                     ),

@@ -3,6 +3,7 @@ from presentation.states.editor_content_state import EditorContentState, CodeSta
 from presentation.states.sidebar_hide_state import *
 from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.render_state import *
+from presentation.states.title_button_state import TitleButtonState
 
 from services.pseudocode_parser import PseudocodeParser
 from services.pygenerator import PythonGenerator
@@ -15,11 +16,13 @@ from presentation.views.editor_view import EditorView
 import json
 
 class EditorContentStateController(Controller):
+    instances: dict[str, "EditorContentStateController"] = {}
     priority = Priority.NONE
     old_active: str = ""
     def __init__(self, page: Page, key: str = "New", editor_view: EditorView = None):
         self.page = page
         self.key_name = key
+        EditorContentStateController.instances[key] = self
 
         if editor_view is None:
             self.editor_view: EditorView = self.page.session.get("editor_view")
@@ -53,6 +56,13 @@ class EditorContentStateController(Controller):
         json_file['content'] = active
         with open(self.af_state.active.path, "w", encoding="utf-8") as f:
             json.dump(json_file, f, indent=4)
+
+        try:
+            self.editor_view.code_editor.value = self.ec_state.content[self.key_name]
+            self.editor_view.code_editor.update()
+            self.editor_view.update()
+        except:
+            pass
 
         if active == "":
             self.ec_state.code_state[self.key_name] = CodeState.BLANK

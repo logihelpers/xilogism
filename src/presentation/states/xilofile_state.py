@@ -15,8 +15,8 @@ class XiloFileState(metaclass=Singleton):
     
     @files.setter
     def files(self, files: List[XiloFile]):
-        self.on_files_change()
         self._files__ = files
+        self.on_files_change()
     
     def on_files_change(self):
         pass
