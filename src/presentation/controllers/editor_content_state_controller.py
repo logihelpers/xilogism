@@ -43,7 +43,7 @@ class EditorContentStateController(Controller):
         if self.old_active == active or not self.af_state.active:
             return
         
-        if type(self.af_state.active) == XiloFile and self.af_state.active.title != self.key_name:
+        if type(self.af_state.active) != XiloFile or (type(self.af_state.active) == XiloFile and self.af_state.active.title != self.key_name):
             return
 
         self.old_active = active
