@@ -32,7 +32,7 @@ class ActiveSideBarButtonController(Controller):
     def change_active(self):
         active: str = self.asbb_state.active
 
-        self.titlebar.filename_tf.value= active.upper()
+        self.titlebar.filename_tf.value = active.upper()
         self.titlebar.filename_tf.update()
 
         name: str = ""
