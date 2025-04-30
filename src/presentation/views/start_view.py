@@ -1,8 +1,6 @@
 from flet import *
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 
-import flet_lottie as fl
-
 class StartView(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0

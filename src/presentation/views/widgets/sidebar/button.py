@@ -40,7 +40,8 @@ class SideBarButton(FilledButton):
             padding=padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale)
         )
 
-        SideBarButton.refs.append((self.label, self))
+        if (self.label, self) not in SideBarButton.refs:
+            SideBarButton.refs.append((self.label, self))
 
         if self.label == "Start":
             self.active = True

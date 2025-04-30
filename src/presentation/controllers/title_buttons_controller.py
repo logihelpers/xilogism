@@ -1,5 +1,4 @@
 from presentation.states.title_button_state import *
-from presentation.views.dialogs.settings_dialog import SettingsDialog
 from presentation.states.dialogs_state import *
 from flet import Page
 

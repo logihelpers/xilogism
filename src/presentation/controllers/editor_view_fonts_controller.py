@@ -8,12 +8,15 @@ from models.font_model import FontType
 from presentation.controllers.controller import Controller, Priority
 
 class EditorViewFontsController(Controller):
-    priority = Priority.VIEW_BOUND
-    def __init__(self, page: Page):
+    priority = Priority.NONE
+    def __init__(self, page: Page, editor_view: EditorView = None):
         self.page = page
         self.fonts = Fonts()
 
-        self.editor_view: EditorView = page.session.get("editor_view")
+        if editor_view is None:
+            self.editor_view: EditorView = page.session.get("editor_view")
+        else:
+            self.editor_view = editor_view
 
         self.af_state = ActiveFontState()
 

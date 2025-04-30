@@ -18,3 +18,7 @@ from presentation.controllers.left_handed_controller import LeftHandedController
 from presentation.controllers.language_controller import LanguageController
 from presentation.controllers.auth_controller import AuthController
 from presentation.controllers.google_drive_controller import GoogleDriveController
+from presentation.controllers.render_controller import RenderController
+from presentation.controllers.expand_canvas_controller import ExpandCanvasController
+from presentation.controllers.export_controller import ExportController
+from presentation.controllers.xilofiles_controller import XiloFilesController

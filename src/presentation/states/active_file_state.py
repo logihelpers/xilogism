@@ -19,3 +19,15 @@ class ActiveFileState(metaclass = Singleton):
     
     def on_change(self):
         pass
+
+    @property
+    def active_changed(self) -> bool:
+        return self._active_changed
+    
+    @active_changed.setter
+    def active_changed(self, active_changed: bool):
+        self.on_active_changed()
+        self._active_changed = active_changed
+    
+    def on_active_changed(self):
+        pass

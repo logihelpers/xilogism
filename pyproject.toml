@@ -10,7 +10,11 @@ authors = [
 dependencies = [
   "flet==0.27.6",
   "xilowidgets @ git+https://github.com/logihelpers/xilowidgets.git",
-  "lark"
+  "flet-layoutbuilder @ git+https://github.com/Wanna-Pizza/flet_layoutbuilder",
+  "python-docx",
+  "docx2pdf",
+  "pypdfium2",
+  "pillow",
 ]
 
 [tool.flet]
@@ -34,6 +38,7 @@ path = "src"
 [tool.uv]
 dev-dependencies = [
     "flet[all]==0.27.6",
+    "docx2pdf==0.1.8",
 ]
 
 [tool.poetry]

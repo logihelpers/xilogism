@@ -1,5 +1,3 @@
-# boolean_converter.py
-
 import re
 
 class BooleanConverter:
@@ -62,6 +60,16 @@ class BooleanConverter:
             return expr
 
     def convert(self, python_code: str):
+        self.nodes = {}
+        self.counter = {
+            "constant": 0,
+            "multiplier": 0,
+            "comparator": 0,
+            "adder": 0,
+            "logic": 0,
+            "wire": 0
+        }
+
         lines = python_code.strip().splitlines()
         current_condition = None
         last_var = None
