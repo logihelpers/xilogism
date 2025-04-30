@@ -19,11 +19,6 @@ class ContentDict(dict):
         super().__setitem__(key, value)
         if self._on_change_callback and not self._suppress_callback:
             self._on_change_callback()
-
-    def __delitem__(self, key):
-        super().__delitem__(key)
-        if self._on_change_callback and not self._suppress_callback:
-            self._on_change_callback()
     
     def update_without_callback(self, content: dict):
         self._suppress_callback = True

@@ -17,7 +17,8 @@ from presentation.controllers.controller import Controller, Priority
 
 class XiloFilesController(Controller):
     extra_controllers: list = []
-    priority = Priority.NONE
+    priority = Priority.LAST
+    already_loaded = False
     def __init__(self, page: Page):
         self.page = page
 
@@ -30,9 +31,12 @@ class XiloFilesController(Controller):
         self.sidebar: SideBar = self.page.session.get("sidebar")
 
     def load_views(self):
+        if XiloFilesController.already_loaded:
+            return
+
         xilo_files: List[XiloFile] = self.xf_state.files
         self.switcher.controls = self.switcher.controls[:3]
-        self.sidebar.recent_files.controls = []
+        self.sidebar.local_files.controls = []
         XiloFilesController.extra_controllers = []
         for xilofile in xilo_files:
             with open(xilofile.path, "r", encoding="utf-8") as f:
@@ -55,8 +59,11 @@ class XiloFilesController(Controller):
                 button = SideBarButton(
                     "icons_light/document.png",
                     name,
-                    on_button_press=lambda e, name=name: setattr(self.asb_state, 'active', name)
+                    on_button_press=lambda e: setattr(self.asb_state, 'active', e.control.label)
                 )
+                button.tooltip = xilofile.path
 
-                self.sidebar.recent_files.controls.append(button)
-                self.sidebar.recent_files.update()
+                self.sidebar.local_files.controls.append(button)
+                self.sidebar.local_files.update()
+        
+        XiloFilesController.already_loaded = True

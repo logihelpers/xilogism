@@ -236,12 +236,15 @@ class EditorView(Container):
             on_change=self.update_codepane_length
         )
 
+        if self not in EditorView.instances:
+            EditorView.instances.append(self)
+    
+    def did_mount(self):
+        super().did_mount()
+
         self.ec_state.on_code_state_change = self.update_status_icon
         self.et_state.on_theme_change = self.update_theme
         self.render_state.on_output_change = self.update_canvas
-
-        if self not in EditorView.instances:
-            EditorView.instances.append(self)
     
     def update_codepane_length(self, event: ControlEvent):
         if not self.code_pane.content_hidden:

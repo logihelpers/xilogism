@@ -20,4 +20,4 @@ from presentation.controllers.render_controller import RenderController
 from presentation.controllers.expand_canvas_controller import ExpandCanvasController
 from presentation.controllers.export_controller import ExportController
 from presentation.controllers.xilofiles_controller import XiloFilesController
-# from presentation.controllers.title_change_controller import TitleChangeController
+from presentation.controllers.title_change_controller import TitleChangeController

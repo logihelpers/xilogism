@@ -57,9 +57,12 @@ class EditorContentStateController(Controller):
         with open(self.af_state.active.path, "w", encoding="utf-8") as f:
             json.dump(json_file, f, indent=4)
 
-        self.editor_view.code_editor.value = self.ec_state.content[self.key_name]
-        self.editor_view.code_editor.update()
-        self.editor_view.update()
+        try:
+            self.editor_view.code_editor.value = self.ec_state.content[self.key_name]
+            self.editor_view.code_editor.update()
+            self.editor_view.update()
+        except:
+            pass
 
         if active == "":
             self.ec_state.code_state[self.key_name] = CodeState.BLANK

@@ -36,7 +36,7 @@ class SideBar(Container):
             ]
         )
 
-        self.recent_files = Column(
+        self.local_files = Column(
             expand=True,
             spacing=0,
             scroll=True,
@@ -82,8 +82,8 @@ class SideBar(Container):
                         SideBarButton("icons_light/open.png", "Open Xilogism", on_button_press=self.active_changed),
                         SideBarTitle("Pinned"),
                         self.pinned_files,
-                        SideBarTitle("Recent Files"),
-                        self.recent_files,
+                        SideBarTitle("Local Files"),
+                        self.local_files,
                         SideBarTitle("Google Drive"),
                         self.gdrive_files
                     ],

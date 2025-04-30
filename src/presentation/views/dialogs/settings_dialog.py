@@ -77,7 +77,7 @@ class SettingsDialog(XDialog, metaclass = Singleton):
                     bgcolor="#4d191f51"
                 ),
                 on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
-            ),
+            )
         ]
 
         self.title_padding = 0

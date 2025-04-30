@@ -9,13 +9,8 @@ class RenderDict(dict):
 
     def __setitem__(self, key, value):
         super().__setitem__(key, value)
-        if self._on_change_callback and self._suppress_callback:
+        if self._on_change_callback and not self._suppress_callback:
             self._on_change_callback({key: value})
-
-    def __delitem__(self, key):
-        if self._on_change_callback and self._suppress_callback:
-            self._on_change_callback({key: self[key]})
-        super().__delitem__(key)
     
     def update_without_callback(self, content: dict):
         self._suppress_callback = True
