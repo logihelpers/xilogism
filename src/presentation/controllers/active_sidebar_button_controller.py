@@ -25,9 +25,8 @@ class ActiveSideBarButtonController(Controller):
     def change_active(self):
         active: str = self.asbb_state.active
 
-        self.titlebar.title = active.upper()
-        self.titlebar.build()
-        self.titlebar.update()
+        self.titlebar.filename_tf.value= active.upper()
+        self.titlebar.filename_tf.update()
 
         name: str = ""
         widget: SideBarButton = None
