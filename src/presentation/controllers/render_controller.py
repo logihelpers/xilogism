@@ -1,4 +1,5 @@
 from presentation.states.render_state import RenderState
+from models.xilofile_model import XiloFile
 
 from flet import *
 
@@ -9,20 +10,18 @@ from presentation.views.widgets.logic_circuit.output_node import OutputNode
 from presentation.views.widgets.logic_circuit.wire import Wire
 
 class RenderController(Controller):
-    priority = Priority.VIEW_BOUND
+    priority = Priority.NONE
     def __init__(self, page: Page):
         self.page = page
 
         self.render_state = RenderState()
-
         self.render_state.on_input_change = self.process_input
-        self.render_state.on_image_change = lambda: print(self.render_state.image)
 
-    def process_input(self):
-        input: dict = self.render_state.input
+    def process_input(self, input: dict):
+        key_name, input_dict = input.popitem()
         nodes = []
 
-        for input_name, gate_info in input.items():
+        for input_name, gate_info in input_dict.items():
             gate_type = gate_info["type"]
             match gate_type:
                 case "INPUT_NODE":
@@ -32,4 +31,4 @@ class RenderController(Controller):
                 case "WIRE":
                     print("WIRE:", gate_info)
         
-        self.render_state.output = nodes
+        self.render_state.output[key_name] = nodes

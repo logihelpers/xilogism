@@ -27,7 +27,7 @@ class WindowView(Row):
         self.titlebar = TitleBar()
 
         self.start_view = StartView()
-        self.editor_view = EditorView()
+        self.editor_view = EditorView("New")
         self.open_view = OpenExistingView()
 
         self.settings_dialog = SettingsDialog()

@@ -19,3 +19,4 @@ from presentation.controllers.language_controller import LanguageController
 from presentation.controllers.render_controller import RenderController
 from presentation.controllers.expand_canvas_controller import ExpandCanvasController
 from presentation.controllers.export_controller import ExportController
+from presentation.controllers.xilofiles_controller import XiloFilesController

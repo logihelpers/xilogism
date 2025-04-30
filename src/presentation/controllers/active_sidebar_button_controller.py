@@ -34,27 +34,33 @@ class ActiveSideBarButtonController(Controller):
         widget: SideBarButton = None
         for index, (name, widget) in enumerate(SideBarButton.refs):
             if name == active:
+                if widget.active:
+                    return
+
                 widget.bgcolor = "#4d191f51"
                 widget.active = True
 
-                self.af_state.active = Files.parse(name)
-
                 if active == "Start" or active == "Open Xilogism" or active == "New Xilogism":
+                    self.titlebar.filename_tf.disabled = True
+                    self.titlebar.filename_tf.suffix_icon = None
+                    self.titlebar.filename_tf.update()
+
                     self.af_state.active = active
                     widget.update()
                     continue
-                
-                # TODO: TEMPORARY
-                if not Files.parse(name):
-                    self.af_state.active = index + 3
+                else:
+                    self.af_state.active = Files.parse(name)
 
-                widget.update()
+                self.titlebar.filename_tf.disabled = False
+                self.titlebar.filename_tf.suffix_icon = Icons.EDIT
+                self.titlebar.filename_tf.update()
             else:
                 if widget.bgcolor == "#d9d9d9":
                     continue
 
                 widget.bgcolor = "#d9d9d9"
                 widget.active = False
-                widget.update()
+
+            widget.update()
         
         self.page.update()

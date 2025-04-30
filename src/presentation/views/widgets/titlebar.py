@@ -9,7 +9,7 @@ class TitleBar(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
     sidebar_hide_button: FilledButton = None
-    title: str = "START XILOGISM"
+    title: str = "START"
     def __init__(self):
         super().__init__()
 
@@ -97,6 +97,21 @@ class TitleBar(Container):
             )
         )
 
+        self.filename_tf = TextField(
+            value=self.title,
+            text_size=16 * self.widget_scale,
+            text_style=TextStyle(
+                weight=FontWeight.W_600,
+            ),
+            height = 32,
+            fit_parent_size=True,
+            border=InputBorder.NONE,
+            multiline=False,
+            width=180,
+            disabled=True,
+            color="#000000"
+        )
+
         self.content = Container(
             padding=padding.symmetric(0, 8),
             content = Row(
@@ -107,10 +122,11 @@ class TitleBar(Container):
                             WindowDragArea(
                                 expand = True,
                                 content = Container(
-                                    Text(
-                                        value=self.title,
-                                        weight=FontWeight.W_600,
-                                        size=16 * self.widget_scale,
+                                    content = Row(
+                                        controls = [
+                                            self.filename_tf
+                                        ],
+                                        width=180
                                     ),
                                     expand = True,
                                     padding=padding.only(left=16 * self.widget_scale),

@@ -6,7 +6,6 @@ import base64
 import io
 import os
 import tempfile
-import docx2pdf as d2f
 import pypdfium2 as pdfium
 import shutil
 from PIL import Image as IMG
@@ -17,11 +16,13 @@ from presentation.controllers.controller import Controller, Priority
 from presentation.states.render_state import RenderState
 from presentation.states.sidebar_hide_state import SideBarHideState
 from presentation.states.dialogs_state import Dialogs, DialogState
+import docx2pdf as d2f
 
 class ExportController(Controller):
-    priority = Priority.VIEW_BOUND
-    def __init__(self, page: Page):
+    priority = Priority.NONE
+    def __init__(self, page: Page, key_name: str = "New"):
         self.page = page
+        self.key_name = key_name
 
         self.export_state = ExportState()
         self.render_state = RenderState()
@@ -38,6 +39,18 @@ class ExportController(Controller):
         creator: str = self.export_state.creator
         date: str = self.export_state.date
 
+        self.dia_state.state = Dialogs.CLOSE
+
+        self.page.open(
+            SnackBar(
+                content=Text(f"Exporting the document. Please wait!"), 
+                behavior=SnackBarBehavior.FLOATING, 
+                duration=3000,
+                show_close_icon=True,
+                margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
+            )
+        )
+
         output_filename = ""
 
         match file_format:
@@ -50,23 +63,22 @@ class ExportController(Controller):
             case FileFormat.RAW_PNG:
                 output_filename = self.export_to_png()
 
-        if output_filename != "":
-            self.dia_state.state = Dialogs.CLOSE
-
-            self.page.open(
-                SnackBar(
-                    content=Text(f"Successfully exported to {output_filename}!"), 
-                    behavior=SnackBarBehavior.FLOATING, 
-                    duration=5000,
-                    show_close_icon=True,
-                    margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
-                    action="Open",
-                    on_action=lambda e: os.startfile(output_filename)
-                )
+        message = f"Successfully exported to {output_filename}!" if output_filename != "" else f"There was a problem exporting the file!"
+        
+        self.page.open(
+            SnackBar(
+                content=Text(message), 
+                behavior=SnackBarBehavior.FLOATING, 
+                duration=5000,
+                show_close_icon=True,
+                margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
+                action="Open" if output_filename != "" else None,
+                on_action=lambda e: os.startfile(output_filename) if output_filename != "" else None
             )
+        )
     
     def export_to_file(self, margin: bool, titleblock_enable: bool, proj_name: str, creator: str, date: str, is_pdf = 0):
-        image_data = base64.b64decode(self.render_state.image)
+        image_data = base64.b64decode(self.render_state.image[self.key_name])
         image_stream = io.BytesIO(image_data)
         
         doc: Document = None
@@ -155,7 +167,7 @@ class ExportController(Controller):
             return "test.png"
     
     def export_to_png(self):
-        image_data = base64.b64decode(self.render_state.image)
+        image_data = base64.b64decode(self.render_state.image[self.key_name])
         image_stream = io.BytesIO(image_data)
 
         img = IMG.open(image_stream)

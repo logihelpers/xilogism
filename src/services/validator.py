@@ -1,5 +1,3 @@
-# python_validator.py
-
 class PythonValidator:
     def validate(self, code: str):
         lines = code.strip().splitlines()
