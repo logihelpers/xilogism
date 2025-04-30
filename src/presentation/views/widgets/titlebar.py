@@ -15,9 +15,6 @@ class TitleBar(Container):
 
         self.title_button_state = TitleButtonState()
         self.sidebar_hide_state = SideBarHideState()
-    
-    def build(self):
-        super().build()
 
         self.sidebar_hide_button_content = Image(
             src="/icons_light/sidebar_hide.png",

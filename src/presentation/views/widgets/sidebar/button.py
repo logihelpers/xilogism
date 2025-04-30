@@ -29,11 +29,13 @@ class SideBarButton(FilledButton):
             on_animation_end=self._revert_state
         )
 
+        self.button_label = Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale, no_wrap=False)
+
         self.content = Container(
             content = Row(
                 controls=[
                     self._button_image,
-                    Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale, no_wrap=False)
+                    self.button_label
                 ],
                 vertical_alignment=CrossAxisAlignment.CENTER
             ),
