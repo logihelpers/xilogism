@@ -1,8 +1,6 @@
 from flet import *
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 
-import flet_lottie as fl
-
 class StartView(Container):
     widget_scale: float = 1.0
     old_scale: float = 1.0
@@ -22,20 +20,20 @@ class StartView(Container):
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
-                padding = padding.all(16 * self.widget_scale),
+                padding = padding.all(16),
                 content = Row(
                     controls=[
                         Image(
                             src="/icons_light/new.png",
-                            width=56 * self.widget_scale,
-                            height=56 * self.widget_scale
+                            width=56,
+                            height=56
                         ),
                         Text(
                             spans=[
                                 TextSpan(
                                     text="CREATE MY XILOGISM\n",
                                     style=TextStyle(
-                                        size=18 * self.widget_scale,
+                                        size=18,
                                         color="black",
                                         weight=FontWeight.W_700
                                     )
@@ -43,7 +41,7 @@ class StartView(Container):
                                 TextSpan(
                                     text="Pseudocode Format",
                                     style=TextStyle(
-                                        size=12 * self.widget_scale,
+                                        size=12,
                                         color="black"
                                     )
                                 )
@@ -56,7 +54,7 @@ class StartView(Container):
             ),
             style=ButtonStyle(
                 bgcolor="#26191f51",
-                shape=RoundedRectangleBorder(16 * self.widget_scale),
+                shape=RoundedRectangleBorder(16),
                 side=BorderSide(1, "#1a191f51")
             ),
             on_hover=self._hover
@@ -66,13 +64,13 @@ class StartView(Container):
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
-                padding = padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale),
+                padding = padding.symmetric(8 * self.widget_scale, 16),
                 content = Row(
                     controls = [
                         Image(
                             src="/icons_light/open.png",
-                            width=16 * self.widget_scale,
-                            height=16 * self.widget_scale
+                            width=16,
+                            height=16
                         ),
                         Text(
                             value="OPEN EXISTING",
@@ -87,7 +85,7 @@ class StartView(Container):
             on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', "Open Xilogism"),
             style=ButtonStyle(
                 bgcolor="#26191f51",
-                shape=RoundedRectangleBorder(16 * self.widget_scale),
+                shape=RoundedRectangleBorder(16),
                 side=BorderSide(1, "#1a191f51")
             ),
             on_hover=self._hover
@@ -100,7 +98,7 @@ class StartView(Container):
             controls=[
                 Container(
                     content = Image(
-                        src="light_mode_cropped.gif",
+                        src="light_mode.gif",
                         width=(320 * self.widget_scale) * 1.10,
                         height=(320 * self.widget_scale) * 1.10,
                     ),
@@ -119,7 +117,7 @@ class StartView(Container):
                                     TextSpan(
                                         text="GET YOUR HANDS DIRTY WITH\n",
                                         style=TextStyle(
-                                            size=16 * self.widget_scale,
+                                            size=16,
                                             weight=FontWeight.W_600,
                                             italic=True
                                         )
@@ -127,7 +125,7 @@ class StartView(Container):
                                     TextSpan(
                                         text="XILOGISM",
                                         style=TextStyle(
-                                            size=72 * self.widget_scale,
+                                            size=72,
                                             weight=FontWeight.W_800,
                                         )
                                     )
@@ -142,16 +140,16 @@ class StartView(Container):
                                 text_align=TextAlign.CENTER,
                             ),
                             Container(
-                                padding = padding.all(16 * self.widget_scale),
-                                margin = margin.symmetric(8 * self.widget_scale, 0),
-                                width=480 * self.widget_scale,
-                                height=128 * self.widget_scale,
+                                padding = padding.all(16),
+                                margin = margin.symmetric(8, 0),
+                                width=480,
+                                height=128,
                                 content = self.new_button
                             ),
                             Container(
-                                padding=padding.only(left=96 * self.widget_scale, right=16 * self.widget_scale),
-                                width=480 * self.widget_scale,
-                                height=48 * self.widget_scale,
+                                padding=padding.only(left=96, right=16),
+                                width=480,
+                                height=48,
                                 content = self.open_button,
                             )
                         ]

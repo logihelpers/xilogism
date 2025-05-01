@@ -75,6 +75,12 @@ class AccessibilitySettings(Column):
                             DataCell(content = Text("Hide Sidebar")),
                             DataCell(content = Text("Ctrl + \\"))
                         ]
+                    ),
+                    DataRow(
+                        cells=[
+                            DataCell(content = Text("Save Xilogism")),
+                            DataCell(content = Text("Ctrl + S"))
+                        ]
                     )
                 ]
             )

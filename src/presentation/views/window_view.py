@@ -22,12 +22,12 @@ class WindowView(Row):
 
         self.mq_state = MediaQueryState()
 
-        self.media_query = MediaQuery()
+        self.media_query = MediaQuery(on_size_change=lambda e: setattr(self.mq_state, 'size', (e.window_width, e.window_height)))
         self.sidebar = SideBar()
         self.titlebar = TitleBar()
 
         self.start_view = StartView()
-        self.editor_view = EditorView()
+        self.editor_view = EditorView("New")
         self.open_view = OpenExistingView()
 
         self.settings_dialog = SettingsDialog()
@@ -51,20 +51,22 @@ class WindowView(Row):
             ]
         )
 
+        self.main_container = Container(
+            expand = True,
+            padding = padding.only(top=8),
+            content=Column(
+                expand = True,
+                controls=[
+                    self.titlebar,
+                    self.switcher
+                ]
+            ),
+        )
+
         self.controls = [
             self.media_query,
             self.slidable_panel,
-            Container(
-                expand = True,
-                padding = padding.only(top=8),
-                content=Column(
-                    expand = True,
-                    controls=[
-                        self.titlebar,
-                        self.switcher
-                    ]
-                ),
-            )
+            self.main_container
         ]
 
         self.spacing=0

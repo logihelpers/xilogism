@@ -330,10 +330,8 @@ class ExportPrintDialog(XDialog):
         self.proceed_button.text = segment.segments[active].label.value
         self.proceed_button.update()
     
-    def update_preview(self):
-        image: str = self.r_state.image
-
-        self.preview_image.src_base64 = image
+    def update_preview(self, image_dict: dict):
+        self.preview_image.src_base64 = list(image_dict.values())[0]
         self.preview_image.update()
     
     def update_format(self, event: ControlEvent):

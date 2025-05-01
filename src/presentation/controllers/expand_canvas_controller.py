@@ -7,15 +7,18 @@ from presentation.controllers.controller import Controller, Priority
 from presentation.views.editor_view import EditorView
 
 class ExpandCanvasController(Controller):
-    priority = Priority.VIEW_BOUND
-    def __init__(self, page: Page):
+    priority = Priority.NONE
+    def __init__(self, page: Page, editor_view: EditorView = None):
         self.page = page
 
         self.ec_state = ExpandCanvasState()
 
         self.ec_state.on_change = self.change_view
 
-        self.editor_view: EditorView = self.page.session.get("editor_view")
+        if editor_view is None:
+            self.editor_view: EditorView = self.page.session.get("editor_view")
+        else:
+            self.editor_view = editor_view
 
     def change_view(self):
         expand: bool = self.ec_state.expand

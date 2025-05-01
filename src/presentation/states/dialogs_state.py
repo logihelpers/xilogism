@@ -9,6 +9,7 @@ class Dialogs(Enum):
     REGISTER = 2
     SETTINGS = 3
     EXPORT = 4
+    CREATE_NEW = 5
 
 class DialogState(metaclass=Singleton):
     def __init__(self):

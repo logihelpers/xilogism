@@ -1,5 +1,3 @@
-# boolean_converter.py
-
 import re
 
 class BooleanConverter:

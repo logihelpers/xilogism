@@ -1,18 +1,63 @@
 from typing import Optional, List
-from models.xilofile_model import XiloFile
+from models.xilofile_model import XiloFile, StorageType
 from services.singleton import Singleton
+from pathlib import Path
+from datetime import datetime
+from presentation.states.xilofile_state import XiloFileState
+
+import os
+import json
 
 class Files(metaclass=Singleton):
     all_files: List[XiloFile] = []
 
+    def __init__(self):
+        self.xf_state = XiloFileState()
+
     def retrieve_files_local(self):
-        pass
+        Files.all_files.clear()
+        home_dir = Path.home()
+    
+        # Define directories to scan
+        directories = [
+            home_dir / "Downloads",
+            home_dir / "Documents",
+            home_dir / "Desktop",
+        ]
+
+        for directory in directories:
+            if directory.exists() and directory.is_dir():
+                for file_path in directory.rglob("*.xlg"):
+                    self.process_local(str(file_path))
+                self.xf_state.files = Files.all_files
+            else:
+                print(f"Directory not found: {directory}")
+    
+    def append_file(self, file_path: Path):
+        xilofile = self.process_local(str(file_path))
+        self.xf_state.appended_file = xilofile
+    
+    def process_local(self, file_path: str):
+        with open(file_path, "r") as file:
+            file = json.load(file)
+            stats = os.stat(file_path)
+
+            xilofile = XiloFile(
+                title=file['name'],
+                path=file_path,
+                date=datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
+                size=stats.st_size,
+                storage_type=StorageType.LOCAL
+            )
+
+            self.append(xilofile)
+            return xilofile
 
     def retrieve_files_gdrive(self):
         pass
 
     def append(self, file: XiloFile):
-        self.all_files.append(file)
+        Files.all_files.append(file)
 
     @staticmethod
     def parse(title: str) -> Optional['XiloFile']:

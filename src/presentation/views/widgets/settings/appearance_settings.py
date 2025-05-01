@@ -5,6 +5,7 @@ from presentation.views.widgets.settings.settings_image_button import SettingsIm
 from presentation.views.widgets.settings.accent_color_button import AccentColorButton
 from presentation.states.dark_mode_state import DarkModeState
 from presentation.states.editor_theme_state import EditorThemeState
+from presentation.states.custom_background_state import CustomBackgroundState
 from presentation.states.accent_color_state import AccentColorState, AccentColors
 
 class AppearanceSettings(Column):
@@ -15,6 +16,7 @@ class AppearanceSettings(Column):
         self.dm_state = DarkModeState()
         self.et_state = EditorThemeState()
         self.ac_state = AccentColorState()
+        self.cb_state = CustomBackgroundState()
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -38,6 +40,35 @@ class AppearanceSettings(Column):
             font_family="Inter",
             font_size=14,
             editor_theme=EditorTheme.OBSIDIAN
+        )
+
+        self._source_path = Text("Source Path:", visible=False, weight=FontWeight.W_600)
+        self.current_path_text = Container(Text("", size=12), padding=padding.only(left=16), visible=False)
+        self.background_preview = Container(
+            expand = True,
+            width=200,
+            height=180,
+            border=border.all(1, "black"),
+            clip_behavior=ClipBehavior.ANTI_ALIAS,
+            border_radius=8,
+            bgcolor="#ededed"
+        )
+
+        self.pick_files_dialog = FilePicker(
+            on_result=self.custom_background_picked,
+        )
+
+        self.use_default_button = FilledButton(
+            style=ButtonStyle(
+                bgcolor="#1a191f51",
+                shape=RoundedRectangleBorder(16),
+                side=BorderSide(1, "#1a191f51"),
+                color="black"
+            ),
+            text="Use Default",
+            expand=True,
+            disabled=True,
+            on_click=self.default_bg
         )
 
         self.controls=[
@@ -95,8 +126,64 @@ class AppearanceSettings(Column):
                         border=border.all(1, Colors.BLACK)
                     )
                 ]
+            ),
+            Text("Custom Background", weight=FontWeight.BOLD),
+            Row(
+                vertical_alignment=CrossAxisAlignment.START,
+                alignment=MainAxisAlignment.CENTER,
+                controls = [
+                    self.background_preview,
+                    Container(
+                        expand = True,
+                        margin = margin.only(right=32),
+                        content = Column(
+                            expand = True,
+                            horizontal_alignment=CrossAxisAlignment.STRETCH,
+                            controls = [
+                                self._source_path,
+                                self.current_path_text,
+                                Container(
+                                    content = FilledButton(
+                                        style=ButtonStyle(
+                                            bgcolor="#36191f51",
+                                            shape=RoundedRectangleBorder(16),
+                                            side=BorderSide(1, "#1a191f51"),
+                                            color="black"
+                                        ),
+                                        text="Choose Image",
+                                        icon=Icons.UPLOAD_FILE,
+                                        expand=True,
+                                        on_click=self.pick_file,
+                                        icon_color="black"
+                                    ),
+                                    padding=padding.symmetric(0, 16)
+                                ),
+                                Container(
+                                    content = self.use_default_button,
+                                    padding=padding.symmetric(0, 16)
+                                )
+                            ]
+                        )
+                    )
+                ]
             )
         ]
+    
+    def did_mount(self):
+        self.page.overlay.append(self.pick_files_dialog)
+    
+    def pick_file(self, event: ControlEvent):
+        self.pick_files_dialog.pick_files(
+            allowed_extensions=[
+                "png",
+                "jpg",
+                "PNG",
+                "JPEG",
+                "JPG",
+                "webp",
+                "gif"
+            ]
+        )
     
     def hide_panel(self, event: ControlEvent):
         self.dark_mode_options.content_hidden = (event.data == "true")
@@ -123,6 +210,28 @@ class AppearanceSettings(Column):
         button: AccentColorButton = event.control
 
         self.ac_state.active = button.color
+    
+    def custom_background_picked(self, event: FilePickerResultEvent):
+        if event.files:
+            path = event.files[0].path
+            self.cb_state.active = path
+            self._source_path.visible = True
+            self.current_path_text.content.value = path
+            self.current_path_text.visible = True
+            self.use_default_button.disabled = False
+            self.background_preview.image = DecorationImage(
+                src=path,
+                fit=ImageFit.FILL
+            )
+            self.update()
+    
+    def default_bg(self, event: ControlEvent):
+        self.cb_state.active = None
+        self._source_path.visible = False
+        self.current_path_text.visible = False
+        self.background_preview.image = None
+        self.use_default_button.disabled = True
+        self.update()
 
 class ThemeButton(ListTile):
     refs: list = []
