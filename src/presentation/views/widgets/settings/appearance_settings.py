@@ -171,6 +171,7 @@ class AppearanceSettings(Column):
     
     def did_mount(self):
         self.page.overlay.append(self.pick_files_dialog)
+        self.update_bg_preview()
     
     def pick_file(self, event: ControlEvent):
         self.pick_files_dialog.pick_files(
@@ -231,6 +232,23 @@ class AppearanceSettings(Column):
         self.current_path_text.visible = False
         self.background_preview.image = None
         self.use_default_button.disabled = True
+        self.update()
+    
+    def update_bg_preview(self):
+        if not self.cb_state.active:
+            self._source_path.visible = False
+            self.current_path_text.visible = False
+            self.background_preview.image = None
+            self.use_default_button.disabled = True
+        else:
+            self._source_path.visible = True
+            self.current_path_text.content.value = self.cb_state.active
+            self.current_path_text.visible = True
+            self.use_default_button.disabled = False
+            self.background_preview.image = DecorationImage(
+                src=self.cb_state.active,
+                fit=ImageFit.FILL
+            )
         self.update()
 
 class ThemeButton(ListTile):

@@ -3,6 +3,7 @@ from services.singleton import Singleton
 class CustomBackgroundState(metaclass = Singleton):
     def __init__(self):
         self._active: str = None
+        self._change_callbacks: list = []
     
     @property
     def active(self) -> str:
@@ -11,7 +12,14 @@ class CustomBackgroundState(metaclass = Singleton):
     @active.setter
     def active(self, active: str):
         self._active = active
-        self.on_change()
+        for callback in self._change_callbacks:
+            callback()
     
+    @property
     def on_change(self):
-        pass
+        return self._change_callbacks
+    
+    @on_change.setter
+    def on_change(self, callback):
+        if callback not in self._change_callbacks:
+            self._change_callbacks.append(callback)
