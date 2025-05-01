@@ -19,13 +19,13 @@ class Language:
         match self.language:
             case "en":
                 return en_val
-            case "tag":
+            case "tl":
                 return tag_val
             case "ceb":
                 return ceb_val
-            case "jp":
+            case "ja":
                 return jp_val
-            case "esp":
+            case "es":
                 return span_val
             case _:
                 return None
