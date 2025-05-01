@@ -2,9 +2,9 @@ text_values = {
     "__LANG__": "en",
     # Home page
     "start": "START",
-    "get_your_hands_dity": "GET YOUR HANDS DIRTY",
+    "get_your_hands_dirty": "GET YOUR HANDS DIRTY\n",
     "tagline": "CODES TO CIRCUIT, XILOGIZED!",
-    "create_title": "CREATE MY XILOGISM",
+    "create_title": "CREATE MY XILOGISM\n",
     "format":"PSEUDOCODE FORMAT",
     "open_existing": "OPEN EXISTING",
     # Editor
@@ -52,5 +52,8 @@ text_values = {
     "keeb_hide": "Hide Sidebar",
     # Language
     "language": "Language",
-    
-    }
+    "greetings": "Greetings, my friend!",
+    "search": "Search",
+    "pinned_projects": "Pinned Projects",
+    "local_projects": "Local Projects"
+}

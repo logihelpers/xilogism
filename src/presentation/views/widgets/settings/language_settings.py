@@ -50,9 +50,6 @@ class LanguageSettings(Column):
         button.leading.opacity = 1
         button.leading.update()
 
-        self.preview_image.src = f"/icons_light/language_{button.language.name.lower()}.png"
-        self.preview_image.update()
-
 class LanguageButton(ListTile):
     refs: list = []
     active: bool = False

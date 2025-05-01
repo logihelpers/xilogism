@@ -1,9 +1,9 @@
 text_values = {
     "__LANG__": "ceb",
     "start": "SUGOD",
-    "get_your_hands_dity": "SUGDI NA",
+    "get_your_hands_dirty": "SUGDI NA\n",
     "tagline": "GIKAN SA KODIGO PAINGON SA SIRKITO, XILOGIZED!",
-    "create_title": "HIMOA ANG AKONG XILOGISM",
+    "create_title": "HIMOA ANG AKONG XILOGISM\n",
     "format": "PSEUDOCODE NGA PORMAT",
     "open_existing": "ABLI ANG DAAANG FILE",
     "view_mode": "Paagi sa Paglantaw",
@@ -45,4 +45,8 @@ text_values = {
     "keeb_shortcut": "Shortcut",
     "keeb_hide": "Itago ang Sidebar",
     "language": "Pinulongan",
+    "greetings": "Kumusta, higala!",
+    "search": "Pangita",
+    "pinned_projects": "Gipin nga mga Proyekto",
+    "local_projects": "Lokal nga mga Proyekto"
 }

@@ -14,6 +14,7 @@ class Dialogs(Enum):
 class DialogState(metaclass=Singleton):
     def __init__(self):
         self._state__ = Dialogs.CLOSE
+        self._done_build_callbacks: list = []
     
     @property
     def state(self) -> Dialogs:
@@ -34,7 +35,14 @@ class DialogState(metaclass=Singleton):
     @done_build.setter
     def done_build(self, done_build: Dialogs):
         self._done_build__ = done_build
-        self.on_done_build()
+        for callback in self._done_build_callbacks:
+            callback()
     
+    @property
     def on_done_build(self):
-        pass
+        return self._done_build_callbacks
+    
+    @on_done_build.setter
+    def on_done_build(self, callback):
+        if callback not in self._done_build_callbacks:
+            self._done_build_callbacks.append(callback)

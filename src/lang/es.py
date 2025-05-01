@@ -1,9 +1,9 @@
 text_values = {
     "__LANG__": "es",
     "start": "INICIAR",
-    "get_your_hands_dity": "¡MANOS A LA OBRA!",
+    "get_your_hands_dirty": "¡MANOS A LA OBRA!\n",
     "tagline": "¡DEL CÓDIGO AL CIRCUITO, XILOGIZED!",
-    "create_title": "CREAR MI XILOGISM",
+    "create_title": "CREAR MI XILOGISM\n",
     "format": "FORMATO DE PSEUDOCÓDIGO",
     "open_existing": "ABRIR EXISTENTE",
     "view_mode": "Modo de Vista",
@@ -45,4 +45,8 @@ text_values = {
     "keeb_shortcut": "Atajo",
     "keeb_hide": "Ocultar Barra Lateral",
     "language": "Idioma",
+    "greetings": "¡Hola, amigo!",
+    "search": "Buscar",
+    "pinned_projects": "Proyectos Fijados",
+    "local_projects": "Proyectos Locales"
 }

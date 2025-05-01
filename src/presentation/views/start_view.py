@@ -1,5 +1,6 @@
 from flet import *
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.states.language_state import LanguageState
 
 class StartView(Container):
     widget_scale: float = 1.0
@@ -9,14 +10,32 @@ class StartView(Container):
         self.widget_scale = 1.0
 
         self.active_sidebar_button_state = ActiveSideBarButtonState()
-    
-    def build(self):
+        self.lang_state = LanguageState()
+        self.lang_state.on_lang_updated = self.update_lang
+
         self.padding = padding.all(16)
         self.expand = True
         self.expand_loose = True
 
+        self.create_xilogism_span = TextSpan(
+            text="CREATE MY XILOGISM\n",
+            style=TextStyle(
+                size=18,
+                color="black",
+                weight=FontWeight.W_700
+            )
+        )
+
+        self.format_span = TextSpan(
+            text="Pseudocode Format",
+            style=TextStyle(
+                size=12,
+                color="black"
+            )
+        )
+
         self.new_button = FilledButton(
-            on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', "New Xilogism"),
+            on_click = lambda _: setattr(self.active_sidebar_button_state, 'active', "New Xilogism"),
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
@@ -30,21 +49,8 @@ class StartView(Container):
                         ),
                         Text(
                             spans=[
-                                TextSpan(
-                                    text="CREATE MY XILOGISM\n",
-                                    style=TextStyle(
-                                        size=18,
-                                        color="black",
-                                        weight=FontWeight.W_700
-                                    )
-                                ),
-                                TextSpan(
-                                    text="Pseudocode Format",
-                                    style=TextStyle(
-                                        size=12,
-                                        color="black"
-                                    )
-                                )
+                                self.create_xilogism_span,
+                                self.format_span
                             ],
                             text_align=TextAlign.START,
                             expand=True
@@ -60,6 +66,14 @@ class StartView(Container):
             on_hover=self._hover
         )
 
+        self.open_existing_text = Text(
+            value="OPEN EXISTING",
+            weight=FontWeight.W_600,
+            color="black",
+            text_align=TextAlign.START,
+            expand=True
+        )
+
         self.open_button = FilledButton(
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
@@ -72,13 +86,7 @@ class StartView(Container):
                             width=16,
                             height=16
                         ),
-                        Text(
-                            value="OPEN EXISTING",
-                            weight=FontWeight.W_600,
-                            color="black",
-                            text_align=TextAlign.START,
-                            expand=True
-                        )
+                        self.open_existing_text
                     ],
                 )
             ),
@@ -91,18 +99,36 @@ class StartView(Container):
             on_hover=self._hover
         )
 
+        self.logo_icon = Image(
+            src="light_mode.gif",
+            width=360,
+            height=360,
+        )
+
+        self.get_dirty_span = TextSpan(
+            text="GET YOUR HANDS DIRTY WITH\n",
+            style=TextStyle(
+                size=16,
+                weight=FontWeight.W_600,
+                italic=True
+            )
+        )
+
+        self.code_to_circuits_text = Text(
+            value="CODES TO CIRCUITS, XILOGIZED!",
+            size=20,
+            weight=FontWeight.W_700,
+            text_align=TextAlign.CENTER,
+        )
+
         self.content = Row(
             alignment=MainAxisAlignment.SPACE_AROUND,
             vertical_alignment=CrossAxisAlignment.CENTER,
             expand=True,
             controls=[
                 Container(
-                    content = Image(
-                        src="light_mode.gif",
-                        width=(320 * self.widget_scale) * 1.10,
-                        height=(320 * self.widget_scale) * 1.10,
-                    ),
-                    expand=True,
+                    content = self.logo_icon,
+                    expand=True
                 ),
                 Container(
                     expand = True,
@@ -114,14 +140,7 @@ class StartView(Container):
                         controls = [
                             Text(
                                 spans=[
-                                    TextSpan(
-                                        text="GET YOUR HANDS DIRTY WITH\n",
-                                        style=TextStyle(
-                                            size=16,
-                                            weight=FontWeight.W_600,
-                                            italic=True
-                                        )
-                                    ),
+                                    self.get_dirty_span,
                                     TextSpan(
                                         text="XILOGISM",
                                         style=TextStyle(
@@ -133,12 +152,7 @@ class StartView(Container):
                                 text_align=TextAlign.CENTER,
                                 no_wrap=True
                             ),
-                            Text(
-                                value="CODES TO CIRCUITS, XILOGIZED!",
-                                size=20,
-                                weight=FontWeight.W_700,
-                                text_align=TextAlign.CENTER,
-                            ),
+                            self.code_to_circuits_text,
                             Container(
                                 padding = padding.all(16),
                                 margin = margin.symmetric(8, 0),
@@ -157,19 +171,17 @@ class StartView(Container):
                 )
             ]
         )
-
-        super().build()
-    
-    def scale_all(self, scale: float):
-        if abs(scale - self.old_scale) > 0.05:
-            self.widget_scale = scale
-            self.build()
-            self.update()
-
-            self.old_scale = scale
     
     def _hover(self, event: ControlEvent):
         button: FilledButton = event.control
 
         button.scale = 1.10 if event.data == "true" else 1
         button.update()
+    
+    def update_lang(self):
+        self.create_xilogism_span.text = self.lang_state.lang_values['create_title']
+        self.format_span.text = self.lang_state.lang_values["format"]
+        self.open_existing_text.value = self.lang_state.lang_values["open_existing"]
+        self.get_dirty_span.text = self.lang_state.lang_values["get_your_hands_dirty"]
+        self.code_to_circuits_text.value = self.lang_state.lang_values["tagline"]
+        self.update()

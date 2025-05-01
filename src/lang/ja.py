@@ -1,9 +1,9 @@
 text_values = {
     "__LANG__": "ja",
     "start": "開始",
-    "get_your_hands_dity": "さあ始めよう",
+    "get_your_hands_dirty": "さあ始めよう\n",
     "tagline": "コードから回路へ、XILOGIZED！",
-    "create_title": "マイXILOGISMを作成",
+    "create_title": "マイXILOGISMを作成\n",
     "format": "擬似コード形式",
     "open_existing": "既存を開く",
     "view_mode": "閲覧モード",
@@ -45,4 +45,8 @@ text_values = {
     "keeb_shortcut": "ショートカット",
     "keeb_hide": "サイドバーを隠す",
     "language": "言語",
+    "greetings": "やあ、友だち！",
+    "search": "検索",
+    "pinned_projects": "ピン留めしたプロジェクト",
+    "local_projects": "ローカルプロジェクト"
 }

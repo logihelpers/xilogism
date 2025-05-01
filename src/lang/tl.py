@@ -1,10 +1,10 @@
 text_values = {
     "__LANG__": "tl",
     "start": "SIMULA",
-    "get_your_hands_dity": "MAGSIMULA NA",
-    "tagline": "MULA KODIGO HANGGANG SIRKITO, XILOGIZED!",
-    "create_title": "GUMAWA NG XILOGISM KO",
-    "format": "PSEUDOCODE NA FORMAT",
+    "get_your_hands_dirty": "MAGSIMULA NA\n",
+    "tagline": "MULA KODIGO HANGGANG SIRKITO, XILOGIZED YAN!",
+    "create_title": "GUMAWA NG XILOGISM\n",
+    "format": "MALA-PSEUDOCODE NA FORMAT",
     "open_existing": "BUKSAN ANG NAUNANG FILE",
     "view_mode": "Paraan ng Pagtingin",
     "exp": "I-export",
@@ -45,4 +45,8 @@ text_values = {
     "keeb_shortcut": "Shortcut",
     "keeb_hide": "Itago ang Sidebar",
     "language": "Wika",
+    "greetings": "Isang Pagbati, Kaibigan!",
+    "search": "Hanap",
+    "pinned_projects": "Mga Naka-pin na Proyekto",
+    "local_projects": "Mga Lokal na Proyekto"
 }
