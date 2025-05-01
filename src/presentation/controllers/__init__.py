@@ -21,3 +21,4 @@ from presentation.controllers.expand_canvas_controller import ExpandCanvasContro
 from presentation.controllers.export_controller import ExportController
 from presentation.controllers.xilofiles_controller import XiloFilesController
 from presentation.controllers.title_change_controller import TitleChangeController
+from presentation.controllers.custom_background_controller import CustomBackgroundController

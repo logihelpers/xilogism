@@ -23,7 +23,10 @@ class DialogStateController(Controller):
         
         match active:
             case Dialogs.CLOSE:
-                [self.page.close(overlay) for overlay in self.page.overlay] # One liner close all dialogs
+                try:
+                    [self.page.close(overlay) for overlay in self.page.overlay] # One liner close all dialogs
+                except:
+                    pass
             case Dialogs.SETTINGS:
                 self.page.open(self.settings_dialog)
             case Dialogs.LOGIN:
