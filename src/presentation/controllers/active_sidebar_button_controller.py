@@ -1,5 +1,6 @@
 from presentation.states.active_sidebar_button_state import *
 from presentation.states.active_file_state import ActiveFileState
+from presentation.states.editor_content_state import EditorContentState
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import DialogState, Dialogs
 
@@ -23,6 +24,7 @@ class ActiveSideBarButtonController(Controller):
         self.af_state = ActiveFileState()
         self.dia_state = DialogState()
         self.ns_state = NewSaveState()
+        self.ec_state = EditorContentState()
 
         self.asbb_state.on_change = self.change_active
         self.ns_state.on_change = lambda: setattr(self, 'save_state_changed', True)
@@ -39,7 +41,7 @@ class ActiveSideBarButtonController(Controller):
                 if widget.active:
                     return
                 
-                if self.creating_new:
+                if self.creating_new and self.ec_state.content["New"] != "":
                     self.dia_state.state = Dialogs.CREATE_NEW
                     while not self.save_state_changed:
                         self.creating_new = True

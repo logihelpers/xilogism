@@ -1,6 +1,9 @@
 from presentation.views.window_view import WindowView
 from presentation.states.sidebar_hide_state import *
 from presentation.states.media_query_state import MediaQueryState
+from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.states.active_file_state import ActiveFileState
+from presentation.states.editor_content_state import EditorContentState
 
 from flet import *
 
@@ -16,6 +19,9 @@ class WindowController(Controller):
 
         self.sbh_state = SideBarHideState()
         self.mq_state = MediaQueryState()
+        self.af_state = ActiveFileState()
+        self.asbb_state = ActiveSideBarButtonState()
+        self.ec_state = EditorContentState()
         self.mq_state.on_size_change = self.update_icon_size
 
         self.page.session.set("window", self.window)
@@ -33,6 +39,9 @@ class WindowController(Controller):
     def handle_keyboard_events(self, event: KeyboardEvent):
         if (event.key == "\\" and event.ctrl):
             self.sbh_state.invert(event)
+        elif (event.key == "S" and event.ctrl):
+            if self.af_state.active == "New Xilogism" and self.ec_state.content["New"] != "":
+                self.asbb_state.active = "Start"
     
     def update_icon_size(self):
         width = self.mq_state.size[0]
