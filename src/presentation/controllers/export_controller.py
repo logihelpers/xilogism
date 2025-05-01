@@ -11,7 +11,7 @@ import shutil
 from PIL import Image as IMG
 
 from flet import Page, margin as mg, SnackBar, Text, SnackBarBehavior
-
+from presentation.states.active_file_state import ActiveFileState
 from presentation.controllers.controller import Controller, Priority
 from presentation.states.render_state import RenderState
 from presentation.states.sidebar_hide_state import SideBarHideState
@@ -20,14 +20,14 @@ import docx2pdf as d2f
 
 class ExportController(Controller):
     priority = Priority.NONE
-    def __init__(self, page: Page, key_name: str = "New"):
+    def __init__(self, page: Page):
         self.page = page
-        self.key_name = key_name
 
         self.export_state = ExportState()
         self.render_state = RenderState()
         self.sbh_state = SideBarHideState()
         self.dia_state = DialogState()
+        self.af_state = ActiveFileState()
 
         self.export_state.on_export = self.export
 
@@ -38,6 +38,12 @@ class ExportController(Controller):
         proj_name: str = self.export_state.proj_name
         creator: str = self.export_state.creator
         date: str = self.export_state.date
+
+        self.key_name = ""
+        for key in self.render_state.image.keys():
+            if key == self.af_state.active.title:
+                self.key_name = key
+                break
 
         self.dia_state.state = Dialogs.CLOSE
 
@@ -81,90 +87,93 @@ class ExportController(Controller):
         image_data = base64.b64decode(self.render_state.image[self.key_name])
         image_stream = io.BytesIO(image_data)
         
-        doc: Document = None
-        if margin and titleblock_enable:
-            doc = Document("src/assets/full.docx")
+        try:
+            doc: Document = None
+            if margin and titleblock_enable:
+                doc = Document("src/assets/full.docx")
 
-            table = doc.tables[0]
+                table = doc.tables[0]
 
-            # Insert image in merged cell 0,0 and 0,1
-            image_cell = table.cell(0, 0)
-            paragraph = image_cell.paragraphs[0]
-            run = paragraph.add_run()
-            run.add_picture(image_stream, width=Inches(5))
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                # Insert image in merged cell 0,0 and 0,1
+                image_cell = table.cell(0, 0)
+                paragraph = image_cell.paragraphs[0]
+                run = paragraph.add_run()
+                run.add_picture(image_stream, width=Inches(5))
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-            # Fill title, creator, and date
-            table.cell(1, 0).text = table.cell(1, 0).text.replace('{TITLE}', proj_name)
-            table.cell(1, 1).text = table.cell(1, 1).text.replace('{CREATOR}', creator)
-            table.cell(2, 1).text = table.cell(2, 1).text.replace('{DATE}', date)
-        elif not margin and titleblock_enable:
-            doc = Document("src/assets/no_margin.docx")
+                # Fill title, creator, and date
+                table.cell(1, 0).text = table.cell(1, 0).text.replace('{TITLE}', proj_name)
+                table.cell(1, 1).text = table.cell(1, 1).text.replace('{CREATOR}', creator)
+                table.cell(2, 1).text = table.cell(2, 1).text.replace('{DATE}', date)
+            elif not margin and titleblock_enable:
+                doc = Document("src/assets/no_margin.docx")
 
-            paragraph = doc.add_paragraph()
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = paragraph.add_run()
-            run.add_picture(image_stream, width=Inches(5))
+                paragraph = doc.add_paragraph()
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = paragraph.add_run()
+                run.add_picture(image_stream, width=Inches(5))
 
-            # Footer table handling
-            section = doc.sections[0]
-            footer = section.footer
-            table = footer.tables[0]
+                # Footer table handling
+                section = doc.sections[0]
+                footer = section.footer
+                table = footer.tables[0]
 
-            table.cell(0, 0).text = table.cell(0, 0).text.replace('{TITLE}', proj_name)
-            table.cell(0, 1).text = table.cell(0, 1).text.replace('{CREATOR}', creator)
-            table.cell(1, 1).text = table.cell(1, 1).text.replace('{DATE}', date)
-        elif margin and not titleblock_enable:
-            doc = Document("src/assets/no_titlebar.docx")
+                table.cell(0, 0).text = table.cell(0, 0).text.replace('{TITLE}', proj_name)
+                table.cell(0, 1).text = table.cell(0, 1).text.replace('{CREATOR}', creator)
+                table.cell(1, 1).text = table.cell(1, 1).text.replace('{DATE}', date)
+            elif margin and not titleblock_enable:
+                doc = Document("src/assets/no_titlebar.docx")
 
-            table = doc.tables[0]
+                table = doc.tables[0]
 
-            # Insert image into the single large table cell
-            image_cell = table.cell(0, 0)
-            paragraph = image_cell.paragraphs[0]
-            run = paragraph.add_run()
-            run.add_picture(image_stream, width=Inches(5))
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        else:
-            doc = Document("src/assets/plain.docx")
-            paragraph = doc.add_paragraph()
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = paragraph.add_run()
-            run.add_picture(image_stream, width=Inches(5))
-        
-        if is_pdf == 0:
-            doc.save("test.docx")
-
-            return "test.docx"
-        elif is_pdf == 1:
-            with tempfile.TemporaryDirectory() as tempdir:
-                docx_path = os.path.join(tempdir, "temp.docx")
-                pdf_path = "test.pdf"
-        
-                doc.save(docx_path)
-
-                # Convert DOCX to PDF
-                d2f.convert(docx_path, pdf_path)
+                # Insert image into the single large table cell
+                image_cell = table.cell(0, 0)
+                paragraph = image_cell.paragraphs[0]
+                run = paragraph.add_run()
+                run.add_picture(image_stream, width=Inches(5))
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            else:
+                doc = Document("src/assets/plain.docx")
+                paragraph = doc.add_paragraph()
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = paragraph.add_run()
+                run.add_picture(image_stream, width=Inches(5))
             
-                return pdf_path
-        else:
-            output_pdf_path = "copied_temp.pdf"
-            with tempfile.TemporaryDirectory() as tempdir:
-                docx_path = os.path.join(tempdir, "temp.docx")
-                pdf_path = os.path.join(tempdir, "temp.pdf")
-        
-                doc.save(docx_path)
+            if is_pdf == 0:
+                doc.save("test.docx")
 
-                # Convert DOCX to PDF
-                d2f.convert(docx_path, pdf_path)
-                shutil.copy2(pdf_path, output_pdf_path)
+                return "test.docx"
+            elif is_pdf == 1:
+                with tempfile.TemporaryDirectory() as tempdir:
+                    docx_path = os.path.join(tempdir, "temp.docx")
+                    pdf_path = "test.pdf"
+            
+                    doc.save(docx_path)
 
-                pdf = pdfium.PdfDocument(output_pdf_path)
+                    # Convert DOCX to PDF
+                    d2f.convert(docx_path, pdf_path)
+                
+                    return pdf_path
+            else:
+                output_pdf_path = "copied_temp.pdf"
+                with tempfile.TemporaryDirectory() as tempdir:
+                    docx_path = os.path.join(tempdir, "temp.docx")
+                    pdf_path = os.path.join(tempdir, "temp.pdf")
+            
+                    doc.save(docx_path)
 
-                image = pdf[0].render(scale=4).to_pil()
-                image.save("test.png", format='PNG')
+                    # Convert DOCX to PDF
+                    d2f.convert(docx_path, pdf_path)
+                    shutil.copy2(pdf_path, output_pdf_path)
 
-            return "test.png"
+                    pdf = pdfium.PdfDocument(output_pdf_path)
+
+                    image = pdf[0].render(scale=4).to_pil()
+                    image.save("test.png", format='PNG')
+
+                return "test.png"
+        except:
+            return ""
     
     def export_to_png(self):
         image_data = base64.b64decode(self.render_state.image[self.key_name])

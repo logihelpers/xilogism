@@ -1,6 +1,5 @@
 from presentation.states.xilofile_state import XiloFileState
 from presentation.states.editor_content_state import EditorContentState, CodeState
-from presentation.states.active_file_state import ActiveFileState
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.controllers.editor_view_fonts_controller import EditorViewFontsController
 from presentation.controllers.expand_canvas_controller import ExpandCanvasController
