@@ -9,7 +9,7 @@ from services.pseudocode_parser import PseudocodeParser
 from services.pygenerator import PythonGenerator
 from services.validator import PythonValidator
 from services.boolean_converter import BooleanConverter
-from services.init_files import InitFiles
+from services.init_files import AppendFile
 
 from presentation.controllers.controller import Controller, Priority
 from presentation.views.editor_view import EditorView
@@ -59,33 +59,20 @@ class EditorContentStateController(Controller):
             with open(file_path, "x") as f:
                 json.dump(file_content, f, indent=4)
 
-            self.page.open(
-                SnackBar(
-                    content=Text(f"Your xilogism is now saved in {file_path}."), 
-                    behavior=SnackBarBehavior.FLOATING, 
-                    duration=10000,
-                    show_close_icon=True,
-                    margin=margin.all(12) if not self.sbh_state.state.value else margin.only(left=212, top=12, right=12, bottom=12)
+            try:
+                self.page.open(
+                    SnackBar(
+                        content=Text(f"Your xilogism is now saved in {file_path}."), 
+                        behavior=SnackBarBehavior.FLOATING, 
+                        duration=10000,
+                        show_close_icon=True,
+                        margin=margin.all(12) if not self.sbh_state.state.value else margin.only(left=212, top=12, right=12, bottom=12)
+                    )
                 )
-            )
-
-            self.page.run_thread(self.run, self.page, file_path)
-
-    def run(self, page: Page, file_path):
-        try:
-            self.page.open(
-                SnackBar(
-                    content=Text(f"Your xilogism is now saved in {file_path}."), 
-                    behavior=SnackBarBehavior.FLOATING, 
-                    duration=10000,
-                    show_close_icon=True,
-                    margin=margin.all(12) if not self.sbh_state.state.value else margin.only(left=212, top=12, right=12, bottom=12)
-                )
-            )
-        except:
-            pass
-
-        InitFiles(page)
+            except:
+                pass
+            
+            AppendFile(file_path)
 
     def parse_content(self):
         active: str = self.ec_state.content[self.key_name]

@@ -33,19 +33,25 @@ class Files(metaclass=Singleton):
             else:
                 print(f"Directory not found: {directory}")
     
+    def append_file(self, file_path: Path):
+        xilofile = self.process_local(str(file_path))
+        self.xf_state.appended_file = xilofile
+    
     def process_local(self, file_path: str):
         with open(file_path, "r") as file:
             file = json.load(file)
             stats = os.stat(file_path)
-            self.append(
-                XiloFile(
-                    title=file['name'],
-                    path=file_path,
-                    date=datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
-                    size=stats.st_size,
-                    storage_type=StorageType.LOCAL
-                )
+
+            xilofile = XiloFile(
+                title=file['name'],
+                path=file_path,
+                date=datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
+                size=stats.st_size,
+                storage_type=StorageType.LOCAL
             )
+
+            self.append(xilofile)
+            return xilofile
 
     def retrieve_files_gdrive(self):
         pass

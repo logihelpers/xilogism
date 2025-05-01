@@ -24,6 +24,7 @@ class XiloFilesController(Controller):
 
         self.xf_state = XiloFileState()
         self.xf_state.on_files_change = self.load_views
+        self.xf_state.on_file_appended = self.append_view
         self.asb_state = ActiveSideBarButtonState()
         self.ec_state = EditorContentState()
 
@@ -31,9 +32,6 @@ class XiloFilesController(Controller):
         self.sidebar: SideBar = self.page.session.get("sidebar")
 
     def load_views(self):
-        if len(XiloFilesController.extra_controllers) / 3 != len(self.xf_state.files):
-            XiloFilesController.already_loaded = False
-
         if XiloFilesController.already_loaded:
             return
 
@@ -41,32 +39,36 @@ class XiloFilesController(Controller):
         self.switcher.controls = self.switcher.controls[:3]
         self.sidebar.local_files.controls = []
         XiloFilesController.extra_controllers = []
+        self.page.update()
         for xilofile in xilo_files:
-            with open(xilofile.path, "r", encoding="utf-8") as f:
-                json_file = json.load(f)
-
-                name = json_file['name']
-                content = json_file['content']
-
-                self.ec_state.content[name] = content
-                self.ec_state.code_state[name] = CodeState.BLANK
-
-                editor = EditorView(name)
-                self.switcher.controls.append(editor)
-                self.switcher.update()
-
-                XiloFilesController.extra_controllers.append(EditorViewFontsController(self.page, editor))
-                XiloFilesController.extra_controllers.append(ExpandCanvasController(self.page, editor))
-                XiloFilesController.extra_controllers.append(EditorContentStateController(self.page, name, editor))
-
-                button = SideBarButton(
-                    "icons_light/document.png",
-                    name,
-                    on_button_press=lambda e: setattr(self.asb_state, 'active', e.control.label)
-                )
-                button.tooltip = xilofile.path
-
-                self.sidebar.local_files.controls.append(button)
-                self.sidebar.local_files.update()
+            self.append_view(xilofile)
         
         XiloFilesController.already_loaded = True
+    
+    def append_view(self, xilofile: XiloFile):
+        with open(xilofile.path, "r", encoding="utf-8") as f:
+            json_file = json.load(f)
+
+            name = json_file['name']
+            content = json_file['content']
+
+            self.ec_state.content[name] = content
+            self.ec_state.code_state[name] = CodeState.BLANK
+
+            editor = EditorView(name)
+            self.switcher.controls.append(editor)
+            self.switcher.update()
+
+            XiloFilesController.extra_controllers.append(EditorViewFontsController(self.page, editor))
+            XiloFilesController.extra_controllers.append(ExpandCanvasController(self.page, editor))
+            XiloFilesController.extra_controllers.append(EditorContentStateController(self.page, name, editor))
+
+            button = SideBarButton(
+                "icons_light/document.png",
+                name,
+                on_button_press=lambda e: setattr(self.asb_state, 'active', e.control.label)
+            )
+            button.tooltip = xilofile.path
+
+            self.sidebar.local_files.controls.append(button)
+            self.sidebar.local_files.update()

@@ -28,7 +28,7 @@ class RenderController(Controller):
                     nodes.append(InputNode(30, 50))
                 case "OUTPUT_NODE":
                     nodes.append(OutputNode(200, 80))
-                case "WIRE":
-                    print("WIRE:", gate_info)
+                # case "WIRE":
+                    # print("WIRE:", gate_info)
         
         self.render_state.output[key_name] = nodes

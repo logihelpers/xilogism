@@ -8,6 +8,7 @@ from services.singleton import Singleton
 class XiloFileState(metaclass=Singleton):
     def __init__(self):
         self._files__: List[XiloFile] = []
+        self._appended_file: XiloFile = None
     
     @property
     def files(self) -> List[XiloFile]:
@@ -19,4 +20,16 @@ class XiloFileState(metaclass=Singleton):
         self.on_files_change()
     
     def on_files_change(self):
+        pass
+
+    @property
+    def appended_file(self):
+        return self._appended_file
+    
+    @appended_file.setter
+    def appended_file(self, file: XiloFile):
+        self._appended_file = file
+        self.on_file_appended(file)
+    
+    def on_file_appended(file: XiloFile):
         pass
