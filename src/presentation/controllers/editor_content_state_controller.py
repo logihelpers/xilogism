@@ -93,16 +93,19 @@ class EditorContentStateController(Controller):
         if self.old_active == active or not self.af_state.active:
             return
         
-        if type(self.af_state.active) != XiloFile or (type(self.af_state.active) == XiloFile and self.af_state.active.title != self.key_name):
+        if isinstance(self.af_state.active, str) and self.af_state.active != "New Xilogism":
+            return
+        elif isinstance(self.af_state.active, XiloFile) and self.af_state.active.title != self.key_name:
             return
 
         self.old_active = active
 
-        json_file: dict = {}
-        json_file['name'] = self.key_name
-        json_file['content'] = active
-        with open(self.af_state.active.path, "w", encoding="utf-8") as f:
-            json.dump(json_file, f, indent=4)
+        if not isinstance(self.af_state.active, str):
+            json_file: dict = {}
+            json_file['name'] = self.key_name
+            json_file['content'] = active
+            with open(self.af_state.active.path, "w", encoding="utf-8") as f:
+                json.dump(json_file, f, indent=4)
 
         try:
             self.editor_view.code_editor.value = self.ec_state.content[self.key_name]
