@@ -122,19 +122,9 @@ class OpenExistingView(Container):
     def update_colors(self):
         self.colors = self.ac_state.color_values
         
-        # Update text colors
-        self.greetings_text.color = self.colors.get("text_color", "#000000")
-        self.pinned_text.color = self.colors.get("text_color", "#000000")
-        self.local_text.color = self.colors.get("text_color", "#000000")
-        
         # Update search text field
         self.search_tf.bgcolor = self.ac_state.active.value
         self.search_tf.border = border.all(1, self.colors.get("divider_color", "#6d6d6d"))
-        self.search_tf.hint_style = TextStyle(
-            color=self.colors.get("text_color", "#000000"),
-            weight=FontWeight.W_500,
-            size=14,
-        )
         
         # Update divider
         self.divider.color = self.colors.get("divider_color", "#6d6d6d")
