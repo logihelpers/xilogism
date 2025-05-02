@@ -1,6 +1,7 @@
 from flet import *
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
 
 class StartView(Container):
     widget_scale: float = 1.0
@@ -12,6 +13,8 @@ class StartView(Container):
         self.active_sidebar_button_state = ActiveSideBarButtonState()
         self.lang_state = LanguageState()
         self.lang_state.on_lang_updated = self.update_lang
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.padding = padding.all(16)
         self.expand = True
@@ -184,4 +187,9 @@ class StartView(Container):
         self.open_existing_text.value = self.lang_state.lang_values["open_existing"]
         self.get_dirty_span.text = self.lang_state.lang_values["get_your_hands_dirty"]
         self.code_to_circuits_text.value = self.lang_state.lang_values["tagline"]
+        self.update()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.create_xilogism_span.style.color = colors["text_color"]
         self.update()

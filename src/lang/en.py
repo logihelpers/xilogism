@@ -2,7 +2,7 @@ text_values = {
     "__LANG__": "en",
     # Home page
     "start": "START",
-    "get_your_hands_dirty": "GET YOUR HANDS DIRTY\n",
+    "get_your_hands_dirty": "GET YOUR HANDS DIRTY WITH\n",
     "tagline": "CODES TO CIRCUIT, XILOGIZED!",
     "create_title": "CREATE MY XILOGISM\n",
     "format":"PSEUDOCODE FORMAT",

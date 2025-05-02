@@ -1,7 +1,7 @@
 text_values = {
     "__LANG__": "tl",
     "start": "SIMULA",
-    "get_your_hands_dirty": "MAGSIMULA NA\n",
+    "get_your_hands_dirty": "PANAHON NA PARA SA\n",
     "tagline": "MULA KODIGO HANGGANG SIRKITO, XILOGIZED YAN!",
     "create_title": "GUMAWA NG XILOGISM\n",
     "format": "MALA-PSEUDOCODE NA FORMAT",

@@ -1,6 +1,7 @@
 from flet import *
 from presentation.views.widgets.existing_view import *
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
 
 class OpenExistingView(Container):
     widget_scale: float = 1.0
@@ -10,6 +11,8 @@ class OpenExistingView(Container):
 
         self.lang_state = LanguageState()
         self.lang_state.on_lang_updated = self.update_lang
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.widget_scale = 1.0
         self.padding = padding.all(16 * self.widget_scale)
@@ -102,8 +105,12 @@ class OpenExistingView(Container):
         )
     
     def update_lang(self):
-        self.greetings_text.value = self.lang_state.lang_values["greetings"]
-        self.search_tf.hint_text = self.lang_state.lang_values["search"]
-        self.pinned_text.value = self.lang_state.lang_values["pinned_projects"]
-        self.local_text.value = self.lang_state.lang_values["local_projects"]
+        lang_values = self.lang_state.lang_values
+        self.greetings_text.value = lang_values["greetings"]
+        self.search_tf.hint_text = lang_values["search"]
+        self.pinned_text.value = lang_values["pinned_projects"]
+        self.local_text.value = lang_values["local_projects"]
         self.update()
+    
+    def update_colors(self):
+        color_values = self.ac_state.color_values

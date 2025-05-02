@@ -3,7 +3,7 @@ from xilowidgets import Revealer, Editor, EditorTheme
 
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.views.widgets.settings.accent_color_button import AccentColorButton
-from presentation.states.dark_mode_state import DarkModeState
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.custom_background_state import CustomBackgroundState
 from presentation.states.accent_color_state import AccentColorState, AccentColors
@@ -195,7 +195,7 @@ class AppearanceSettings(Column):
     def switch_dark_mode(self, event: ControlEvent):
         button: SettingsImageButton = event.control
 
-        self.dm_state.active = (button.text == "Dark")
+        self.dm_state.active = DarkModeScheme(button.text == "Dark")
     
     def switch_theme(self, event: ControlEvent):
         button: ThemeButton = event.control

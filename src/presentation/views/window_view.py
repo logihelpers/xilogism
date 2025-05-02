@@ -10,6 +10,7 @@ from presentation.views.open_existing_view import OpenExistingView
 from presentation.views.dialogs.settings_dialog import SettingsDialog
 
 from presentation.states.media_query_state import MediaQueryState
+from presentation.states.accent_color_state import AccentColorState
 
 from xilowidgets import MediaQuery, Revealer, Switcher
 
@@ -21,6 +22,8 @@ class WindowView(Row):
         super().build()
 
         self.mq_state = MediaQueryState()
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.media_query = MediaQuery(on_size_change=lambda e: setattr(self.mq_state, 'size', (e.window_width, e.window_height)))
         self.sidebar = SideBar()
@@ -72,3 +75,8 @@ class WindowView(Row):
         self.spacing=0
         self.expand=True
         self.vertical_alignment = CrossAxisAlignment.STRETCH
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.page.bgcolor = colors["bg_color"]
+        self.page.update()

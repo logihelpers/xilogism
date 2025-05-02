@@ -12,6 +12,8 @@ class AccentColors(Enum):
 class AccentColorState(metaclass = Singleton):
     def __init__(self):
         self._active: AccentColors = AccentColors.SORA
+        self._color_values: dict = {}
+        self._colors_updated_callbacks: list = []
     
     @property
     def active(self) -> AccentColors:
@@ -24,3 +26,22 @@ class AccentColorState(metaclass = Singleton):
     
     def on_change(self):
         pass
+
+    @property
+    def color_values(self) -> dict:
+        return self._color_values
+    
+    @color_values.setter
+    def color_values(self, value: dict):
+        self._color_values.update(value)
+        for callback in self._colors_updated_callbacks:
+            callback()
+    
+    @property
+    def on_colors_updated(self):
+        return self._colors_updated_callbacks
+    
+    @on_colors_updated.setter
+    def on_colors_updated(self, callback):
+        if callback not in self._colors_updated_callbacks:
+            self._colors_updated_callbacks.append(callback)
