@@ -11,6 +11,7 @@ from presentation.views.dialogs.settings_dialog import SettingsDialog
 
 from presentation.states.media_query_state import MediaQueryState
 from presentation.states.accent_color_state import AccentColorState
+from presentation.states.animation_disable_state import AnimationDisableState
 
 from xilowidgets import MediaQuery, Revealer, Switcher
 
@@ -24,6 +25,8 @@ class WindowView(Row):
         self.mq_state = MediaQueryState()
         self.ac_state = AccentColorState()
         self.ac_state.on_colors_updated = self.update_colors
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.media_query = MediaQuery(on_size_change=lambda e: setattr(self.mq_state, 'size', (e.window_width, e.window_height)))
         self.sidebar = SideBar()
@@ -80,3 +83,9 @@ class WindowView(Row):
         colors = self.ac_state.color_values
         self.page.bgcolor = colors["bg_color"]
         self.page.update()
+    
+    def update_animations(self):
+        animate = self.ad_state.state
+        self.slidable_panel.animation_duration = 500 if animate else 0
+        self.switcher.animation_duration = 500 if animate else 25
+        self.update()

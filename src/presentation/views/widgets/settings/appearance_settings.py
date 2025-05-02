@@ -7,6 +7,7 @@ from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.custom_background_state import CustomBackgroundState
 from presentation.states.accent_color_state import AccentColorState, AccentColors
+from presentation.states.animation_disable_state import AnimationDisableState
 
 class AppearanceSettings(Column):
     THEME_BUTTON_SCALE: float = 1
@@ -17,6 +18,8 @@ class AppearanceSettings(Column):
         self.et_state = EditorThemeState()
         self.ac_state = AccentColorState()
         self.cb_state = CustomBackgroundState()
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -250,6 +253,13 @@ class AppearanceSettings(Column):
                 fit=ImageFit.FILL
             )
         self.update()
+    
+    def update_animations(self):
+        try:
+            self.dark_mode_options.animation_duration = 500 if self.ad_state.state else 0
+            self.dark_mode_options.update()
+        except:
+            pass
 
 class ThemeButton(ListTile):
     refs: list = []

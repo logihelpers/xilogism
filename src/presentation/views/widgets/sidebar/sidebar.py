@@ -68,7 +68,7 @@ class SideBar(Container):
                                         width=24 * self.widget_scale,
                                         height=24 * self.widget_scale
                                     ),
-                                    Text("Guest User", weight=FontWeight.W_700, color="black", size=18 * self.widget_scale)
+                                    Text("Guest User", weight=FontWeight.W_700, color="black", size=18 * self.widget_scale, expand=True)
                                 ]
                             ),
                             on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.REGISTER)

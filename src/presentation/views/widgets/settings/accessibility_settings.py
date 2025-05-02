@@ -10,6 +10,7 @@ class AccessibilitySettings(Column):
         super().__init__()
 
         self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_anim_disable_switch
         self.cb_state = ColorBlindState()
         self.df_state = DyslexiaFriendlyState()
         self.lh_state = LeftHandedState()
@@ -17,6 +18,12 @@ class AccessibilitySettings(Column):
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
         self.spacing = 16
+
+        self.anim_disable_switch = Switch(
+            label="Animations:      ", 
+            label_position=LabelPosition.LEFT,
+            on_change=lambda e: setattr(self.ad_state, 'state', (e.data == "true"))
+        )
 
         self.controls = [
             Text("Dyslexia-Friendly Options", weight=FontWeight.BOLD),
@@ -54,11 +61,7 @@ class AccessibilitySettings(Column):
                 ]
             ),
             Text("Animation Settings", weight=FontWeight.BOLD),
-            Switch(
-                label="Disable Animations:      ", 
-                label_position=LabelPosition.LEFT,
-                on_change=lambda e: setattr(self.ad_state, 'state', (e.data == "true"))
-            ),
+            self.anim_disable_switch,
             Text("Keyboard Shortcuts", weight=FontWeight.BOLD),
             DataTable(
                 columns=[
@@ -100,3 +103,10 @@ class AccessibilitySettings(Column):
         button: SettingsImageButton = event.control
 
         self.lh_state.state = (button.text == "Left-Handed")
+    
+    def update_anim_disable_switch(self):
+        try:
+            self.anim_disable_switch.value = self.ad_state.state
+            self.anim_disable_switch.update()
+        except:
+            pass

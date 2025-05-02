@@ -77,11 +77,3 @@ class SideBarButton(FilledButton):
     
     def on_button_press(self, event: ControlEvent):
         pass
-
-    @staticmethod
-    def scale_all(scale: float):
-        button: SideBarButton = None
-        for name, button in SideBarButton.refs.items():
-            button.widget_scale = scale
-            button.build()
-            button.update()

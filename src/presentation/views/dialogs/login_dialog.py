@@ -3,6 +3,7 @@ from xilowidgets import XDialog
 from services.singleton import Singleton
 
 from presentation.states.dialogs_state import *
+from presentation.states.animation_disable_state import AnimationDisableState
 
 class LoginDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -10,8 +11,11 @@ class LoginDialog(XDialog, metaclass=Singleton):
     
     def __init__(self):
         super().__init__()
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = lambda e: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
+
         self.bgcolor = "#ededed"
-        self.open_duration = 300
+        self.open_duration = 300 if self.ad_state.state else 0
         self.width = 320
         self.height = 500
 

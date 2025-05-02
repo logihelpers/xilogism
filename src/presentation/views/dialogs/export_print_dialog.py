@@ -2,10 +2,9 @@ from flet import *
 from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.render_state import RenderState
 from presentation.states.export_state import ExportState, FileFormat
+from presentation.states.animation_disable_state import AnimationDisableState
 
 from xilowidgets import Revealer, XDialog, Switcher
-
-from services.singleton import Singleton
 
 class ExportPrintDialog(XDialog):
     def __init__(self):
@@ -15,6 +14,8 @@ class ExportPrintDialog(XDialog):
         self.export_state = ExportState()
         self.r_state = RenderState()
         self.r_state.on_image_change = self.update_preview
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.content_padding = 0
         self.title_padding = 0
@@ -24,7 +25,7 @@ class ExportPrintDialog(XDialog):
         self.actions_padding = padding.all(16)
         self.action_button_padding = 0
         self.actions_overflow_button_spacing = 0
-        self.open_duration = 300
+        self.open_duration = 300 if self.ad_state.state else 0
         self.modal = True
 
         self.navigator = SegmentedButton(
@@ -308,6 +309,13 @@ class ExportPrintDialog(XDialog):
                 ]
             )
         )
+    
+    def update_animations(self):
+        animate = self.ad_state.state
+        self.open_duration = 300 if animate else 0
+        self.print_export_setting.animation_duration = 300 if animate else 25
+        self.extra_options.animation_duration = 500 if animate else 0
+        self.update()
     
     def update_titleblock(self, event: ControlEvent):
         self.export_state.titleblock_enable = (event.data == "true")

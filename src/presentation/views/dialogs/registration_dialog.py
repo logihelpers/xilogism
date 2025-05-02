@@ -3,6 +3,7 @@ from services.singleton import Singleton
 from xilowidgets import XDialog
 
 from presentation.states.dialogs_state import *
+from presentation.states.animation_disable_state import AnimationDisableState
 
 class RegistrationDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -10,12 +11,15 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
     
     def __init__(self):
         super().__init__()
+        self.dia_state = DialogState()
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = lambda e: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
+
         self.bgcolor = "#ededed"
         self.width = 320
         self.height = 540
-        self.open_duration = 300
+        self.open_duration = 300 if self.ad_state.state else 0
 
-        self.dia_state = DialogState()
         self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
         
     def build(self):

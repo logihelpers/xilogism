@@ -197,14 +197,6 @@ class TitleBar(Container):
             )
         )
     
-    def scale_all(self, scale: float):
-        if abs(scale - self.old_scale) > 0.05:
-            self.widget_scale = scale
-            self.build()
-            self.update()
-
-            self.old_scale = scale
-    
     def _rotate_buttons(self, event: ControlEvent):
         button: FilledButton = event.control
 

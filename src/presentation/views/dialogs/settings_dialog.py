@@ -6,7 +6,7 @@ from presentation.views.widgets.settings.accessibility_settings import Accessibi
 from presentation.views.widgets.settings.language_settings import LanguageSettings
 
 from presentation.states.dialogs_state import DialogState, Dialogs
-
+from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.settings_navigator_state import SettingsNavigatorState
 
 from services.singleton import Singleton
@@ -17,6 +17,11 @@ class SettingsDialog(XDialog, metaclass = Singleton):
 
         self.dia_state = DialogState()
         self.sn_state = SettingsNavigatorState()
+        self.appearance_settings = AppearanceSettings()
+        self.accessibility_settings = AccessibilitySettings()
+        self.language_settings = LanguageSettings()
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.content_padding = 0
         self.title_padding = 0
@@ -25,12 +30,9 @@ class SettingsDialog(XDialog, metaclass = Singleton):
         self.actions = []
         self.actions_padding = 0
         self.clip_behavior = ClipBehavior.HARD_EDGE
-        self.open_duration = 300
+        self.open_duration = 300 if self.ad_state.state else 0
         self.animation_curve = AnimationCurve.ELASTIC_IN_OUT
-
-        self.appearance_settings = AppearanceSettings()
-        self.accessibility_settings = AccessibilitySettings()
-        self.language_settings = LanguageSettings()
+        self.on_dismiss = self.revert_index
 
         self.bgcolor = "#ededed"
 
@@ -45,7 +47,7 @@ class SettingsDialog(XDialog, metaclass = Singleton):
             ]
         )
 
-        navigator = SegmentedButton(
+        self.navigator = SegmentedButton(
             padding=padding.symmetric(16, 128),
             on_change=self.change_view,
             selected={"0"},
@@ -65,7 +67,7 @@ class SettingsDialog(XDialog, metaclass = Singleton):
             ],
         )
 
-        self.title = navigator
+        self.title = self.navigator
         self.actions = [
             FilledButton(
                 "Close", 
@@ -103,3 +105,16 @@ class SettingsDialog(XDialog, metaclass = Singleton):
     
     def change_view(self, event: ControlEvent):
         self.sn_state.active = int(event.data[2])
+    
+    def update_animations(self):
+        try:
+            animate = self.ad_state.state
+            self.switcher.animation_duration = 500 if animate else 25
+            self.open_duration = 300 if animate else 0
+            self.update()
+        except:
+            pass
+    
+    def revert_index(self, _):
+        self.navigator.selected={"0"}
+        self.navigator.update()

@@ -16,6 +16,7 @@ from presentation.views.widgets.logic_circuit.canvas import LogicCanvas
 
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 from presentation.states.render_state import RenderState
+from presentation.states.animation_disable_state import AnimationDisableState
 
 from xilowidgets import Editor, Revealer, Zoomer
 from flet_layoutbuilder import LayoutBuilder
@@ -39,6 +40,8 @@ class EditorView(Container):
         self.render_state = RenderState()
         self.dia_state = DialogState()
         self.af_state = ActiveFileState()
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -309,3 +312,9 @@ class EditorView(Container):
     
     def capture_image(self, event: ControlEvent):
         self.render_state.image[self.key_name] = event.data
+    
+    def update_animations(self):
+        animate = self.ad_state.state
+        self.hidden_options.animation_duration = 500 if animate else 0
+        self.code_pane.animation_duration = 500 if animate else 0
+        self.update()
