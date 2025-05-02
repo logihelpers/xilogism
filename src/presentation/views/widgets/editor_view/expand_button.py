@@ -20,7 +20,7 @@ class ExpandButton(Container):
         self.padding = 8
         self.border_radius = 16
         self.on_animation_end=self._rerotate
-        self.on_click = lambda e: setattr(self.expand_state, 'expand', not self.expand_state.expand)
+        self.on_click = self.update_expand
         self.on_hover=self._hover
     
     def _hover(self, event: ControlEvent):
@@ -39,3 +39,8 @@ class ExpandButton(Container):
         button.rotate.angle = 0
         button.scale = 1
         button.update()
+    
+    def update_expand(self, _):
+        self.expand_state.expand = not self.expand_state.expand
+        self.content.src = "/icons_light/shrink.png" if self.expand_state.expand else "/icons_light/full-size.png"
+        self.content.update()

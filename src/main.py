@@ -1,5 +1,4 @@
 from flet import *
-import splash
 
 from presentation.controllers import Controller
 from services.init_fonts import InitFonts
