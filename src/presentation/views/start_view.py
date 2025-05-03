@@ -200,10 +200,7 @@ class StartView(Container):
         colors = self.ac_state.color_values
         
         # Update button styles
-        self.new_button.bgcolor = self.ac_state.active.value
-        self.new_button.border = border.all(1, self.colors.get("divider_color", "#6d6d6d")
-
-        self.open_button.bgcolor = self.ac_state.active.value
-        self.open_button.border = border.all(1, self.colors.get("divider_color", "#6d6d6d")
+        self.new_button.style.bgcolor = colors["accent_color"]
+        self.new_button.update()
         
         self.update()
