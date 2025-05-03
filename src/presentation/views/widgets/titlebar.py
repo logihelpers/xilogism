@@ -20,12 +20,14 @@ class TitleBar(Container):
             src="/icons_light/sidebar_hide.png",
             width=16 * self.widget_scale,
             height=16 * self.widget_scale,
+            tooltip="Hide the side bar"
         )
 
         self.sidebar_show_button_content = Image(
             src="/icons_light/sidebar_show.png",
             width=16 * self.widget_scale,
             height=16 * self.widget_scale,
+            tooltip="Show the side bar"
         )
 
         self.sidebar_hide_button = FilledButton(
@@ -48,6 +50,25 @@ class TitleBar(Container):
                 switch_out_curve=AnimationCurve.LINEAR,
             )
         )
+        
+        self.tutorial_button = FilledButton(
+            height=32,
+            width=32,
+            content = Image(
+                src="/icons_light/tutorial.png",
+                width=16 * self.widget_scale,
+                height=16 * self.widget_scale,
+            ),
+            bgcolor="#00ffffff",
+            scale = 1,
+            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            rotate=transform.Rotate(0, alignment.center),
+            animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+            on_animation_end=self._rerotate,
+            on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.TUTORIAL),
+            on_hover=self._rotate_buttons,
+            tooltip="Application Tutorial"
+        )
 
         self.settings_button = FilledButton(
             height=32,
@@ -65,6 +86,7 @@ class TitleBar(Container):
             on_animation_end=self._rerotate,
             on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.SETTINGS),
             on_hover=self._rotate_buttons,
+            tooltip="Application Settings"
         )
 
         self.hidden_profile_button_revealer = Container(
@@ -90,6 +112,7 @@ class TitleBar(Container):
                     on_animation_end=self._rerotate,
                     on_click=lambda e: setattr(self.title_button_state, 'state', WindowState.PROFILE),
                     on_hover=self._rotate_buttons,
+                    tooltip="User settings"
                 )
             )
         )
@@ -138,6 +161,7 @@ class TitleBar(Container):
                         spacing = 16,
                         controls=[
                             self.hidden_profile_button_revealer,
+                            self.tutorial_button,
                             self.settings_button,
                             FilledButton(
                                 height=32,
@@ -155,6 +179,7 @@ class TitleBar(Container):
                                 animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
                                 on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MINIMIZE),
                                 on_hover=self._rotate_buttons,
+                                tooltip="Minimize the app"
                             ),
                             FilledButton(
                                 height=32,
@@ -172,6 +197,7 @@ class TitleBar(Container):
                                 on_animation_end=self._rerotate,
                                 on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.MAXIMIZE),
                                 on_hover=self._rotate_buttons,
+                                tooltip="Maximize the app"
                             ),
                             FilledButton(
                                 height=32,
@@ -189,6 +215,7 @@ class TitleBar(Container):
                                 on_animation_end=self._rerotate,
                                 on_click = lambda e: setattr(self.title_button_state, 'state', WindowState.CLOSE),
                                 on_hover=self._rotate_buttons,
+                                tooltip="Close the app"
                             ),
                         ]
                     )

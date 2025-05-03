@@ -28,5 +28,7 @@ class TitleButtonsController(Controller):
                 self.dia_state.state = Dialogs.SETTINGS
             case WindowState.PROFILE:
                 self.dia_state.state = Dialogs.LOGIN
+            case WindowState.TUTORIAL:
+                self.dia_state.state = Dialogs.TUTORIAL
         
         self.page.update()

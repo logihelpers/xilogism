@@ -5,6 +5,7 @@ from presentation.views.dialogs.login_dialog import LoginDialog
 from presentation.views.dialogs.registration_dialog import RegistrationDialog
 from presentation.views.dialogs.export_print_dialog import ExportPrintDialog
 from presentation.views.dialogs.create_new_dialog import CreateNewDialog
+from presentation.views.dialogs.tutorial_dialog import TutorialDialog
 
 from presentation.controllers.controller import Controller, Priority
 
@@ -37,5 +38,7 @@ class DialogStateController(Controller):
                 self.page.open(ExportPrintDialog())
             case Dialogs.CREATE_NEW:
                 self.page.open(CreateNewDialog())
+            case Dialogs.TUTORIAL:
+                self.page.open(TutorialDialog())
         
         self.dia_state.done_build = active
