@@ -75,7 +75,6 @@ class ActiveSideBarButtonController(Controller):
                         if widget in self.sidebar.pinned_files.controls:
                             self.sidebar.pinned_files.controls.remove(widget)
                         self.sidebar.local_files.controls.append(widget)
-                        print(self.window.switcher.controls.__len__())
                         view = self.window.switcher.controls.pop(3 + index)
                         self.window.switcher.controls.insert(3 + length_pinned + index, view)
                         self.window.update()

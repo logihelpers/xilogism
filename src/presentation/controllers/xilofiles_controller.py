@@ -38,7 +38,6 @@ class XiloFilesController(Controller):
 
         try:
             self.pinned_list: list = list(self.page.client_storage.get("pinned_files"))
-            print(self.pinned_list)
         except:
             self.pinned_list = []
             self.page.client_storage.set("pinned_files", [])
