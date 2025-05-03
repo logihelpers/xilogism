@@ -2,6 +2,7 @@ from flet import *
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
+from presentation.states.animation_disable_state import AnimationDisableState
 
 class StartView(Container):
     widget_scale: float = 1.0
@@ -15,6 +16,8 @@ class StartView(Container):
         self.lang_state.on_lang_updated = self.update_lang
         self.ac_state = AccentColorState()
         self.ac_state.on_colors_updated = self.update_colors
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.padding = padding.all(16)
         self.expand = True
@@ -103,7 +106,7 @@ class StartView(Container):
         )
 
         self.logo_icon = Image(
-            src="light_mode.gif",
+            src="light_mode.gif"  if self.ad_state.state else "icons_light/logo.png",
             width=360,
             height=360,
         )
@@ -192,4 +195,8 @@ class StartView(Container):
     def update_colors(self):
         colors = self.ac_state.color_values
         self.create_xilogism_span.style.color = colors["text_color"]
+        self.update()
+    
+    def update_animations(self):
+        self.logo_icon.src="light_mode.gif"  if self.ad_state.state else "icons_light/logo.png"
         self.update()
