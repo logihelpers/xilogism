@@ -57,6 +57,18 @@ class OpenExistingView(Container):
             size=14
         )
 
+        self.pinned_list = Row( # Pinned row
+            controls=[],
+            scroll=True,
+            spacing=16
+        )
+
+        self.local_list = Column( # Local Column
+            controls=[],
+            expand=True,
+            scroll=True
+        )
+
         self.content = Column(
             controls = [
                 Row(
@@ -67,18 +79,7 @@ class OpenExistingView(Container):
                     ]
                 ),
                 self.pinned_text,
-                Row( # Pinned row
-                    controls=[
-                        PinnedButton(),
-                        PinnedButton(),
-                        PinnedButton(),
-                        PinnedButton(),
-                        PinnedButton(),
-                        PinnedButton()
-                    ],
-                    scroll=True,
-                    spacing=16
-                ),
+                self.pinned_list,
                 Container(
                     content = self.local_text,
                     padding=padding.only(top=16)
@@ -86,19 +87,7 @@ class OpenExistingView(Container):
                 Divider(1, color="#6b6b6b"),
                 Container(
                     padding=padding.only(top=8, right=8, bottom=0, left=8),
-                    content = Column( # Local Column
-                        controls=[
-                            LocalButton(),
-                            LocalButton(),
-                            LocalButton(),
-                            LocalButton(),
-                            LocalButton(),
-                            LocalButton(),
-                            LocalButton()
-                        ],
-                        expand=True,
-                        scroll=True
-                    ),
+                    content = self.local_list,
                     expand=True
                 )
             ]
