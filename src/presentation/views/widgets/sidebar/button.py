@@ -77,27 +77,36 @@ class SideBarButton(FilledButton):
             self.bgcolor = "#4d191f51"
     
     def __hover(self, event: ControlEvent):
-        button: SideBarButton = event.control
-        button.pin_button.visible = True if event.data == "true" else False
+        try:
+            button: SideBarButton = event.control
+            button.pin_button.visible = True if event.data == "true" else False
 
-        button._button_image.rotate.angle = 3.14159 / 6 if event.data == "true" else 0
-        button._button_image.update()
+            button._button_image.rotate.angle = 3.14159 / 6 if event.data == "true" else 0
+            button._button_image.update()
 
-        if button.active:
-            return
+            if button.active:
+                return
 
-        button.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
-        button.update()
+            button.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
+            button.update()
+        except:
+            pass
     
     def _revert_state(self, event: ControlEvent):
-        image: Image = event.control
-        image.rotate.angle = 0
-        image.update()
+        try:
+            image: Image = event.control
+            image.rotate.angle = 0
+            image.update()
+        except:
+            pass
     
     def on_button_press(self, event: ControlEvent):
         pass
 
     def _pin_hover(self, event: ControlEvent):
-        button: Container = event.control
-        button.bgcolor = "#26191f51" if event.data == "true" else "#00000000"
-        button.update()
+        try:
+            button: Container = event.control
+            button.bgcolor = "#26191f51" if event.data == "true" else "#00000000"
+            button.update()
+        except:
+            pass

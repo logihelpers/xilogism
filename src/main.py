@@ -22,7 +22,7 @@ class Xilogism(Page):
 
         Controller.initialize_controllers(target=self)
 
-        self.theme = Theme(color_scheme_seed = "#4169e1", font_family="Inter")
+        self.theme = Theme(font_family="Inter")
         self.window.title_bar_hidden = True
         self.padding = padding.all(0)
         self.window.min_height = 640

@@ -1,8 +1,9 @@
 from flet import *
 
 class PinnedButton(Container):
-    def __init__(self):
+    def __init__(self, thumbnail: str, title: str, date: str, on_press):
         super().__init__()
+        self.title = title
 
         self.bgcolor = "#00191f51"
         self.width = 144
@@ -10,18 +11,37 @@ class PinnedButton(Container):
         self.padding = padding.symmetric(12, 8)
         self.animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT)
 
+        self.thumbnail_image = Image(
+            src_base64=f"{thumbnail}",
+            width=144,
+            height=180,
+            border_radius=8
+        )
+
+        self.project_name = TextSpan(
+            text=f"{title}\n",
+            style=TextStyle(
+                size=12,
+                weight=FontWeight.W_500
+            )
+        )
+
+        self.date = TextSpan(
+            text=f"Modified: {date}",
+            style=TextStyle(
+                size=8,
+                weight=FontWeight.W_500,
+                color="#6b6b6b"
+            )
+        )
+
         self.content = Column(
             spacing=0,
             controls=[
                 Container(
                     Stack(
                         controls=[
-                            Image(
-                                src="/icons_light/white.jpg",
-                                width=144,
-                                height=180,
-                                border_radius=8
-                            ),
+                            self.thumbnail_image,
                             Image(
                                 src="/icons_light/Heart.png",
                                 width=24,
@@ -46,21 +66,8 @@ class PinnedButton(Container):
                         ),
                         Text(
                             spans=[
-                                TextSpan(
-                                    text="My First Project\n",
-                                    style=TextStyle(
-                                        size=12,
-                                        weight=FontWeight.W_500
-                                    )
-                                ),
-                                TextSpan(
-                                    text="Modified: 1/26/20 8:54 AM",
-                                    style=TextStyle(
-                                        size=8,
-                                        weight=FontWeight.W_500,
-                                        color="#6b6b6b"
-                                    )
-                                )
+                                self.project_name,
+                                self.date
                             ]
                         )
                     ]
@@ -69,6 +76,7 @@ class PinnedButton(Container):
         )
     
         self.on_hover = self.__hover
+        self.on_click = on_press
     
     def __hover(self, event: ControlEvent):
         event.control.scale = 1.05 if event.data == "true" else 1

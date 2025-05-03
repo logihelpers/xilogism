@@ -5,12 +5,15 @@ from presentation.controllers.editor_view_fonts_controller import EditorViewFont
 from presentation.controllers.expand_canvas_controller import ExpandCanvasController
 from presentation.controllers.editor_content_state_controller import EditorContentStateController
 from presentation.views.widgets.sidebar.sidebar import *
-from xilowidgets import Switcher
-from models.xilofile_model import XiloFile
 from presentation.views.editor_view import EditorView
 from presentation.views.open_existing_view import OpenExistingView
 from presentation.views.widgets.existing_view.local_button import LocalButton
+from presentation.views.widgets.existing_view.pinned_button import PinnedButton
 from presentation.views.window_view import WindowView
+
+from models.xilofile_model import XiloFile
+
+from xilowidgets import Switcher
 from typing import List
 from flet import *
 import json
@@ -86,6 +89,16 @@ class XiloFilesController(Controller):
             if xilofile.path in self.pinned_list:
                 self.sidebar.pinned_files.controls.append(button)
                 self.sidebar.pinned_files.update()
+
+                pinned_button = PinnedButton(
+                    title=xilofile.title,
+                    thumbnail=xilofile.thumbnail,
+                    date=xilofile.date,
+                    on_press=lambda e: setattr(self.asb_state, 'active', e.control.title),
+                )
+                
+                self.existing_view.pinned_list.controls.append(pinned_button)
+                self.existing_view.pinned_list.update()
             else:
                 self.sidebar.local_files.controls.append(button)
                 self.sidebar.local_files.update()
