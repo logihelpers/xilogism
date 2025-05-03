@@ -62,9 +62,9 @@ class StartView(Container):
                 )
             ),
             style=ButtonStyle(
-                bgcolor={},  # Will be set in update_colors
+                bgcolor={},  
                 shape=RoundedRectangleBorder(16),
-                side=BorderSide(1, {})  # Will be set in update_colors
+                side=BorderSide(1, {})  
             ),
             on_hover=self._hover
         )
@@ -72,7 +72,7 @@ class StartView(Container):
         self.open_existing_text = Text(
             value="OPEN EXISTING",
             weight=FontWeight.W_600,
-            color="black",  # Will be updated in update_colors
+            color="black", 
             text_align=TextAlign.START,
             expand=True
         )
@@ -95,9 +95,9 @@ class StartView(Container):
             ),
             on_click = lambda event: setattr(self.active_sidebar_button_state, 'active', "Open Xilogism"),
             style=ButtonStyle(
-                bgcolor={},  # Will be set in update_colors
+                bgcolor={},  
                 shape=RoundedRectangleBorder(16),
-                side=BorderSide(1, {})  # Will be set in update_colors
+                side=BorderSide(1, {})  
             ),
             on_hover=self._hover
         )
@@ -114,7 +114,7 @@ class StartView(Container):
                 size=16,
                 weight=FontWeight.W_600,
                 italic=True,
-                color={}  # Will be set in update_colors
+                color={}  
             )
         )
 
@@ -123,7 +123,7 @@ class StartView(Container):
             size=20,
             weight=FontWeight.W_700,
             text_align=TextAlign.CENTER,
-            color={}  # Will be set in update_colors
+            color={}  
         )
 
         self.content = Row(
@@ -151,7 +151,7 @@ class StartView(Container):
                                         style=TextStyle(
                                             size=72,
                                             weight=FontWeight.W_800,
-                                            color={}  # Will be set in update_colors
+                                            color={}  
                                         )
                                     )
                                 ],
@@ -199,8 +199,15 @@ class StartView(Container):
     def update_colors(self):
         colors = self.ac_state.color_values
         
-        # Update button styles
-        self.new_button.style.bgcolor = colors["accent_color"]
-        self.new_button.update()
-        
+        # Update button colors
+        self.new_button.style.bgcolor = colors["sidebar_color"] 
+        self.new_button.style.side = BorderSide(1, colors["divider_color"])
+    
+        self.open_button.style.bgcolor = colors["sidebar_color"] 
+        self.open_button.style.side = BorderSide(1, colors["divider_color"])
+    
+        # Update container background if needed
+        self.bgcolor = colors["bg_color"]
+    
+        # Force update to reflect changes
         self.update()
