@@ -254,32 +254,6 @@ class EditorView(Container):
         self.et_state.on_theme_change = self.update_theme
         self.render_state.on_output_change = self.update_canvas
     
-    def update_colors(self):
-        """Update UI elements when theme colors change"""
-        self.colors = self.ac_state.color_values
-        
-        # Update hidden options
-        self.hidden_options.content.border = border.all(1, self.colors.get("divider_color", "#6d6d6d"))
-        self.hidden_options.content.bgcolor = self.ac_state.active.value
-        self.hidden_options.content.content.controls[1].color = self.colors.get("divider_color", "#6d6d6d")
-        
-        # Update status icon
-        self.edit_status_icon.border = border.all(1, self.colors.get("divider_color", "#6d6d6d"))
-        
-        # Update code editor container
-        code_editor_container = self.code_pane.content.content.controls[1]
-        code_editor_container.border = border.all(1, self.colors.get("divider_color", "#6d6d6d"))
-        
-        # Update preview text color
-        preview_bar.controls[0].controls[0].color = self.colors.get("text_color", "#000000")
-        
-        # Update preview container
-        preview_view.border = border.all(1, self.colors.get("divider_color", "#6d6d6d"))
-        preview_view.bgcolor = self.colors.get("sidebar_color", "#d9d9d9")
-        
-        # Refresh the view
-        self.update()
-    
     def update_codepane_length(self, event: ControlEvent):
         if not self.code_pane.content_hidden:
             dictio = json.loads(event.data)
@@ -343,3 +317,38 @@ class EditorView(Container):
     
     def capture_image(self, event: ControlEvent):
         self.render_state.image[self.key_name] = event.data
+
+    def update_colors(self):
+    color_values = self.ac_state.color_values
+    
+    # Update hidden options container
+    hidden_options_container = self.hidden_options.content
+    hidden_options_container.border = border.all(1, color_values["divider_color"])
+    hidden_options_container.bgcolor = color_values["sidebar_color"] 
+    
+    # Update vertical divider in hidden options
+    for control in hidden_options_container.content.controls:
+        if isinstance(control, VerticalDivider):
+            control.color = color_values["divider_color"]
+    
+    # Update edit status icon
+    self.edit_status_icon.border = border.all(1, color_values["divider_color"])
+    
+    # Update code editor container border and background
+    code_editor_container = self.code_editor.parent.parent
+    code_editor_container.border = border.all(1, color_values["divider_color"])
+    
+    # Update preview view
+    preview_view = None
+    for control in self.content.content.controls:
+        if isinstance(control, Container) and isinstance(control.content, Column):
+            preview_view = control.content.controls[1]  # The preview view is the second item
+            
+    if preview_view:
+        preview_view.border = border.all(1, color_values["divider_color"])
+        preview_view.bgcolor = color_values["sidebar_color"]
+    
+    # Update the main background
+    self.bgcolor = color_values["bg_color"]
+
+    self.update()
