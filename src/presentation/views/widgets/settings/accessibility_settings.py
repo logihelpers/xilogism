@@ -53,7 +53,6 @@ class AccessibilitySettings(Column):
             Text("Left-Handed Mode", weight=FontWeight.BOLD),
             Row(
                 spacing = 24,
-                # alignment=MainAxisAlignment.CENTER,
                 expand = True,
                 controls = [
                     SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos", 0.75, on_button_press=self.toggle_left_handed),
