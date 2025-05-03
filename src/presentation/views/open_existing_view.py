@@ -121,13 +121,17 @@ class OpenExistingView(Container):
     
     def update_colors(self):
         self.colors = self.ac_state.color_values
-        
-        # Update search text field
-        self.search_tf.bgcolor = self.ac_state.active.value
-        self.search_tf.border = border.all(1, self.colors.get("divider_color", "#6d6d6d"))
-        
-        # Update divider
-        self.divider.color = self.colors.get("divider_color", "#6d6d6d")
-        
-        # Update the view
+    
+        # Update search field colors
+        self.search_tf.bgcolor = color_values["sidebar_color"]
+        self.search_tf.border = border.all(1, color_values["divider_color"])
+    
+        # Update background and divider colors
+        self.bgcolor = color_values["bg_color"]
+    
+        # Find the divider in the content column
+        for control in self.content.controls:
+            if isinstance(control, Divider):
+                control.color = color_values["divider_color"]
+
         self.update()
