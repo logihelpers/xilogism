@@ -15,7 +15,12 @@ class WindowController(Controller):
         self.page = page
 
         self.window = WindowView()
-        self.page.add(self.window)
+        self.page.add(
+            Container(
+                self.window,
+                expand=True
+            )
+        )
 
         self.sbh_state = SideBarHideState()
         self.mq_state = MediaQueryState()

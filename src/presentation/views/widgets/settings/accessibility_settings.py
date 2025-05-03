@@ -36,20 +36,20 @@ class AccessibilitySettings(Column):
                     SettingsImageButton("/mode_dyslexic_friendly.png", "Readable", "dyslexia", 0.75, on_button_press=self.switch_readability)
                 ]
             ),
-            Text("Vision Friendly Settings", weight=FontWeight.BOLD),
-            Row(
-                spacing = 16,
-                # alignment=MainAxisAlignment.CENTER,
-                expand = True,
-                wrap=True,
-                controls = [
-                    SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.6, on_button_press=self.switch_vision),
-                ]
-            ),
+            # Text("Vision Friendly Settings", weight=FontWeight.BOLD),
+            # Row(
+            #     spacing = 16,
+            #     # alignment=MainAxisAlignment.CENTER,
+            #     expand = True,
+            #     wrap=True,
+            #     controls = [
+            #         SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.6, on_button_press=self.switch_vision),
+            #     ]
+            # ),
             Text("Left-Handed Mode", weight=FontWeight.BOLD),
             Row(
                 spacing = 24,
