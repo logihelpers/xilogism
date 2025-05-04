@@ -161,11 +161,11 @@ class TutorialPage(Column):
                 expand = True,
                 content=Text(title_text, size=24, weight=FontWeight.BOLD, color="black"),
                 alignment=alignment.top_left,
-                padding=padding.only(left=20, top=20)
+                padding=padding.only(left=16, top=16)
             ),
             Container(
                 expand=True,
-                padding=padding.symmetric(horizontal=20, vertical=10),
+                padding=padding.symmetric(horizontal=16, vertical=8),
                 content=Row(
                     expand=True,
                     spacing=30,

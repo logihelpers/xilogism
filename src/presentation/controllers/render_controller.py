@@ -1,5 +1,6 @@
 from presentation.states.render_state import RenderState
 from models.xilofile_model import XiloFile
+from typing import List, Tuple
 
 from flet import *
 
@@ -21,11 +22,15 @@ class RenderController(Controller):
         key_name, input_dict = input.popitem()
         nodes = []
 
+        input_nodes: List[Tuple[str, str]] = []
         for input_name, gate_info in input_dict.items():
             gate_type = gate_info["type"]
+            hierarchy = gate_info["hierarchy"]
+            print(hierarchy)
             match gate_type:
                 case "INPUT_NODE":
-                    nodes.append(InputNode(30, 50))
+                    nodes.append(InputNode(30 + (50 * len(input_nodes)), 50))
+                    input_nodes.append((input_name, gate_info))
                 case "OUTPUT_NODE":
                     nodes.append(OutputNode(200, 80))
                 # case "WIRE":
