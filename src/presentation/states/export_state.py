@@ -75,16 +75,6 @@ class ExportState(metaclass=Singleton):
     def on_change(self):
         pass
 
-    # def export(self, format: FileFormat, margin: Tuple[int, int, int, int], titleblock_enable: bool, proj_name: str, creator: str, date: str):
-    #     self.format = format
-    #     self.margin = margin
-    #     self.titleblock_enable = titleblock_enable
-    #     self.proj_name = proj_name
-    #     self.creator = creator
-    #     self.date = date
-
-    #     self.on_export()
-
     def export(self):
         self.on_export()
     

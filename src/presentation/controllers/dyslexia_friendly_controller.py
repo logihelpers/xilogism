@@ -12,7 +12,6 @@ class DyslexiaFriendlyController(Controller):
         self.page = page
 
         self.df_state = DyslexiaFriendlyState()
-
         self.df_state.on_change = self.change_active
 
     def change_active(self):

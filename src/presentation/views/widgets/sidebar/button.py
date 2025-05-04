@@ -29,18 +29,30 @@ class SideBarButton(FilledButton):
             on_animation_end=self._revert_state
         )
 
+        self.button_label = Text(
+            self.label,
+            weight=FontWeight.W_500,
+            color="black",
+            size=14 * self.widget_scale,
+            no_wrap=False,
+            expand=True,
+            max_lines=1,
+            overflow=TextOverflow.ELLIPSIS
+        )
+
         self.content = Container(
             content = Row(
                 controls=[
                     self._button_image,
-                    Text(self.label, weight=FontWeight.W_500, color="black", size=14 * self.widget_scale, no_wrap=False)
+                    self.button_label
                 ],
                 vertical_alignment=CrossAxisAlignment.CENTER
             ),
             padding=padding.symmetric(8 * self.widget_scale, 16 * self.widget_scale)
         )
 
-        SideBarButton.refs.append((self.label, self))
+        if (self.label, self) not in SideBarButton.refs:
+            SideBarButton.refs.append((self.label, self))
 
         if self.label == "Start":
             self.active = True

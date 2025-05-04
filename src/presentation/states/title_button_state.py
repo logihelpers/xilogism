@@ -13,6 +13,7 @@ class WindowState(Enum):
 class TitleButtonState(metaclass = Singleton):
     def __init__(self):
         self._state__: WindowState = ""
+        self._title: str = ""
     
     @property
     def state(self) -> WindowState:
@@ -24,4 +25,16 @@ class TitleButtonState(metaclass = Singleton):
         self.on_change()
     
     def on_change(self):
+        pass
+
+    @property
+    def title(self) -> str:
+        return self._title
+    
+    @title.setter
+    def title(self, value: str):
+        self._title = value
+        self.on_title_change()
+    
+    def on_title_change(self):
         pass

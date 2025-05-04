@@ -15,7 +15,6 @@ dependencies = [
   "docx2pdf",
   "pypdfium2",
   "pillow",
-  "flet-lottie (>=0.1.0,<0.2.0)"
 ]
 
 [tool.flet]
@@ -39,6 +38,7 @@ path = "src"
 [tool.uv]
 dev-dependencies = [
     "flet[all]==0.27.6",
+    "docx2pdf==0.1.8",
 ]
 
 [tool.poetry]

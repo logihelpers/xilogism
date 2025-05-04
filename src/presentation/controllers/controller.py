@@ -8,8 +8,10 @@ class Priority(Enum):
     DIALOG_BOUND = 3
     SETTINGS_BOUND = 4
     NONE = 5
+    LAST = 6
 
 class Controller:
+    instances: list = []
     priority: Priority = Priority.NONE
     def __init__(self, target: Page = None):
         self.target = target
@@ -19,10 +21,10 @@ class Controller:
         subclasses = [(subclass, getattr(subclass, 'priority', Priority.NONE)) for subclass in self.__class__.__subclasses__()]
         subclasses.sort(key=lambda x: x[1].value)
 
-        self.instances = []
+        Controller.instances = []
         for subclass, priority in subclasses:
             instance = subclass(self.target)
-            self.instances.append(instance)
+            Controller.instances.append(instance)
 
     @staticmethod
     def initialize_controllers(target: Page = None):

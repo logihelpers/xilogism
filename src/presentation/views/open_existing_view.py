@@ -71,13 +71,13 @@ class OpenExistingView(Container):
                     padding=padding.only(top=8, right=8, bottom=0, left=8),
                     content = Column( # Recents Column
                         controls=[
-                            RecentsButton(),
-                            RecentsButton(),
-                            RecentsButton(),
-                            RecentsButton(),
-                            RecentsButton(),
-                            RecentsButton(),
-                            RecentsButton()
+                            LocalButton(),
+                            LocalButton(),
+                            LocalButton(),
+                            LocalButton(),
+                            LocalButton(),
+                            LocalButton(),
+                            LocalButton()
                         ],
                         expand=True,
                         scroll=True
