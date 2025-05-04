@@ -1,11 +1,12 @@
 from flet import *
 from services.singleton import Singleton
-from xilowidgets import XDialog
+from xilowidgets import XDialog, Switcher
 
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
 
 class TutorialDialog(XDialog, metaclass = Singleton):
+    current_index: int = 0
     def __init__(self):
         super().__init__()
 
@@ -23,97 +24,180 @@ class TutorialDialog(XDialog, metaclass = Singleton):
         self.open_duration = 300
         self.modal = True
 
-        self.save_button = FilledButton(
-            "Save", 
+        self.previous_button = FilledButton(
+            "Close", 
             width=128,
-            bgcolor="#191f51",
-            color="white",
+            bgcolor="#4d191f51",
+            color="black",
             style=ButtonStyle(
                 shape=RoundedRectangleBorder(8),
                 padding=8
             ),
-            disabled = True,
-            on_click=self.trigger_save
+            on_click = self.go_previous
+        )
+
+        self.next_button = FilledButton(
+            "Next", 
+            width=128,
+            bgcolor="#4d191f51",
+            color="black",
+            style=ButtonStyle(
+                shape=RoundedRectangleBorder(8),
+                padding=8
+            ),
+            on_click = self.go_next
         )
 
         self.actions=[
-            self.save_button,
-            FilledButton(
-                "Close", 
-                width=128,
-                style=ButtonStyle(
-                    color="black",
-                    shape=RoundedRectangleBorder(8),
-                    padding=8,
-                    bgcolor="#36191f51"
-                ),
-                on_click=self.trigger_save
-            )
+            self.previous_button,
+            self.next_button
         ]
         self.actions_alignment=MainAxisAlignment.SPACE_BETWEEN
 
-        self.proj_name_tf = TextField(hint_text="e.g. Xilogism 1", expand = True, on_change=self.validate_fields)
-        self.file_path_tf = TextField(hint_text="e.g. xilogism_1", suffix_text=".xlg", expand = True, on_change=self.validate_fields)
+        self.switcher = Switcher(
+            controls = [
+                TutorialPage(
+                    title_text = "Start Page – Choose Your Action",
+                    image_file = "appnavigation.png",
+                    description = "The Xilogism app is designed for smooth, simple navigation.\n\n"
+                        "From the sidebar on the left, you can start a new project, open an existing one, or quickly jump into your recent files. "
+                        "You can also pin important projects to keep them right where you need them and even link to your Google Drive for easy file management.\n\n"
+                        "When you land on the Start Page, you’ll see two main options:\n"
+                        "• Create My Xilogism: Start building a circuit from scratch using easy pseudocode format.\n"
+                        "• Open Existing: Load a previous project and pick up right where you left off."
+                ),
+                TutorialPage(
+                    title_text="Settings – Set It Your Way!",
+                    image_file="settings.png",
+                    description="You can adjust the look of your Xilogism app to match your style. You can switch between dark mode and light mode, "
+                        "and even choose your preferred accent color to make the app feel just right for you.\n\n"
+                        "Try it: Go to the Settings and switch between dark and light mode. Then, pick a different color theme from the color options available.\n\n"
+                        "Apply and you’ll instantly see your app’s appearance change — making your workspace more comfortable and personal while you work on your logic projects."
+                ),
+                TutorialPage(
+                    title_text="Input – Type Your Pseudocode!",
+                    image_file="input.png",
+                    description="This section is where you enter your pseudocode or logic statements. This is the starting point for converting your code into a digital circuit.\n\n"
+                        "Try it: Type a simple logic statement into the input box like A AND B.\n\n"
+                        "As you proceed, Xilogism will take that input and start preparing it for visual translation in the next steps.",
+                ),
+                TutorialPage(
+                    title_text="Logic Gates – Build Your Circuits!",
+                    image_file="gates.jpg",
+                    description="In Xilogism, you’ll use basic logic gates to turn your pseudocode into real circuit diagrams. Each gate represents a simple logical function "
+                        "that you’ll combine to build more complex systems.\n\n"
+                        "Try it: When creating your Xilogism, you’ll select and connect these gates to match the logic you describe in your pseudocode.\n\n"
+                        "These basic building blocks are all you need to create powerful, functional digital circuits!"
+                ),
+                TutorialPage(
+                    title_text="Output – See Your Code Come Alive!",
+                    image_file="output.png",
+                    description="In this section, you can see the conversion of your code into a circuit diagram. As you code, the diagram updates to show your logic in action.\n\n"
+                        "Try it: Enter or adjust your pseudocode in the Input section. The Output will automatically display the generated circuit diagram.\n\n"
+                        "This helps you check if your logic is correct and working as expected. You can make changes anytime before exporting your work."
+                ),
+                TutorialPage(
+                    title_text="Export – Save Your Creation!",
+                    image_file="export.png",
+                    description="Once you're happy with your circuit diagram, use the Export section to save your files for future use or for uploading to other platforms.\n\n"
+                        "Try it: Tap the Export option and select your desired file format, like .PDF or .png for your circuit diagram.\n\n"
+                        "Now your project is saved and ready to share, simulate, or build upon wherever and whenever you need it!"
+                )
+            ],
+            orientation=Switcher.Orientation.HORIZONTAL,
+            animation_duration=500,
+            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
+        )
 
         self.content = Container(
             padding = 8,
-            height=180,
-            width=400,
+            height=480,
+            width=960,
             expand=True,
             content = Column(
                 expand=True,
                 horizontal_alignment=CrossAxisAlignment.STRETCH,
                 spacing=0,
                 controls=[
-                    Container(
-                        content = Text("Do you want to save your new Xilogism?", size=16, weight=FontWeight.BOLD),
-                        padding=padding.symmetric(16, 0)
-                    ),
-                    Container(
-                        expand = True,
-                        padding = padding.symmetric(0, 16),
-                        content = Column(
-                            expand = True,
-                            controls = [
-                                Row(
-                                    height = 36,
-                                    controls=[
-                                        Text("Project Name: ", weight=FontWeight.W_500, width=100),
-                                        self.proj_name_tf
-                                    ],
-                                    expand = True
-                                ),
-                                Row(
-                                    height = 36,
-                                    controls=[
-                                        Text("Filename: ", weight=FontWeight.W_500, width=100),
-                                        self.file_path_tf
-                                    ],
-                                    expand = True
-                                )
-                            ]
-                        )
-                    )
+                    self.switcher
                 ]
             )
         )
     
-    def trigger_save(self, event: ControlEvent):
-        if event.control.text == "Save":
-            self.ns_state.filename = self.file_path_tf.value
-            self.ns_state.project_name = self.proj_name_tf.value
-            self.ns_state.state = True
+    def go_previous(self, _):
+        if self.current_index == 0:
+            self.dia_state.state = Dialogs.CLOSE
+            self.current_index = 0
         else:
-            self.ns_state.filename = ""
-            self.ns_state.project_name = ""
-            self.ns_state.state = False
-        
-        self.dia_state.state = Dialogs.CLOSE
-    
-    def validate_fields(self, event: ControlEvent):
-        if self.proj_name_tf.value != "" and self.file_path_tf.value != "":
-            self.save_button.disabled = False
+            self.previous_button.text = "Close" if self.current_index == 1 else "Previous"
+            self.previous_button.update()
+            self.next_button.text = "Next" if self.current_index <= (len(self.switcher.controls) - 1) else "Finish"
+            self.next_button.update()
+
+            self.current_index = self.current_index - 1
+            self.switcher.switch(self.current_index)
+
+    def go_next(self, _):
+        if self.current_index == len(self.switcher.controls) - 1:
+            self.dia_state.state = Dialogs.CLOSE
+            self.current_index = 0
         else:
-            self.save_button.disabled = True
-        
-        self.save_button.update()
+            self.next_button.text = "Finish" if self.current_index == (len(self.switcher.controls) - 2) else "Next"
+            self.next_button.update()
+            self.previous_button.text = "Previous" if self.current_index >= 0 else "Close"
+            self.previous_button.update()
+
+            self.current_index = self.current_index + 1
+            self.switcher.switch(self.current_index)
+
+class TutorialPage(Column):
+    def __init__(self, title_text: str, image_file: str, description: str):
+        super().__init__()
+
+        self.expand = True
+        self.scroll = ScrollMode.AUTO
+        self.controls = [
+            Container(
+                expand = True,
+                content=Text(title_text, size=24, weight=FontWeight.BOLD, color="black"),
+                alignment=alignment.top_left,
+                padding=padding.only(left=20, top=20)
+            ),
+            Container(
+                expand=True,
+                padding=padding.symmetric(horizontal=20, vertical=10),
+                content=Row(
+                    expand=True,
+                    spacing=30,
+                    controls=[
+                        Container(
+                            expand=True,
+                            content=Image(
+                                src=image_file,
+                                fit=ImageFit.FILL,
+                                width=400,
+                                height=240,
+                            ),
+                            height=400
+                        ),
+                        Container(
+                            expand=True,
+                            content=Column(
+                                alignment=MainAxisAlignment.CENTER,
+                                expand=True,
+                                scroll=ScrollMode.AUTO,
+                                controls=[
+                                    Text(
+                                        description,
+                                        size=16,
+                                        text_align=TextAlign.JUSTIFY,
+                                        color="black",
+                                        expand=True
+                                    )
+                                ]
+                            )
+                        )
+                    ]
+                )
+            )
+        ]
