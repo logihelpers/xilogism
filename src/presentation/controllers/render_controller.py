@@ -23,16 +23,25 @@ class RenderController(Controller):
         nodes = []
 
         input_nodes: List[Tuple[str, str]] = []
+        output_nodes: List[Tuple[str, str]] = []
         for input_name, gate_info in input_dict.items():
             gate_type = gate_info["type"]
             hierarchy = gate_info["hierarchy"]
-            print(hierarchy)
+
+            block_type = ""
+            try:
+                block_type = gate_info["block_type"]
+            except:
+                pass
+
+            print(gate_type, block_type, hierarchy)
             match gate_type:
                 case "INPUT_NODE":
                     nodes.append(InputNode(30 + (50 * len(input_nodes)), 50))
                     input_nodes.append((input_name, gate_info))
                 case "OUTPUT_NODE":
-                    nodes.append(OutputNode(200, 80))
+                    nodes.append(OutputNode(80 + (50 * (len(input_nodes) + 1)), 100 + (50 * len(output_nodes))))
+                    output_nodes.append((input_name, gate_info))
                 # case "WIRE":
                     # print("WIRE:", gate_info)
         
