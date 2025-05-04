@@ -9,6 +9,7 @@ class WindowState(Enum):
     MAXIMIZE = 3
     SETTINGS = 4
     PROFILE = 5
+    TUTORIAL = 6
 
 class TitleButtonState(metaclass = Singleton):
     def __init__(self):

@@ -2,10 +2,9 @@ from flet import *
 from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.render_state import RenderState
 from presentation.states.export_state import ExportState, FileFormat
+from presentation.states.animation_disable_state import AnimationDisableState
 
 from xilowidgets import Revealer, XDialog, Switcher
-
-from services.singleton import Singleton
 
 class ExportPrintDialog(XDialog):
     def __init__(self):
@@ -15,6 +14,8 @@ class ExportPrintDialog(XDialog):
         self.export_state = ExportState()
         self.r_state = RenderState()
         self.r_state.on_image_change = self.update_preview
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.content_padding = 0
         self.title_padding = 0
@@ -24,23 +25,8 @@ class ExportPrintDialog(XDialog):
         self.actions_padding = padding.all(16)
         self.action_button_padding = 0
         self.actions_overflow_button_spacing = 0
-        self.open_duration = 300
+        self.open_duration = 300 if self.ad_state.state else 0
         self.modal = True
-
-        self.navigator = SegmentedButton(
-            on_change=self.change_view,
-            selected={"0"},
-            segments=[
-                Segment(
-                    value="0",
-                    label=Text("Export"),
-                ),
-                Segment(
-                    value="1",
-                    label=Text("Print"),
-                ),
-            ],
-        )
 
         self.print_export_setting = Switcher(
             orientation=Switcher.Orientation.HORIZONTAL,
@@ -126,11 +112,18 @@ class ExportPrintDialog(XDialog):
             ]
         )
 
-        self.proceed_button = FilledButton(
+        self.export_button = FilledButton(
             "Export", 
             expand=True,
             disabled=True,
             on_click= lambda e: self.export_state.export() if e.control.text == "Export" else print("HAHA")
+        )
+
+        self.print_button = FilledButton(
+            "Print", 
+            expand=True,
+            disabled=True,
+            on_click= lambda e: self.export_state.export() if e.control.text == "Print" else print("HAHA")
         )
 
         self.project_name_tf = TextField(
@@ -236,7 +229,8 @@ class ExportPrintDialog(XDialog):
                         padding = padding.symmetric(0, 8),
                         content = Row(
                             controls = [
-                                self.proceed_button,
+                                self.export_button,
+                                self.print_button,
                                 FilledButton(
                                     "Cancel", 
                                     expand=True,
@@ -297,7 +291,6 @@ class ExportPrintDialog(XDialog):
                                         expand=True,
                                         horizontal_alignment=CrossAxisAlignment.CENTER,
                                         controls = [
-                                            self.navigator,
                                             self.main_options
                                         ]
                                     )
@@ -309,26 +302,31 @@ class ExportPrintDialog(XDialog):
             )
         )
     
+    def update_animations(self):
+        animate = self.ad_state.state
+        self.open_duration = 300 if animate else 0
+        self.print_export_setting.animation_duration = 300 if animate else 25
+        self.extra_options.animation_duration = 500 if animate else 0
+        self.update()
+    
     def update_titleblock(self, event: ControlEvent):
         self.export_state.titleblock_enable = (event.data == "true")
 
         if event.data == "true" and all([self.project_name_tf.value != "", self.creator_tf.value != "", self.date_tf.value != ""]):
-            self.proceed_button.disabled = False
+            self.export_button.disabled = False
+            self.print_button.disabled = False
         elif event.data == "false":
-            self.proceed_button.disabled = False
+            self.export_button.disabled = False
+            self.print_button.disabled = False
         else:
-            self.proceed_button.disabled = True
-        self.proceed_button.update()
+            self.export_button.disabled = True
+            self.print_button.disabled = True
+
+        self.print_button.update()
+        self.export_button.update()
 
         self.extra_options.content_hidden = not self.extra_options.content_hidden
         self.extra_options.update()
-    
-    def change_view(self, event: ControlEvent):
-        active = int(event.data[2])
-        self.print_export_setting.switch(active)
-        segment: SegmentedButton = event.control
-        self.proceed_button.text = segment.segments[active].label.value
-        self.proceed_button.update()
     
     def update_preview(self, image_dict: dict):
         self.preview_image.src_base64 = list(image_dict.values())[0]
@@ -339,21 +337,26 @@ class ExportPrintDialog(XDialog):
             case "png":
                 self.export_state.format = FileFormat.PNG
                 self.disable_buttons(False)
-                self.proceed_button.disabled = True
+                self.export_button.disabled = True
+                self.print_button.disabled = True
             case "pdf":
                 self.export_state.format = FileFormat.PDF
                 self.disable_buttons(False)
-                self.proceed_button.disabled = True
+                self.export_button.disabled = True
+                self.print_button.disabled = True
             case "docx":
                 self.export_state.format = FileFormat.DOCX
                 self.disable_buttons(False)
-                self.proceed_button.disabled = True
+                self.export_button.disabled = True
+                self.print_button.disabled = True
             case "raw_png":
                 self.export_state.format = FileFormat.RAW_PNG
                 self.disable_buttons(True)
-                self.proceed_button.disabled = False
+                self.export_button.disabled = False
+                self.print_button.disabled = False
 
-        self.proceed_button.update()
+        self.print_button.update()
+        self.export_button.update()
     
     def disable_buttons(self, state: bool):
         self.margin_switch.disabled = state
@@ -366,17 +369,22 @@ class ExportPrintDialog(XDialog):
     
     def update_margin(self, event: ControlEvent):
         self.export_state.margin = (event.data == "true")
-        self.proceed_button.disabled = not (event.data == "true")
-        self.proceed_button.update()
+        self.export_button.disabled = not (event.data == "true")
+        self.export_button.update()
+        self.print_button.disabled = not (event.data == "true")
+        self.print_button.update()
     
     def update_fields(self, event: ControlEvent):
         if all([self.project_name_tf.value != "", self.creator_tf.value != "", self.date_tf.value != ""]):
-            self.proceed_button.disabled = False
+            self.export_button.disabled = False
+            self.print_button.disabled = False
 
             self.export_state.proj_name = self.project_name_tf.value
             self.export_state.creator = self.creator_tf.value
             self.export_state.date = self.date_tf.value
         else:
-            self.proceed_button.disabled = True
+            self.export_button.disabled = True
+            self.print_button.disabled = True
 
-        self.proceed_button.update()
+        self.export_button.update()
+        self.print_button.update()

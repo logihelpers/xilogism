@@ -15,7 +15,12 @@ class WindowController(Controller):
         self.page = page
 
         self.window = WindowView()
-        self.page.add(self.window)
+        self.page.add(
+            Container(
+                self.window,
+                expand=True
+            )
+        )
 
         self.sbh_state = SideBarHideState()
         self.mq_state = MediaQueryState()
@@ -47,6 +52,6 @@ class WindowController(Controller):
         width = self.mq_state.size[0]
         scale = width / 1011
 
-        self.window.start_view.widget_scale = scale
-        self.window.start_view.build()
-        self.window.start_view.update()
+        self.window.start_view.logo_icon.width = 360 * scale
+        self.window.start_view.logo_icon.height = 360 * scale
+        self.window.start_view.logo_icon.update()

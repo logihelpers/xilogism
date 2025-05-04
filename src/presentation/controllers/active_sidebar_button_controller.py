@@ -3,9 +3,14 @@ from presentation.states.active_file_state import ActiveFileState
 from presentation.states.editor_content_state import EditorContentState
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import DialogState, Dialogs
-
+from models.xilofile_model import StorageType
 from presentation.views.widgets.sidebar.button import SideBarButton
 from presentation.views.widgets.titlebar import TitleBar
+from presentation.views.window_view import WindowView
+from presentation.views.open_existing_view import OpenExistingView
+from presentation.views.widgets.sidebar.sidebar import SideBar
+from presentation.views.widgets.existing_view.local_button import LocalButton
+from presentation.views.widgets.existing_view.pinned_button import PinnedButton
 
 from data.files import Files
 
@@ -27,9 +32,90 @@ class ActiveSideBarButtonController(Controller):
         self.ec_state = EditorContentState()
 
         self.asbb_state.on_change = self.change_active
+        self.asbb_state.on_pin = self.button_pinned
         self.ns_state.on_change = lambda: setattr(self, 'save_state_changed', True)
 
         self.titlebar: TitleBar = self.page.session.get("titlebar")
+        self.window: WindowView = self.page.session.get("window")
+        self.sidebar: SideBar = self.window.sidebar
+        self.existing: OpenExistingView = self.window.open_view
+
+        try:
+            self.pinned_list = list(self.page.client_storage.get("pinned_files"))
+        except:
+            self.pinned_list = []
+    
+    def button_pinned(self):
+        pinned_name = self.asbb_state.pin
+        xilofile = Files.parse(pinned_name)
+
+        if xilofile.path not in self.pinned_list: # ADD
+            name: str = ""
+            for index, (name, widget) in enumerate(SideBarButton.refs):
+                if name == pinned_name:
+                    SideBarButton.refs.pop(index)
+                    if xilofile.storage_type == StorageType.LOCAL:
+                        length_pinned = len(self.sidebar.pinned_files.controls)
+                        SideBarButton.refs.insert(3 + length_pinned, (pinned_name, widget))
+                        self.sidebar.local_files.controls.remove(widget)
+                        self.sidebar.pinned_files.controls.append(widget)
+                        view = self.window.switcher.controls.pop(index)
+                        self.window.switcher.controls.insert(3 + length_pinned, view)
+                        self.window.update()
+                        break
+            
+            local_button: LocalButton = None
+            for local_button in self.existing.local_list.controls:
+                if local_button.title == pinned_name:
+                    self.existing.pinned_list.controls.append(
+                        PinnedButton(
+                            thumbnail=xilofile.thumbnail,
+                            title=xilofile.title,
+                            date=xilofile.date,
+                            on_press=lambda e: setattr(self.asbb_state, 'active', e.control.title)
+                        )
+                    )
+                    self.existing.local_list.controls.remove(local_button)
+                    break
+            self.existing.update()
+            
+            self.pinned_list.append(xilofile.path)
+            self.page.client_storage.set("pinned_files", self.pinned_list)
+        else:
+            name: str = ""
+            for index, (name, widget) in enumerate(SideBarButton.refs):
+                if name == pinned_name:
+                    SideBarButton.refs.pop(index)
+                    
+                    if xilofile.storage_type == StorageType.LOCAL:
+                        length_pinned = len(self.sidebar.pinned_files.controls)
+                        length_local = len(self.sidebar.local_files.controls)
+                        SideBarButton.refs.insert(2 + length_pinned + length_local, (pinned_name, widget))
+                        if widget in self.sidebar.pinned_files.controls:
+                            self.sidebar.pinned_files.controls.remove(widget)
+                        self.sidebar.local_files.controls.append(widget)
+                        view = self.window.switcher.controls.pop(3 + index)
+                        self.window.switcher.controls.insert(3 + length_pinned + index, view)
+                        self.window.update()
+                        break
+            
+            pinned_button: PinnedButton = None
+            for pinned_button in self.existing.pinned_list.controls:
+                if pinned_button.title == pinned_name:
+                    self.existing.local_list.controls.append(
+                        LocalButton(
+                            path=xilofile.path,
+                            title=xilofile.title,
+                            date=xilofile.date,
+                            on_press=lambda e: setattr(self.asbb_state, 'active', e.control.title)
+                        )
+                    )
+                    self.existing.pinned_list.controls.remove(pinned_button)
+                    break
+            self.existing.update()
+            
+            self.pinned_list.remove(xilofile.path)
+            self.page.client_storage.set("pinned_files", self.pinned_list)
     
     def change_active(self):
         active: str = self.asbb_state.active

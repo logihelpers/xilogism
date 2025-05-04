@@ -9,7 +9,7 @@ class SideBarTitle(Container):
         self.is_home = is_home
         self.content = Row(
             controls = [
-                Text(self.title, weight=FontWeight.W_700, color="black", size=14 * self.widget_scale, no_wrap=False),
+                Text(self.title, weight=FontWeight.W_700, color="black", size=14 * self.widget_scale, no_wrap=False, expand=True),
                 Container(
                     content=PopupMenuButton(
                         content = Image(
@@ -51,11 +51,3 @@ class SideBarTitle(Container):
         control: SideBarTitle = event.control
         control.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
         control.update()
-    
-    @staticmethod
-    def scale_all(scale: float):
-        button: SideBarTitle = None
-        for name, button in SideBarTitle.refs.items():
-            button.widget_scale = scale
-            button.build()
-            button.update()

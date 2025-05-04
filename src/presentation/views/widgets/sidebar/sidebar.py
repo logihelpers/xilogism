@@ -1,7 +1,6 @@
 from flet import *
 
-from presentation.views.dialogs.registration_dialog import RegistrationDialog
-from presentation.views.dialogs.login_dialog import LoginDialog
+from presentation.states.accent_color_state import AccentColorState
 
 from presentation.views.widgets.sidebar.title import SideBarTitle
 from presentation.views.widgets.sidebar.button import SideBarButton
@@ -27,6 +26,8 @@ class SideBar(Container):
 
         self.active_sidebar_button_state = ActiveSideBarButtonState()
         self.dia_state = DialogState()
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.pinned_files = Column(
             expand=True,
@@ -67,7 +68,7 @@ class SideBar(Container):
                                         width=24 * self.widget_scale,
                                         height=24 * self.widget_scale
                                     ),
-                                    Text("Guest User", weight=FontWeight.W_700, color="black", size=18 * self.widget_scale)
+                                    Text("Guest User", weight=FontWeight.W_700, color="black", size=18 * self.widget_scale, expand=True)
                                 ]
                             ),
                             on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.REGISTER)
@@ -103,13 +104,12 @@ class SideBar(Container):
 
         self.active_sidebar_button_state.active = control.label
 
-    def scale_all(self, scale: float):
-        if abs(scale - self.old_scale) > 0.05:
-            self.widget_scale = scale
-            self.build()
-            self.update()
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["sidebar_color"]
+        self.border = border.only(
+            right=BorderSide(1, color=colors["divider_color"]), 
+            left=BorderSide(1, color=colors["divider_color"])
+        )
 
-            SideBarTitle.scale_all(scale)
-            SideBarButton.scale_all(scale)
-
-            self.old_scale = scale
+        self.update()

@@ -3,10 +3,11 @@ from xilowidgets import Revealer, Editor, EditorTheme
 
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.views.widgets.settings.accent_color_button import AccentColorButton
-from presentation.states.dark_mode_state import DarkModeState
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.custom_background_state import CustomBackgroundState
 from presentation.states.accent_color_state import AccentColorState, AccentColors
+from presentation.states.animation_disable_state import AnimationDisableState
 
 class AppearanceSettings(Column):
     THEME_BUTTON_SCALE: float = 1
@@ -17,6 +18,8 @@ class AppearanceSettings(Column):
         self.et_state = EditorThemeState()
         self.ac_state = AccentColorState()
         self.cb_state = CustomBackgroundState()
+        self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_animations
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -171,6 +174,7 @@ class AppearanceSettings(Column):
     
     def did_mount(self):
         self.page.overlay.append(self.pick_files_dialog)
+        self.update_bg_preview()
     
     def pick_file(self, event: ControlEvent):
         self.pick_files_dialog.pick_files(
@@ -194,7 +198,7 @@ class AppearanceSettings(Column):
     def switch_dark_mode(self, event: ControlEvent):
         button: SettingsImageButton = event.control
 
-        self.dm_state.active = (button.text == "Dark")
+        self.dm_state.active = DarkModeScheme(button.text == "Dark")
     
     def switch_theme(self, event: ControlEvent):
         button: ThemeButton = event.control
@@ -232,6 +236,30 @@ class AppearanceSettings(Column):
         self.background_preview.image = None
         self.use_default_button.disabled = True
         self.update()
+    
+    def update_bg_preview(self):
+        if not self.cb_state.active:
+            self._source_path.visible = False
+            self.current_path_text.visible = False
+            self.background_preview.image = None
+            self.use_default_button.disabled = True
+        else:
+            self._source_path.visible = True
+            self.current_path_text.content.value = self.cb_state.active
+            self.current_path_text.visible = True
+            self.use_default_button.disabled = False
+            self.background_preview.image = DecorationImage(
+                src=self.cb_state.active,
+                fit=ImageFit.FILL
+            )
+        self.update()
+    
+    def update_animations(self):
+        try:
+            self.dark_mode_options.animation_duration = 500 if self.ad_state.state else 0
+            self.dark_mode_options.update()
+        except:
+            pass
 
 class ThemeButton(ListTile):
     refs: list = []

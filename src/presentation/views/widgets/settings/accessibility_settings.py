@@ -10,6 +10,7 @@ class AccessibilitySettings(Column):
         super().__init__()
 
         self.ad_state = AnimationDisableState()
+        self.ad_state.on_change = self.update_anim_disable_switch
         self.cb_state = ColorBlindState()
         self.df_state = DyslexiaFriendlyState()
         self.lh_state = LeftHandedState()
@@ -17,6 +18,12 @@ class AccessibilitySettings(Column):
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
         self.spacing = 16
+
+        self.anim_disable_switch = Switch(
+            label="Animations:      ", 
+            label_position=LabelPosition.LEFT,
+            on_change=lambda e: setattr(self.ad_state, 'state', (e.data == "true"))
+        )
 
         self.controls = [
             Text("Dyslexia-Friendly Options", weight=FontWeight.BOLD),
@@ -29,24 +36,23 @@ class AccessibilitySettings(Column):
                     SettingsImageButton("/mode_dyslexic_friendly.png", "Readable", "dyslexia", 0.75, on_button_press=self.switch_readability)
                 ]
             ),
-            Text("Vision Friendly Settings", weight=FontWeight.BOLD),
-            Row(
-                spacing = 16,
-                # alignment=MainAxisAlignment.CENTER,
-                expand = True,
-                wrap=True,
-                controls = [
-                    SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.6, on_button_press=self.switch_vision),
-                    SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.6, on_button_press=self.switch_vision),
-                ]
-            ),
+            # Text("Vision Friendly Settings", weight=FontWeight.BOLD),
+            # Row(
+            #     spacing = 16,
+            #     # alignment=MainAxisAlignment.CENTER,
+            #     expand = True,
+            #     wrap=True,
+            #     controls = [
+            #         SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.6, on_button_press=self.switch_vision),
+            #         SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.6, on_button_press=self.switch_vision),
+            #     ]
+            # ),
             Text("Left-Handed Mode", weight=FontWeight.BOLD),
             Row(
                 spacing = 24,
-                # alignment=MainAxisAlignment.CENTER,
                 expand = True,
                 controls = [
                     SettingsImageButton("/screenshot_light.png", "Default", "sidebar_pos", 0.75, on_button_press=self.toggle_left_handed),
@@ -54,11 +60,7 @@ class AccessibilitySettings(Column):
                 ]
             ),
             Text("Animation Settings", weight=FontWeight.BOLD),
-            Switch(
-                label="Disable Animations:      ", 
-                label_position=LabelPosition.LEFT,
-                on_change=lambda e: setattr(self.ad_state, 'state', (e.data == "true"))
-            ),
+            self.anim_disable_switch,
             Text("Keyboard Shortcuts", weight=FontWeight.BOLD),
             DataTable(
                 columns=[
@@ -100,3 +102,10 @@ class AccessibilitySettings(Column):
         button: SettingsImageButton = event.control
 
         self.lh_state.state = (button.text == "Left-Handed")
+    
+    def update_anim_disable_switch(self):
+        try:
+            self.anim_disable_switch.value = self.ad_state.state
+            self.anim_disable_switch.update()
+        except:
+            pass

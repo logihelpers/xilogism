@@ -5,7 +5,8 @@ from services.singleton import Singleton
 
 class ActiveSideBarButtonState(metaclass = Singleton):
     def __init__(self):
-        self._active__: str = ""\
+        self._active__: str = ""
+        self._pin: str = ""
     
     @property
     def active(self) -> str:
@@ -17,4 +18,16 @@ class ActiveSideBarButtonState(metaclass = Singleton):
         self.on_change()
     
     def on_change(self):
+        pass
+
+    @property
+    def pin(self) -> str:
+        return self._pin
+    
+    @pin.setter
+    def pin(self, value: str):
+        self._pin = value
+        self.on_pin()
+    
+    def on_pin(self):
         pass
