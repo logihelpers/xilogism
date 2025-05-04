@@ -5,6 +5,7 @@ from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.dialogs_state import DialogState, Dialogs
+from presentation.states.accent_color_state import AccentColorState
 
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
@@ -17,6 +18,7 @@ from presentation.views.widgets.logic_circuit.canvas import LogicCanvas
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 from presentation.states.render_state import RenderState
 from presentation.states.animation_disable_state import AnimationDisableState
+
 
 from xilowidgets import Editor, Revealer, Zoomer
 from flet_layoutbuilder import LayoutBuilder
@@ -42,6 +44,8 @@ class EditorView(Container):
         self.af_state = ActiveFileState()
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -318,3 +322,34 @@ class EditorView(Container):
         self.hidden_options.animation_duration = 500 if animate else 0
         self.code_pane.animation_duration = 500 if animate else 0
         self.update()
+
+    def update_colors(self):
+    colors = self.ac_state.color_values
+
+    self.bgcolor = colors["bg_color"]
+
+    self.hidden_options.content.bgcolor = colors["accent_color_2"]
+    self.hidden_options.content.border = border.all(1, colors["divider_color"])
+    self.hidden_options.content.content.controls[1].color = colors["divider_color"]
+
+    self.code_pane.content.content.controls[1].border = border.all(1, colors["divider_color"])
+
+    self.font_family_chooser.bgcolor = colors["accent_color_2"]
+    self.font_family_chooser.border = border.all(1, colors["divider_color"])
+    self.font_size_tf.bgcolor = colors["accent_color_2"]
+    self.font_size_tf.border = border.all(1, colors["divider_color"])
+    self.undo_redo_button_group.bgcolor = colors["accent_color_2"]
+    self.diagram_mode.bgcolor = colors["accent_color_2"]
+    self.expand_button.bgcolor = colors["accent_color_2"]
+    self.expand_button.border = border.all(1, colors["divider_color"])
+
+    self.edit_status_icon.border = border.all(1, colors["divider_color"])
+
+    self.content.controls[1]\
+        .content.controls[0]\
+        .controls[0].color = colors["text_color"]
+
+    self.export_button.style.bgcolor = colors["accent_color_1"]
+    self.export_button.style.color   = colors["text_color"]
+
+    self.update()
