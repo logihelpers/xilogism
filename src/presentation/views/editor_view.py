@@ -47,41 +47,45 @@ class EditorView(Container):
         self.ac_state = AccentColorState()
         self.ac_state.on_colors_updated = self.update_colors
 
+        self.vertical_divider = VerticalDivider(1, color="black")
+
+        self.hidden_options_content = Container(
+            margin=margin.only(right = 8),
+            border=border.all(1, "black"),
+            bgcolor="#1a191f51",
+            border_radius=8,
+            content=Row(
+                spacing=0,
+                controls=[
+                    Container(
+                        width = 32,
+                        height = 32,
+                        padding = 4,
+                        content=Image(
+                            src="/icons_light/new.png",
+                            width=16,
+                            height=16
+                        )
+                    ),
+                    self.vertical_divider,
+                    Container(
+                        width = 32,
+                        height = 32,
+                        padding = 4,
+                        content=Image(
+                            src="/icons_light/open.png",
+                            width=16,
+                            height=16
+                        )
+                    ),
+                ]
+            )
+        )
+
         self.hidden_options = Revealer(
             content_hidden=True,
             content_length=72,
-            content=Container(
-                margin=margin.only(right = 8),
-                border=border.all(1, "black"),
-                bgcolor="#1a191f51",
-                border_radius=8,
-                content=Row(
-                    spacing=0,
-                    controls=[
-                        Container(
-                            width = 32,
-                            height = 32,
-                            padding = 4,
-                            content=Image(
-                                src="/icons_light/new.png",
-                                width=16,
-                                height=16
-                            )
-                        ),
-                        VerticalDivider(1, color="black"),
-                        Container(
-                            width = 32,
-                            height = 32,
-                            padding = 4,
-                            content=Image(
-                                src="/icons_light/open.png",
-                                width=16,
-                                height=16
-                            )
-                        ),
-                    ]
-                )
-            )
+            content=self.hidden_options_content
         )
 
         self.font_family_chooser = FontFaceChooserButton()
@@ -189,7 +193,7 @@ class EditorView(Container):
             ]
         )
 
-        preview_view = Container(
+        self.preview_view = Container(
             expand=True,
             content=Stack(
                 expand=True,
@@ -232,7 +236,7 @@ class EditorView(Container):
                         content=Column(
                             controls=[
                                 preview_bar,
-                                preview_view
+                                self.preview_view
                             ]
                         ),
                     )
@@ -324,32 +328,32 @@ class EditorView(Container):
         self.update()
 
     def update_colors(self):
-    colors = self.ac_state.color_values
+        colors = self.ac_state.color_values
 
-    self.bgcolor = colors["bg_color"]
+        self.bgcolor = colors["bg_color"]
 
-    self.hidden_options.content.bgcolor = colors["accent_color_2"]
-    self.hidden_options.content.border = border.all(1, colors["divider_color"])
-    self.hidden_options.content.content.controls[1].color = colors["divider_color"]
+        self.hidden_options_content.bgcolor = colors["accent_color_2"]
+        self.hidden_options_content.border = border.all(1, colors["divider_color"])
+        self.vertical_divider.color = colors["divider_color"]
 
-    self.code_pane.content.content.controls[1].border = border.all(1, colors["divider_color"])
+        self.preview_view.border = border.all(1, colors["divider_color"])
 
-    self.font_family_chooser.bgcolor = colors["accent_color_2"]
-    self.font_family_chooser.border = border.all(1, colors["divider_color"])
-    self.font_size_tf.bgcolor = colors["accent_color_2"]
-    self.font_size_tf.border = border.all(1, colors["divider_color"])
-    self.undo_redo_button_group.bgcolor = colors["accent_color_2"]
-    self.diagram_mode.bgcolor = colors["accent_color_2"]
-    self.expand_button.bgcolor = colors["accent_color_2"]
-    self.expand_button.border = border.all(1, colors["divider_color"])
+        self.font_family_chooser.bgcolor = colors["accent_color_2"]
+        self.font_family_chooser.border = border.all(1, colors["divider_color"])
+        self.font_size_tf.bgcolor = colors["accent_color_2"]
+        self.font_size_tf.border = border.all(1, colors["divider_color"])
+        self.undo_redo_button_group.bgcolor = colors["accent_color_2"]
+        self.diagram_mode.bgcolor = colors["accent_color_2"]
+        self.expand_button.bgcolor = colors["accent_color_2"]
+        self.expand_button.border = border.all(1, colors["divider_color"])
 
-    self.edit_status_icon.border = border.all(1, colors["divider_color"])
+        self.edit_status_icon.border = border.all(1, colors["divider_color"])
 
-    self.content.controls[1]\
-        .content.controls[0]\
-        .controls[0].color = colors["text_color"]
+        self.content.controls[1]\
+            .content.controls[0]\
+            .controls[0].color = colors["text_color"]
 
-    self.export_button.style.bgcolor = colors["accent_color_1"]
-    self.export_button.style.color   = colors["text_color"]
+        self.export_button.style.bgcolor = colors["accent_color_1"]
+        self.export_button.style.color   = colors["text_color"]
 
-    self.update()
+        self.update()
