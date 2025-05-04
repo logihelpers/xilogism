@@ -194,7 +194,21 @@ class StartView(Container):
     
     def update_colors(self):
         colors = self.ac_state.color_values
+
         self.create_xilogism_span.style.color = colors["text_color"]
+        self.format_span.style.color = colors["text_color"]
+        self.open_existing_text.color = colors["text_color"]
+        self.get_dirty_span.style.color = colors["text_color"]
+        self.code_to_circuits_text.color = colors["text_color"]
+
+        self.new_button.style.bgcolor = colors["accent_color_1"]
+        self.new_button.style.color = colors["text_color"]
+        self.new_button.style.side = BorderSide(1, colors["divider_color"])
+
+        self.open_button.style.bgcolor = colors["accent_color_1"]
+        self.open_button.style.color = colors["text_color"]
+        self.open_button.style.side = BorderSide(1, colors["divider_color"])
+
         self.update()
     
     def update_animations(self):
