@@ -260,10 +260,21 @@ class EditorView(Container):
         self.code_editor.update()
     
     def update_status_icon(self):
-        if not self.af_state.active or type(self.af_state.active) != XiloFile or (type(self.af_state.active) == XiloFile and self.af_state.active.title != self.key_name):
+        # if not self.af_state.active or \
+        #     type(self.af_state.active) != XiloFile or \
+        #     (type(self.af_state.active) == XiloFile and \
+        #      self.af_state.active.title != self.key_name):
+        #     return
+        if not self.af_state.active:
             return
-        
-        key_name = self.af_state.active.title
+        elif self.af_state.active == "New Xilogism":
+            key_name = "New"
+        elif type(self.af_state.active) != XiloFile or \
+            (type(self.af_state.active) == XiloFile and \
+                self.af_state.active.title != self.key_name):
+            return
+        else:
+            key_name = self.af_state.active.title
 
         active_instance: EditorView = None
         instance: EditorView = None
