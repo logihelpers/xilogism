@@ -123,7 +123,7 @@ class ExportPrintDialog(XDialog):
             "Print", 
             expand=True,
             disabled=True,
-            on_click= lambda e: self.export_state.export() if e.control.text == "Print" else print("HAHA")
+            on_click= lambda e: self.export_state.print() if e.control.text == "Print" else print("HAHA")
         )
 
         self.project_name_tf = TextField(

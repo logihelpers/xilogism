@@ -10,6 +10,7 @@ import pypdfium2 as pdfium
 import shutil
 import numpy as np
 from PIL import Image as IMG
+import win32api
 
 from flet import Page, margin as mg, SnackBar, Text, SnackBarBehavior
 from presentation.states.active_file_state import ActiveFileState
@@ -30,9 +31,10 @@ class ExportController(Controller):
         self.dia_state = DialogState()
         self.af_state = ActiveFileState()
 
-        self.export_state.on_export = self.export
+        self.export_state.on_export = lambda: self.export(to_print=False)
+        self.export_state.on_print = lambda: self.export(to_print=True)
 
-    def export(self):
+    def export(self, to_print: bool):
         file_format: FileFormat = self.export_state.format
         margin: bool = self.export_state.margin
         titleblock_enable: bool = self.export_state.titleblock_enable
@@ -48,11 +50,13 @@ class ExportController(Controller):
 
         self.dia_state.state = Dialogs.CLOSE
 
+        export_message = "Preparing file for printing. Please wait!" if to_print else "Exporting the document. Please wait!"
+
         self.page.open(
             SnackBar(
-                content=Text(f"Exporting the document. Please wait!"), 
+                content=Text(export_message), 
                 behavior=SnackBarBehavior.FLOATING, 
-                duration=3000,
+                duration=6000,
                 show_close_icon=True,
                 margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
             )
@@ -69,20 +73,36 @@ class ExportController(Controller):
                 output_filename = self.export_to_file(margin, titleblock_enable, proj_name, creator, date)
             case FileFormat.RAW_PNG:
                 output_filename = self.export_to_png()
-
-        message = f"Successfully exported to {output_filename}!" if output_filename != "" else f"There was a problem exporting the file!"
         
-        self.page.open(
-            SnackBar(
-                content=Text(message), 
-                behavior=SnackBarBehavior.FLOATING, 
-                duration=6000,
-                show_close_icon=True,
-                margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
-                action="Open" if output_filename != "" else None,
-                on_action=lambda e: os.startfile(output_filename) if output_filename != "" else None
+        if not to_print:
+            message = f"Successfully exported to {output_filename}!" if output_filename != "" else f"There was a problem exporting the file!"
+            
+            self.page.open(
+                SnackBar(
+                    content=Text(message), 
+                    behavior=SnackBarBehavior.FLOATING, 
+                    duration=6000,
+                    show_close_icon=True,
+                    margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
+                    action="Open" if output_filename != "" else None,
+                    on_action=lambda e: os.startfile(output_filename) if output_filename != "" else None
+                )
             )
-        )
+        else:
+            try:
+                win32api.ShellExecute(0, "print", output_filename, None, ".", 0)
+            except:
+                self.page.open(
+                    SnackBar(
+                        content=Text("Cannot process the printing of the file. No printers found."), 
+                        behavior=SnackBarBehavior.FLOATING, 
+                        duration=6000,
+                        show_close_icon=True,
+                        margin=mg.all(12) if not self.sbh_state.state.value else mg.only(left=212, top=12, right=12, bottom=12),
+                        action="Open" if output_filename != "" else None,
+                        on_action=lambda e: os.startfile(output_filename) if output_filename != "" else None
+                    )
+                )
     
     def export_to_file(self, margin: bool, titleblock_enable: bool, proj_name: str, creator: str, date: str, is_pdf = 0):
         if self.key_name == "":

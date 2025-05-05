@@ -80,3 +80,9 @@ class ExportState(metaclass=Singleton):
     
     def on_export(self):
         pass
+
+    def print(self):
+        self.on_print()
+    
+    def on_print(self):
+        pass
