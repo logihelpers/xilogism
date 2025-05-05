@@ -53,11 +53,11 @@ class AccentColorController(Controller):
                 if button.color == active:
                     button.active = True
 
-                    button.main_content.border = border.all(1.5, Colors.BLACK)
+                    button.main_content.border = border.all(1.5, colors["divider_color"])
                     button.main_content.update()
 
                     button.main_content.content.value = "✓"
-                    button.main_content.content.color = "black"
+                    button.main_content.content.color = colors["text_color"]
                     button.main_content.content.update()
 
                     button.name_text.weight = FontWeight.W_600
@@ -65,11 +65,11 @@ class AccentColorController(Controller):
                 else:
                     button.active = False
 
-                    button.main_content.border = border.all(0.5, Colors.BLACK)
+                    button.main_content.border = border.all(0.5, colors["divider_color"])
                     button.main_content.update()
 
                     button.main_content.content.value = ""
-                    button.main_content.content.color = "black"
+                    button.main_content.content.color = colors["text_color"]
                     button.main_content.content.update()
 
                     button.name_text.weight = FontWeight.W_400

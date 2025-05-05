@@ -125,10 +125,12 @@ class EditorView(Container):
             clip_behavior=ClipBehavior.ANTI_ALIAS
         )
 
+        self.viewing_mode_text = Text("Viewing Mode:", color="black")
+
         self.preview_bar = Row(
             height=32, alignment=MainAxisAlignment.SPACE_BETWEEN,
             controls=[
-                Row(controls=[Text("Viewing Mode:", color="black"), self.diagram_mode]),
+                Row(controls=[self.viewing_mode_text, self.diagram_mode]),
                 self.export_button
             ]
         )
@@ -255,7 +257,7 @@ class EditorView(Container):
         self.code_editor_container.border = border.all(1, colors["divider_color"])
         self.edit_status_icon.border = border.all(1, colors["divider_color"])
         
-        self.preview_bar.color = colors["text_color"]
+        self.viewing_mode_text.color = colors["text_color"]
         self.preview_view.border = border.all(1, colors["divider_color"])
         self.preview_view.bgcolor = colors["bg_color"]
         self.update()

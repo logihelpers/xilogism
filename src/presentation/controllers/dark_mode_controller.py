@@ -71,8 +71,8 @@ class DarkModeController(Controller):
                 if (button.text == "Dark" and active.value) or (button.text == "Default" and not active.value):
                     button.active = True
 
-                    button.bgcolor = "#4d191f51"
-                    button.check_box.bgcolor = "#af191f51"
+                    button.bgcolor = colors["accent_color_1"]
+                    button.check_box.bgcolor = colors["accent_color_2"]
                     button.border = border.all(1, "#191f51")
                     button.label.weight = FontWeight.BOLD
                     button.update()
