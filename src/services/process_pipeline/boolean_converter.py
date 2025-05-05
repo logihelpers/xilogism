@@ -17,17 +17,11 @@ class BooleanConverter:
             "not": 0,
             "nand": 0,
             "nor": 0,
-            "xnor": 0,
-            "mux": 0,
-            "demux": 0,
-            "encoder": 0,
-            "decoder": 0,
-            "shifter": 0,
-            "divider": 0,
-            "modulo": 0
+            "xnor": 0
         }
         self.max_hierarchy = 0
         self.variables = {}  # Track variable assignments
+        self.output_connections = {}  # Track which nodes feed into outputs
 
     def _new_name(self, prefix):
         self.counter[prefix] += 1
@@ -123,13 +117,7 @@ class BooleanConverter:
             "not(": "NOT",
             "nand(": "NAND",
             "nor(": "NOR",
-            "xnor(": "XNOR",
-            "mux(": "MUX",
-            "demux(": "DEMUX",
-            "encode(": "ENCODER",
-            "decode(": "DECODER",
-            "shift_left(": "SHIFT_LEFT",
-            "shift_right(": "SHIFT_RIGHT"
+            "xnor(": "XNOR"
         }
         
         for op_keyword, gate_type in logic_ops.items():
@@ -165,6 +153,13 @@ class BooleanConverter:
                         "hierarchy": hierarchy_level
                     }
                     self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+                    
+                    # Track this output for later connection to destination
+                    if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                        if from_var not in self.output_connections:
+                            self.output_connections[from_var] = []
+                        self.output_connections[from_var].append(gate_name)
+                    
                     return gate_name
         
         # Subtraction handling (using XOR and NOT gates)
@@ -176,39 +171,42 @@ class BooleanConverter:
             minuend = self.process_expr(terms[0], from_var)
             subtrahend = self.process_expr(terms[1], from_var)
             
-            # For binary subtraction A-B: Use XOR for difference and AND+NOT for borrow
-            # Difference bit is A XOR B
-            xor_name = self._new_name("xor")
-            hierarchy_level = 2
-            self.nodes[xor_name] = {
-                "type": "BLOCK",
-                "block_type": "XOR",
-                "inputs": [minuend, subtrahend],
-                "output": xor_name,
-                "hierarchy": hierarchy_level
-            }
-            
-            # Borrow bit is NOT(A) AND B
+            # For binary subtraction A-B:
+            # First create the NOT gate (hierarchy level 1)
             not_name = self._new_name("not")
+            not_hierarchy = 1  # Set NOT gate to lowest hierarchy level
             self.nodes[not_name] = {
                 "type": "BLOCK",
                 "block_type": "NOT",
                 "inputs": [minuend],
                 "output": not_name,
-                "hierarchy": hierarchy_level
+                "hierarchy": not_hierarchy
             }
             
+            # Then create the AND gate for borrow (hierarchy level 2)
             and_name = self._new_name("and")
+            and_hierarchy = 2
             self.nodes[and_name] = {
                 "type": "BLOCK",
                 "block_type": "AND",
                 "inputs": [not_name, subtrahend],
                 "output": and_name,
-                "hierarchy": hierarchy_level
+                "hierarchy": and_hierarchy
+            }
+            
+            # Difference bit is A XOR B (hierarchy level 2)
+            xor_name = self._new_name("xor")
+            xor_hierarchy = 2
+            self.nodes[xor_name] = {
+                "type": "BLOCK",
+                "block_type": "XOR",
+                "inputs": [minuend, subtrahend],
+                "output": xor_name,
+                "hierarchy": xor_hierarchy
             }
             
             # Create the subtractor block that represents this operation
-            hierarchy_level += 1
+            hierarchy_level = 3  # Higher level than its components
             self.nodes[subtractor_name] = {
                 "type": "BLOCK",
                 "block_type": "SUBTRACTOR",
@@ -221,7 +219,23 @@ class BooleanConverter:
                 }
             }
             
+            # Create a wire from XOR to output for better connection
+            wire_name = self._new_name("wire")
+            self.nodes[wire_name] = {
+                "type": "WIRE",
+                "from": xor_name,
+                "to": subtractor_name,
+                "hierarchy": hierarchy_level
+            }
+            
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(subtractor_name)
+                
             return subtractor_name
             
         # Addition handling (using XOR and AND gates)
@@ -244,7 +258,7 @@ class BooleanConverter:
             
             # Create XOR gates for sum bits
             current_sum = processed_terms[0]
-            hierarchy_level = 2  # Start with this level
+            xor_hierarchy = 1  # Start with this level
             
             for i in range(1, len(processed_terms)):
                 xor_name = self._new_name("xor")
@@ -253,17 +267,18 @@ class BooleanConverter:
                     "block_type": "XOR",
                     "inputs": [current_sum, processed_terms[i]],
                     "output": xor_name,
-                    "hierarchy": hierarchy_level
+                    "hierarchy": xor_hierarchy
                 }
                 
                 # Create AND gate for carry bit
                 and_name = self._new_name("and")
+                and_hierarchy = 1  # Same level as XOR
                 self.nodes[and_name] = {
                     "type": "BLOCK",
                     "block_type": "AND",
                     "inputs": [current_sum, processed_terms[i]],
                     "output": and_name,
-                    "hierarchy": hierarchy_level
+                    "hierarchy": and_hierarchy
                 }
                 
                 # The current sum becomes the XOR result
@@ -272,30 +287,46 @@ class BooleanConverter:
                 # If this isn't the last term, we need to include the carry in the next iteration
                 if i < len(processed_terms) - 1:
                     next_xor_name = self._new_name("xor")
-                    hierarchy_level += 1
+                    next_hierarchy = 2  # Higher than the previous gates
                     self.nodes[next_xor_name] = {
                         "type": "BLOCK",
                         "block_type": "XOR",
                         "inputs": [current_sum, and_name],
                         "output": next_xor_name,
-                        "hierarchy": hierarchy_level
+                        "hierarchy": next_hierarchy
                     }
                     current_sum = next_xor_name
             
             # Final adder result
+            hierarchy_level = 2  # Set appropriate hierarchy for adder
             self.nodes[adder_name] = {
                 "type": "BLOCK",
-                "block_type": "ADDER",
+                "block_type": "ADD",  # Changed from ADDER to ADD
                 "inputs": processed_terms,
                 "output": adder_name,
-                "hierarchy": hierarchy_level,
-                "implementation": current_sum  # Link to the final XOR output
+                "hierarchy": hierarchy_level
+            }
+            
+            # Create a wire from the final sum to the adder output
+            wire_name = self._new_name("wire")
+            self.nodes[wire_name] = {
+                "type": "WIRE",
+                "from": current_sum,
+                "to": adder_name,
+                "hierarchy": hierarchy_level
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(adder_name)
+                
             return adder_name
             
-        # Multiplication handling
+        # Multiplication handling (simplified)
         elif "*" in expr:
             terms = [t.strip() for t in expr.split("*")]
             mul_name = self._new_name("multiplier")
@@ -318,95 +349,17 @@ class BooleanConverter:
                 "hierarchy": hierarchy_level
             }
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(mul_name)
+                
             return mul_name
+            
         elif expr.isdigit():
             return self.add_constant(int(expr))
-        # Division handling
-        elif "/" in expr:
-            terms = [t.strip() for t in expr.split("/", 1)]
-            div_name = self._new_name("divider")
-            
-            # Process dividend and divisor
-            dividend = self.process_expr(terms[0], from_var)
-            divisor = self.process_expr(terms[1], from_var)
-            
-            # Create division block (simplified implementation)
-            hierarchy_level = 3  # Division is complex, so higher hierarchy
-            self.nodes[div_name] = {
-                "type": "BLOCK",
-                "block_type": "DIVIDER",
-                "inputs": [dividend, divisor],
-                "output": div_name,
-                "hierarchy": hierarchy_level
-            }
-            
-            self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
-            return div_name
-            
-        # Modulo handling
-        elif "%" in expr:
-            terms = [t.strip() for t in expr.split("%", 1)]
-            mod_name = self._new_name("modulo")
-            
-            # Process dividend and divisor
-            dividend = self.process_expr(terms[0], from_var)
-            divisor = self.process_expr(terms[1], from_var)
-            
-            # Create modulo block
-            hierarchy_level = 3  # Modulo is complex, so higher hierarchy
-            self.nodes[mod_name] = {
-                "type": "BLOCK",
-                "block_type": "MODULO",
-                "inputs": [dividend, divisor],
-                "output": mod_name,
-                "hierarchy": hierarchy_level
-            }
-            
-            self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
-            return mod_name
-            
-        # Bitwise shift operations
-        elif "<<" in expr:
-            terms = [t.strip() for t in expr.split("<<", 1)]
-            shift_name = self._new_name("shifter")
-            
-            # Process value and shift amount
-            value = self.process_expr(terms[0], from_var)
-            shift_amount = self.process_expr(terms[1], from_var)
-            
-            # Create shift left block
-            hierarchy_level = 2
-            self.nodes[shift_name] = {
-                "type": "BLOCK",
-                "block_type": "SHIFT_LEFT",
-                "inputs": [value, shift_amount],
-                "output": shift_name,
-                "hierarchy": hierarchy_level
-            }
-            
-            self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
-            return shift_name
-            
-        elif ">>" in expr:
-            terms = [t.strip() for t in expr.split(">>", 1)]
-            shift_name = self._new_name("shifter")
-            
-            # Process value and shift amount
-            value = self.process_expr(terms[0], from_var)
-            shift_amount = self.process_expr(terms[1], from_var)
-            
-            # Create shift right block
-            hierarchy_level = 2
-            self.nodes[shift_name] = {
-                "type": "BLOCK",
-                "block_type": "SHIFT_RIGHT",
-                "inputs": [value, shift_amount],
-                "output": shift_name,
-                "hierarchy": hierarchy_level
-            }
-            
-            self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
-            return shift_name
             
         # Bitwise operations (if not already captured by logic_ops)
         elif "&" in expr and "&&" not in expr:  # Bitwise AND
@@ -418,7 +371,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 2
+            hierarchy_level = 2  # CHANGED: Set AND gate hierarchy to 2
             self.nodes[and_name] = {
                 "type": "BLOCK",
                 "block_type": "AND",
@@ -428,6 +381,13 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(and_name)
+                
             return and_name
             
         elif "|" in expr and "||" not in expr:  # Bitwise OR
@@ -439,7 +399,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 2
+            hierarchy_level = 2  # CHANGED: Set OR gate hierarchy to 2
             self.nodes[or_name] = {
                 "type": "BLOCK",
                 "block_type": "OR",
@@ -449,6 +409,13 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(or_name)
+                
             return or_name
             
         elif "^" in expr:  # Bitwise XOR
@@ -460,7 +427,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 2
+            hierarchy_level = 2  # CHANGED: Set XOR gate hierarchy to 2
             self.nodes[xor_name] = {
                 "type": "BLOCK",
                 "block_type": "XOR",
@@ -470,6 +437,13 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(xor_name)
+                
             return xor_name
             
         # Logical operations
@@ -482,7 +456,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 2
+            hierarchy_level = 2  # CHANGED: Set AND gate hierarchy to 2
             self.nodes[and_name] = {
                 "type": "BLOCK",
                 "block_type": "AND",
@@ -492,6 +466,13 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(and_name)
+                
             return and_name
             
         elif "||" in expr:  # Logical OR
@@ -503,7 +484,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 2
+            hierarchy_level = 2  # CHANGED: Set OR gate hierarchy to 2
             self.nodes[or_name] = {
                 "type": "BLOCK",
                 "block_type": "OR",
@@ -513,6 +494,13 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(or_name)
+                
             return or_name
             
         # Unary operations
@@ -521,7 +509,7 @@ class BooleanConverter:
             not_name = self._new_name("not")
             processed_operand = self.process_expr(operand, from_var)
             
-            hierarchy_level = 1
+            hierarchy_level = 1  # Keep NOT gate at lowest hierarchy level
             self.nodes[not_name] = {
                 "type": "BLOCK",
                 "block_type": "NOT",
@@ -531,6 +519,13 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(not_name)
+                
             return not_name
             
         elif expr.startswith("!"):  # Logical NOT
@@ -538,7 +533,7 @@ class BooleanConverter:
             not_name = self._new_name("not")
             processed_operand = self.process_expr(operand, from_var)
             
-            hierarchy_level = 1
+            hierarchy_level = 1  # Keep NOT gate at lowest hierarchy level
             self.nodes[not_name] = {
                 "type": "BLOCK",
                 "block_type": "NOT",
@@ -548,6 +543,38 @@ class BooleanConverter:
             }
             
             self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(not_name)
+                
+            return not_name
+        
+        # ADDED: Special case for negation operator "-" at the beginning
+        elif expr.startswith("-") and not expr[1:].isdigit():  # Handle negation operation
+            operand = expr[1:].strip()
+            not_name = self._new_name("not")
+            processed_operand = self.process_expr(operand, from_var)
+            
+            hierarchy_level = 1  # Keep NOT gate at the lowest hierarchy level
+            self.nodes[not_name] = {
+                "type": "BLOCK",
+                "block_type": "NOT",
+                "inputs": [processed_operand],
+                "output": not_name,
+                "hierarchy": hierarchy_level
+            }
+            
+            self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(not_name)
+                
             return not_name
             
         elif expr.startswith("-") and expr[1:].isdigit():  # Handle negative numbers
@@ -561,6 +588,7 @@ class BooleanConverter:
     def convert(self, python_code: str):
         self.nodes = {}
         self.variables = {}
+        self.output_connections = {}
         self.max_hierarchy = 0
         self.counter = {
             "constant": 0,
@@ -576,20 +604,12 @@ class BooleanConverter:
             "not": 0,
             "nand": 0,
             "nor": 0,
-            "xnor": 0,
-            "mux": 0,
-            "demux": 0,
-            "encoder": 0,
-            "decoder": 0,
-            "shifter": 0,
-            "divider": 0,
-            "modulo": 0
+            "xnor": 0
         }
 
         lines = python_code.strip().splitlines()
         current_condition = None
-        last_var = None
-        condition_blocks = {}  # Store info about if-elif-else blocks
+        condition_blocks = {}
 
         # First pass: identify input and output nodes
         for line in lines:
@@ -609,7 +629,8 @@ class BooleanConverter:
                 # We'll update the hierarchy for outputs later
                 self.nodes[var] = {
                     "type": "OUTPUT_NODE",
-                    "hierarchy": 0  # Placeholder, will be updated later
+                    "hierarchy": 0,  # Placeholder, will be updated later
+                    "inputs": []     # Will track nodes connected to this output
                 }
 
         # Second pass: process all expressions and blocks
@@ -641,6 +662,15 @@ class BooleanConverter:
                 var, expr = map(str.strip, stripped.split("=", 1))
                 expr_result = self.process_expr(expr, var)
                 wire_hierarchy = self.max_hierarchy + 1
+
+                # Store this assignment as a variable
+                self.variables[var] = expr_result
+                
+                # If the destination is an output node, update its inputs list
+                if var in self.nodes and self.nodes[var]["type"] == "OUTPUT_NODE":
+                    if not hasattr(self.nodes[var], "inputs"):
+                        self.nodes[var]["inputs"] = []
+                    self.nodes[var]["inputs"].append(expr_result)
 
                 if current_condition == "default" or current_condition is None:
                     wire_name = self._new_name("wire")
@@ -681,5 +711,17 @@ class BooleanConverter:
         for node_name, node in self.nodes.items():
             if node["type"] == "OUTPUT_NODE":
                 node["hierarchy"] = output_hierarchy
+
+        # Create connections for all outputs
+        for output_name, connected_nodes in self.output_connections.items():
+            if output_name in self.nodes and self.nodes[output_name]["type"] == "OUTPUT_NODE":
+                for node in connected_nodes:
+                    wire_name = self._new_name("wire")
+                    self.nodes[wire_name] = {
+                        "type": "WIRE",
+                        "from": node,
+                        "to": output_name,
+                        "hierarchy": self.nodes[output_name]["hierarchy"] - 1
+                    }
 
         return self.nodes

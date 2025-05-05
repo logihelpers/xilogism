@@ -1,0 +1,34 @@
+{
+    "ow": {
+        "type": "INPUT_NODE", 
+        "hierarchy": 0
+        }, 
+    "karsa": {
+        "type": "INPUT_NODE", 
+        "hierarchy": 0
+        }, 
+    "wen": {
+        "type": "OUTPUT_NODE", 
+        "hierarchy": 3, 
+        "inputs": ["and_1"]
+    }, 
+    "and_1": {
+        "type": "BLOCK", 
+        "block_type": "AND", 
+        "inputs": ["ow", "karsa"], 
+        "output": "and_1", 
+        "hierarchy": 1
+    }, 
+    "wire_1": {
+        "type": "WIRE", 
+        "from": "and_1", 
+        "to": "wen", 
+        "hierarchy": 2
+    }, 
+    "wire_2": {
+        "type": "WIRE", 
+        "from": "and_1", 
+        "to": "wen", 
+        "hierarchy": 2
+    }
+}

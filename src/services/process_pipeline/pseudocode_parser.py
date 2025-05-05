@@ -21,7 +21,7 @@ class PseudocodeParser:
         assignments = defaultdict(list)
         current_conditions = []
 
-        def get_indent(line):
+        def get_indent(line: str):
             return len(line) - len(line.lstrip())
 
         i = 0

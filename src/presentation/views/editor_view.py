@@ -304,7 +304,7 @@ class EditorView(Container):
         active_instance.canvas.update()
     
     def update_dialog(self, event: ControlEvent):
-        self.canvas.capture(600, 600)
+        self.canvas.capture(1000, 772)
         self.dia_state.state = Dialogs.EXPORT
     
     def update_content(self, event: ControlEvent):

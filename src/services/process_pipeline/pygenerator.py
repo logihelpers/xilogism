@@ -16,7 +16,7 @@ class PythonGenerator:
 
         for var, conditions in self.assignments.items():
             lines.append("")
-            first_condition = True  # <-- Track first condition for each variable
+            first_condition = True  # Track first condition for each variable
 
             for idx, (cond, val) in enumerate(conditions):
                 if cond == "else":
@@ -31,16 +31,3 @@ class PythonGenerator:
                     first_condition = False  # <-- After first, switch to elif
 
         return "\n".join(lines)
-    
-    """
-INPUT tenko
-OUTPUT token
-
-assign token = tenko * 2
-
-IF token < 10 THEN
-  assign token = 15
-ELIF token > 10 THEN
-  assign token = -15
-ELSE
-  assign token = 0"""
