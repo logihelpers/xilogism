@@ -584,8 +584,7 @@ class BooleanConverter:
 
         lines = python_code.strip().splitlines()
         current_condition = None
-        last_var = None
-        condition_blocks = {}  # Store info about if-elif-else blocks
+        condition_blocks = {}
 
         # First pass: identify input and output nodes
         for line in lines:
@@ -700,4 +699,5 @@ class BooleanConverter:
                         "hierarchy": self.nodes[output_name]["hierarchy"] - 1
                     }
 
+        print(self.nodes)
         return self.nodes

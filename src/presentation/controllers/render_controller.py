@@ -20,7 +20,7 @@ class RenderController(Controller):
     priority = Priority.NONE
     
     # Constants for layout
-    HORIZONTAL_SPACING = 150  # Space between hierarchy levels
+    HORIZONTAL_SPACING = 100  # Space between hierarchy levels
     VERTICAL_SPACING = 80     # Base vertical spacing between nodes
     MARGIN_LEFT = 50         # Left margin
     MARGIN_TOP = 50          # Top margin
@@ -35,11 +35,8 @@ class RenderController(Controller):
 
     def process_input(self, input: dict):
         """Main entry point to process the input dictionary and create visual elements"""
-        print("_____START_____")
         key_name, input_dict = input.popitem()
         nodes = []
-
-        print(input_dict)
         
         # Reset tracking dictionaries
         self.node_map = {}
@@ -113,7 +110,7 @@ class RenderController(Controller):
         for i, (name, info) in enumerate(output_nodes):
             # Place outputs at the rightmost hierarchy level
             x = self.MARGIN_LEFT + ((hierarchy + 1) * self.HORIZONTAL_SPACING)
-            y = self.MARGIN_TOP + (i * self.VERTICAL_SPACING)
+            y = self.MARGIN_TOP + 100 + (i * self.VERTICAL_SPACING)
             
             output_node = OutputNode(x, y)
             nodes.append(output_node)
@@ -136,7 +133,7 @@ class RenderController(Controller):
             for i, (name, info) in enumerate(group_blocks):
                 x = self.MARGIN_LEFT + (hierarchy * self.HORIZONTAL_SPACING)
                 # Distribute nodes vertically with proper spacing between groups
-                y = self.MARGIN_TOP + y_offset + (i * self.VERTICAL_SPACING)
+                y = self.MARGIN_TOP + y_offset + 100 + (i * self.VERTICAL_SPACING)
                 
                 # Create the appropriate gate based on block_type
                 gate = self._create_gate_by_type(name, info, x, y)
