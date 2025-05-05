@@ -169,8 +169,9 @@ class ExportController(Controller):
                 run.add_picture(image_stream, width=Inches(6))
             
             if is_pdf == 0:
-                doc.save(self.documents_dir / f"{self.key_name}.docx")
-                return f"{self.key_name}.docx"
+                final_filename = self.documents_dir / f"{self.key_name}.docx"
+                doc.save(final_filename)
+                return final_filename
 
             elif is_pdf == 1:
                 with tempfile.TemporaryDirectory() as tempdir:
@@ -185,6 +186,7 @@ class ExportController(Controller):
                     return pdf_path
             else:
                 output_pdf_path = "copied_temp.pdf"
+                final_filename = self.documents_dir / f"{self.key_name}.png"
                 with tempfile.TemporaryDirectory() as tempdir:
                     docx_path = os.path.join(tempdir, "temp.docx")
                     pdf_path = os.path.join(tempdir, "temp.pdf")
@@ -198,9 +200,9 @@ class ExportController(Controller):
                     pdf = pdfium.PdfDocument(output_pdf_path)
 
                     image = pdf[0].render(scale=4).to_pil()
-                    image.save(self.documents_dir / f"{self.key_name}.png", format='PNG')
+                    image.save(final_filename, format='PNG')
 
-                return f"{self.key_name}.png"
+                return final_filename
         except:
             return ""
     
