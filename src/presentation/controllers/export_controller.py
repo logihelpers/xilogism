@@ -2,6 +2,7 @@ from presentation.states.export_state import ExportState, FileFormat
 from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from pathlib import Path
 import base64
 import io
 import os
@@ -33,6 +34,8 @@ class ExportController(Controller):
 
         self.export_state.on_export = lambda: self.export(to_print=False)
         self.export_state.on_print = lambda: self.export(to_print=True)
+
+        self.documents_dir = (Path.home() / "Documents").absolute()
 
     def export(self, to_print: bool):
         file_format: FileFormat = self.export_state.format
@@ -76,7 +79,7 @@ class ExportController(Controller):
         
         if not to_print:
             message = f"Successfully exported to {output_filename}!" if output_filename != "" else f"There was a problem exporting the file!"
-            
+
             self.page.open(
                 SnackBar(
                     content=Text(message), 
@@ -166,13 +169,13 @@ class ExportController(Controller):
                 run.add_picture(image_stream, width=Inches(6))
             
             if is_pdf == 0:
-                doc.save("test.docx")
+                doc.save(self.documents_dir / f"{self.key_name}.docx")
+                return f"{self.key_name}.docx"
 
-                return "test.docx"
             elif is_pdf == 1:
                 with tempfile.TemporaryDirectory() as tempdir:
                     docx_path = os.path.join(tempdir, "temp.docx")
-                    pdf_path = "test.pdf"
+                    pdf_path = self.documents_dir / f"{self.key_name}.pdf"
             
                     doc.save(docx_path)
 
@@ -195,9 +198,9 @@ class ExportController(Controller):
                     pdf = pdfium.PdfDocument(output_pdf_path)
 
                     image = pdf[0].render(scale=4).to_pil()
-                    image.save("test.png", format='PNG')
+                    image.save(self.documents_dir / f"{self.key_name}.png", format='PNG')
 
-                return "test.png"
+                return f"{self.key_name}.png"
         except:
             return ""
     
@@ -212,9 +215,9 @@ class ExportController(Controller):
 
         img = IMG.open(image_stream)
     
-        img.save("test.png", format='PNG')
+        img.save(self.documents_dir / f"{self.key_name}.png", format='PNG')
 
-        return "test.png"
+        return f"{self.key_name}.png"
     
     def center_image(self, image_stream: io.BytesIO, bg_color: tuple = None, target_width_inches: float = 12, dpi: int = 96):
         try:
