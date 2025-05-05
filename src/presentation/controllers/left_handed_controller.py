@@ -2,6 +2,7 @@ from presentation.states.left_handed_state import LeftHandedState
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.views.window_view import WindowView
+from presentation.states.accent_color_state import AccentColorState
 from xilowidgets import Revealer
 
 from flet import *
@@ -19,6 +20,7 @@ class LeftHandedController(Controller):
         self.lh_state.on_change = self.change_state
         self.dia_state = DialogState()
         self.dia_state.on_done_build = self.update_view
+        self.ac_state = AccentColorState()
 
         self.window: WindowView = self.page.session.get("window")
 
@@ -50,8 +52,10 @@ class LeftHandedController(Controller):
 
         if active and isinstance(middle_widget, Revealer):
             self.window.controls.append(self.window.controls.pop(1))
+            self.window.sidebar.border = border.only(left=BorderSide(1, self.ac_state.color_values["divider_color"]))
         elif not active and isinstance(last_widget, Revealer):
             self.window.controls.insert(1, self.window.controls.pop())
+            self.window.sidebar.border = border.only(right=BorderSide(1, self.ac_state.color_values["divider_color"]))
         self.window.update()
 
         try:

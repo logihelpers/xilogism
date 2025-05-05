@@ -35,8 +35,6 @@ class SettingsDialog(XDialog, metaclass = Singleton):
         self.animation_curve = AnimationCurve.ELASTIC_IN_OUT
         self.on_dismiss = self.revert_index
 
-        self.bgcolor = "#ededed"
-
         self.switcher = Switcher(
             orientation = Switcher.Orientation.HORIZONTAL,
             animation_curve=AnimationCurve.EASE_IN_OUT_CUBIC,

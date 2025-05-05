@@ -41,7 +41,6 @@ class DarkModeController(Controller):
             self.old_active = None
             self.dm_state.active = DarkModeScheme(bool(self.page.client_storage.get("dark_mode")))
             self.dm_state.follow_system_active = bool(self.page.client_storage.get("follow_sysdark_mode"))
-            self.settings_dialog = SettingsDialog()
 
     def follow_system_change(self):
         active = self.dm_state.follow_system_active
@@ -65,11 +64,6 @@ class DarkModeController(Controller):
 
         colors = get_colors(active, self.ac_state.active)
         self.ac_state.color_values = colors
-
-        try:
-            self.settings_dialog.bgcolor = self.ac_state.color_values["bg_color"]
-        except:
-            pass
 
         try:
             button: SettingsImageButton = None
@@ -96,5 +90,13 @@ class DarkModeController(Controller):
                     self.page.update()
         except:
             pass
+
+        if active == DarkModeScheme.LIGHT:
+            self.page.theme.dialog_theme.bgcolor = "#ededed"
+            self.page.theme.dialog_theme.surface_tint_color = "#ededed"
+        else:
+            self.page.theme.dialog_theme.bgcolor = "#333333"
+            self.page.theme.dialog_theme.surface_tint_color = "#333333"
+        self.page.update()
         
         self.page.client_storage.set("dark_mode", active.value)

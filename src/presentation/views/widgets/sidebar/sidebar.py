@@ -20,8 +20,7 @@ class SideBar(Container):
         self.padding = padding.all(0)
         self.margin = margin.all(0)
         self.border = border.only(
-            right=BorderSide(1, color="#6d6d6d"), 
-            left=BorderSide(1, color="#6d6d6d")
+            right=BorderSide(1, color="#6d6d6d"),
         )
 
         self.active_sidebar_button_state = ActiveSideBarButtonState()
@@ -109,7 +108,6 @@ class SideBar(Container):
         self.top_column = colors["text_color"]
         self.bgcolor = colors["sidebar_color"]
         self.border = border.only(
-            right=BorderSide(1, color=colors["divider_color"]), 
-            left=BorderSide(1, color=colors["divider_color"])
+            right=BorderSide(1, color=colors["divider_color"])
         )
         self.update()

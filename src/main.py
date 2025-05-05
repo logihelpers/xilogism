@@ -11,10 +11,12 @@ class Xilogism(Page):
 
         self.theme_mode = ThemeMode.LIGHT
         self.theme = Theme(
-            color_scheme_seed = "#4169e1",
             dialog_theme= DialogTheme(
-                shape=RoundedRectangleBorder(radius=8)
+                shape=RoundedRectangleBorder(radius=8),
+                bgcolor="#ededed",
+                surface_tint_color="#ededed"
             ),
+            font_family="Inter"
         )
 
         InitFonts(self)
@@ -22,7 +24,6 @@ class Xilogism(Page):
 
         Controller.initialize_controllers(target=self)
 
-        self.theme = Theme(font_family="Inter")
         self.window.title_bar_hidden = True
         self.padding = padding.all(0)
         self.window.min_height = 640
