@@ -5,6 +5,7 @@ from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.dialogs_state import DialogState, Dialogs
+from presentation.states.accent_color_state import AccentColorState
 
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
@@ -27,60 +28,58 @@ class EditorView(Container):
     font_size = 16
     font_family = "Iosevka"
     instances: list = []
+
     def __init__(self, key_name: str):
         super().__init__()
-        self.widget_scale = 1.0
         self.key_name = key_name
-        
+        self.widget_scale = 1.0
         self.padding = padding.all(16)
         self.expand = True
-
+        
         self.ec_state = EditorContentState()
         self.et_state = EditorThemeState()
         self.render_state = RenderState()
         self.dia_state = DialogState()
         self.af_state = ActiveFileState()
         self.ad_state = AnimationDisableState()
-        self.ad_state.on_change = self.update_animations
+        self.ac_state = AccentColorState()
 
+        self.ad_state.on_change = self.update_animations
+        self.ac_state.on_colors_updated = self.update_colors
+
+        self.vertical_divider = VerticalDivider(1, color="black")
+        self.hidden_options_content = Container(
+            margin=margin.only(right=8),
+            border=border.all(1, "black"),
+            bgcolor="#1a191f51",
+            border_radius=8,
+            content=Row(
+                spacing=0,
+                controls=[
+                    Container(width=32, height=32, padding=4, content=Image(src="/icons_light/new.png", width=16, height=16)),
+                    self.vertical_divider,
+                    Container(width=32, height=32, padding=4, content=Image(src="/icons_light/open.png", width=16, height=16)),
+                ]
+            )
+        )
         self.hidden_options = Revealer(
             content_hidden=True,
             content_length=72,
-            content=Container(
-                margin=margin.only(right = 8),
-                border=border.all(1, "black"),
-                bgcolor="#1a191f51",
-                border_radius=8,
-                content=Row(
-                    spacing=0,
-                    controls=[
-                        Container(
-                            width = 32,
-                            height = 32,
-                            padding = 4,
-                            content=Image(
-                                src="/icons_light/new.png",
-                                width=16,
-                                height=16
-                            )
-                        ),
-                        VerticalDivider(1, color="black"),
-                        Container(
-                            width = 32,
-                            height = 32,
-                            padding = 4,
-                            content=Image(
-                                src="/icons_light/open.png",
-                                width=16,
-                                height=16
-                            )
-                        ),
-                    ]
-                )
-            )
+            content=self.hidden_options_content
         )
 
         self.font_family_chooser = FontFaceChooserButton()
+        self.font_size_tf = FontSizeTextField()
+        self.undo_redo_button_group = UndoRedoButtons()
+        self.export_button = ExportButton()
+        self.export_button.on_click = self.update_dialog
+        self.diagram_mode = DiagramModeChooser()
+        self.expand_button = ExpandButton(top=8, right=8)
+
+        self.canvas = LogicCanvas(expand=True)
+        self.canvas.height = 1000
+        self.canvas.width = 1000
+        self.canvas.on_capture = self.capture_image
 
         self.code_editor = Editor(
             value=self.ec_state.content[self.key_name],
@@ -91,106 +90,55 @@ class EditorView(Container):
             font_size=self.font_size,
             on_change=self.update_content
         )
-
         self.edit_status_icon = Container(
             shape=BoxShape.CIRCLE,
             border=border.all(1, "black"),
-            width=32,
-            height=32,
-            padding=8,
-            image=DecorationImage(
-                "/icons_light/blank.png",
-            ),
+            width=32, height=32, padding=8,
+            image=DecorationImage("/icons_light/blank.png"),
             tooltip="Content is currently blank..."
         )
 
-        self.font_size_tf = FontSizeTextField()
-
-        self.undo_redo_button_group = UndoRedoButtons()
-
-        self.export_button = ExportButton()
-        self.export_button.on_click = self.update_dialog
-
-        self.diagram_mode = DiagramModeChooser()
-
-        self.expand_button = ExpandButton(
-            top=8,
-            right=8
-        )
-
-        self.canvas = LogicCanvas(
-            expand=True,
-        )
-        self.canvas.height = 1000
-        self.canvas.width = 1000
-        self.canvas.on_capture = self.capture_image
-
-        toolbar = Row(
-            height = 32,
-            spacing = 0,
-            controls = [
+        self.toolbar = Row(
+            height=32, spacing=0,
+            controls=[
                 self.hidden_options,
                 Row(
-                    expand = True,
-                    height=32,
-                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                    expand=True, height=32, alignment=MainAxisAlignment.SPACE_BETWEEN,
                     controls=[
-                        Row(
-                            controls=[
-                                self.font_family_chooser,
-                                self.font_size_tf
-                            ]
-                        ),
-                        Row(
-                            controls = [
-                                self.edit_status_icon,
-                                self.undo_redo_button_group
-                            ]
-                        )
+                        Row(controls=[self.font_family_chooser, self.font_size_tf]),
+                        Row(controls=[self.edit_status_icon, self.undo_redo_button_group])
                     ]
                 )
             ]
         )
 
-        code_editor_container = Container(
+        self.code_editor_container = Container(
             theme_mode=ThemeMode.LIGHT,
             expand=True,
             content=Container(
-                Row(
-                    expand=True,
-                    vertical_alignment=CrossAxisAlignment.STRETCH,
-                    controls=[
-                        self.code_editor
-                    ]
-                ),
+                Row(expand=True, vertical_alignment=CrossAxisAlignment.STRETCH, controls=[self.code_editor]),
                 border_radius=8
             ),
             border=border.all(1, "#6b6b6b"),
             border_radius=8,
-            padding = 0,
+            padding=0,
             clip_behavior=ClipBehavior.ANTI_ALIAS
         )
 
-        preview_bar = Row(
-            height=32,
-            alignment=MainAxisAlignment.SPACE_BETWEEN,
-            controls= [
-                Row(
-                    controls=[
-                        Text("Viewing Mode:", color="black"),
-                        self.diagram_mode,
-                    ]
-                ),
+        self.preview_bar = Row(
+            height=32, alignment=MainAxisAlignment.SPACE_BETWEEN,
+            controls=[
+                Row(controls=[Text("Viewing Mode:", color="black"), self.diagram_mode]),
                 self.export_button
             ]
         )
 
-        preview_view = Container(
+        self.preview_view = Container(
             expand=True,
             content=Stack(
                 expand=True,
                 controls=[
-                    Row(controls = [Zoomer(self.canvas, 0.1, 100.0, expand=True)], top=0, bottom=0, right=0, left=0, expand=True),
+                    Row(controls=[Zoomer(self.canvas, 0.1, 100.0, expand=True)], expand=True),
                     self.expand_button
                 ]
             ),
@@ -201,39 +149,16 @@ class EditorView(Container):
         )
 
         self.code_pane = Revealer(
-            content_length=384.6,
-            content_fill=True,
+            content_length=384.6, content_fill=True,
             content=Container(
-                Column(
-                    horizontal_alignment=CrossAxisAlignment.STRETCH,
-                    expand=True,
-                    controls=[
-                        toolbar,
-                        code_editor_container
-                    ]
-                ),
+                Column(horizontal_alignment=CrossAxisAlignment.STRETCH, expand=True, controls=[self.toolbar, self.code_editor_container]),
                 animate_opacity=animation.Animation(300, AnimationCurve.EASE_IN_OUT_CIRC)
             ),
-            animation_duration=500,
-            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
+            animation_duration=500, animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
         )
 
         self.content = LayoutBuilder(
-            content = Row(
-                expand=True,
-                controls=[
-                    self.code_pane,
-                    Container(
-                        expand=True,
-                        content=Column(
-                            controls=[
-                                preview_bar,
-                                preview_view
-                            ]
-                        ),
-                    )
-                ]
-            ),
+            content=Row(expand=True, controls=[self.code_pane, Container(expand=True, content=Column(controls=[self.preview_bar, self.preview_view]))]),
             update_size_on_init=True,
             alignment=alignment.center,
             on_change=self.update_codepane_length
@@ -317,4 +242,20 @@ class EditorView(Container):
         animate = self.ad_state.state
         self.hidden_options.animation_duration = 500 if animate else 0
         self.code_pane.animation_duration = 500 if animate else 0
+        self.update()
+
+    def update_colors(self):
+        colors = self.ac_state.color_values
+
+        self.vertical_divider.color = colors["divider_color"]
+
+        self.hidden_options_content.bgcolor = colors["accent_color_1"]
+        self.hidden_options_content.border = border.all(1, colors["divider_color"])
+        self.hidden_options_content.content.controls[1].color = colors["divider_color"]
+        self.code_editor_container.border = border.all(1, colors["divider_color"])
+        self.edit_status_icon.border = border.all(1, colors["divider_color"])
+        
+        self.preview_bar.color = colors["text_color"]
+        self.preview_view.border = border.all(1, colors["divider_color"])
+        self.preview_view.bgcolor = colors["bg_color"]
         self.update()

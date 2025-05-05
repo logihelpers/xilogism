@@ -1,8 +1,13 @@
 from flet import *
+from presentation.states.accent_color_state import AccentColorState
 
 class PinnedButton(Container):
     def __init__(self, thumbnail: str, title: str, date: str, on_press):
         super().__init__()
+
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
+
         self.title = title
 
         self.bgcolor = "#00191f51"
@@ -81,3 +86,8 @@ class PinnedButton(Container):
     def __hover(self, event: ControlEvent):
         event.control.scale = 1.05 if event.data == "true" else 1
         event.control.update()
+
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["accent_color_1"]
+    

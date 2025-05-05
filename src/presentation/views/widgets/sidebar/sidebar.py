@@ -53,7 +53,7 @@ class SideBar(Container):
             ]
         )
 
-        top_column = Column(
+        self.top_column = Column(
             controls = [
                 WindowDragArea(
                     content=Container(
@@ -97,7 +97,7 @@ class SideBar(Container):
             spacing=0
         )
         
-        self.content = top_column
+        self.content = self.top_column
     
     def active_changed(self, event: ControlEvent):
         control: SideBarButton = event.control
@@ -106,10 +106,10 @@ class SideBar(Container):
 
     def update_colors(self):
         colors = self.ac_state.color_values
+        self.top_column = colors["text_color"]
         self.bgcolor = colors["sidebar_color"]
         self.border = border.only(
             right=BorderSide(1, color=colors["divider_color"]), 
             left=BorderSide(1, color=colors["divider_color"])
         )
-
         self.update()

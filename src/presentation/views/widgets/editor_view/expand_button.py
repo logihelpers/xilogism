@@ -1,9 +1,14 @@
 from flet import *
 from presentation.states.expand_canvas_state import ExpandCanvasState
+from presentation.states.accent_color_state import AccentColorState
 
 class ExpandButton(Container):
     def __init__(self, top, right):
         super().__init__(top=top, right=right)
+
+        self.ac_state = AccentColorState()
+
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.expand_state = ExpandCanvasState()
 
@@ -44,3 +49,8 @@ class ExpandButton(Container):
         self.expand_state.expand = not self.expand_state.expand
         self.content.src = "/icons_light/shrink.png" if self.expand_state.expand else "/icons_light/full-size.png"
         self.content.update()
+
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["accent_color_1"]
+        self.border = border.all(1, colors["divider_color"])

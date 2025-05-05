@@ -2,6 +2,7 @@ from presentation.states.accent_color_state import *
 from presentation.views.widgets.settings.accent_color_button import AccentColorButton
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
+from presentation.views.dialogs.settings_dialog import SettingsDialog
 from data.colors import get_colors
 
 from flet import *
@@ -34,6 +35,9 @@ class AccentColorController(Controller):
         if self.dia_state.done_build == Dialogs.SETTINGS:
             self.old_active = None
             self.ac_state.active = AccentColors(self.page.client_storage.get("accent_color"))
+            self.settings_dialog = SettingsDialog()
+            self.settings_dialog.bgcolor = self.ac_state.color_values["bg_color"]
+            self.settings_dialog.update()
 
     def change_active(self):
         active: AccentColors = self.ac_state.active

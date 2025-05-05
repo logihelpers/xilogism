@@ -2,6 +2,7 @@ from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 from presentation.states.dialogs_state import *
 from presentation.states.accent_color_state import AccentColors, AccentColorState
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
+from presentation.views.dialogs.settings_dialog import SettingsDialog
 from data.colors import get_colors
 from flet import *
 
@@ -40,6 +41,7 @@ class DarkModeController(Controller):
             self.old_active = None
             self.dm_state.active = DarkModeScheme(bool(self.page.client_storage.get("dark_mode")))
             self.dm_state.follow_system_active = bool(self.page.client_storage.get("follow_sysdark_mode"))
+            self.settings_dialog = SettingsDialog()
 
     def follow_system_change(self):
         active = self.dm_state.follow_system_active
@@ -63,6 +65,11 @@ class DarkModeController(Controller):
 
         colors = get_colors(active, self.ac_state.active)
         self.ac_state.color_values = colors
+
+        try:
+            self.settings_dialog.bgcolor = self.ac_state.color_values["bg_color"]
+        except:
+            pass
 
         try:
             button: SettingsImageButton = None
