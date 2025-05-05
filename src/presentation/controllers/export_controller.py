@@ -216,10 +216,12 @@ class ExportController(Controller):
         image_stream = self.center_image(image_stream)
 
         img = IMG.open(image_stream)
-    
-        img.save(self.documents_dir / f"{self.key_name}.png", format='PNG')
 
-        return f"{self.key_name}.png"
+        final_filename = self.documents_dir / f"{self.key_name}.png"
+    
+        img.save(final_filename, format='PNG')
+
+        return final_filename
     
     def center_image(self, image_stream: io.BytesIO, bg_color: tuple = None, target_width_inches: float = 12, dpi: int = 96):
         try:
