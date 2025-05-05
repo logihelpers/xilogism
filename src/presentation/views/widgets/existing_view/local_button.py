@@ -1,8 +1,13 @@
 from flet import *
+from presentation.states.accent_color_state import AccentColorState
 
 class LocalButton(Container):
     def __init__(self, title: str, path: str, date: str, on_press):
         super().__init__()
+
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
+
         self.title = title
 
         self.bgcolor = "#00191f51"
@@ -67,3 +72,7 @@ class LocalButton(Container):
     def __hover(self, event: ControlEvent):
         event.control.bgcolor = "#4d191f51" if event.data == "true" else None
         event.control.update()
+
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["accent_color_1"]

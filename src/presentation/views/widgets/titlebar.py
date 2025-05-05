@@ -2,6 +2,7 @@ from flet import *
 from math import pi
 from presentation.states.title_button_state import *
 from presentation.states.sidebar_hide_state import *
+from presentation.states.accent_color_state import AccentColorState
 
 from xilowidgets import Revealer
 
@@ -15,6 +16,8 @@ class TitleBar(Container):
 
         self.title_button_state = TitleButtonState()
         self.sidebar_hide_state = SideBarHideState()
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.sidebar_hide_button_content = Image(
             src="/icons_light/sidebar_hide.png",
@@ -237,3 +240,8 @@ class TitleBar(Container):
         button.rotate.angle = 0
         button.scale = 1
         button.update()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.filename_tf.color = colors["text_color"]
+        self.update()

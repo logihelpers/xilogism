@@ -246,20 +246,16 @@ class EditorView(Container):
 
     def update_colors(self):
         colors = self.ac_state.color_values
+
         self.vertical_divider.color = colors["divider_color"]
-        self.hidden_options_content.bgcolor = colors["accent_color_2"]
+
+        self.hidden_options_content.bgcolor = colors["accent_color_1"]
         self.hidden_options_content.border = border.all(1, colors["divider_color"])
         self.hidden_options_content.content.controls[1].color = colors["divider_color"]
         self.code_editor_container.border = border.all(1, colors["divider_color"])
         self.edit_status_icon.border = border.all(1, colors["divider_color"])
-        for btn in (self.font_family_chooser, self.font_size_tf,
-                    self.undo_redo_button_group, self.diagram_mode,
-                    self.expand_button):
-            btn.bgcolor = colors["accent_color_2"]
-            btn.border = border.all(1, colors["divider_color"])
-        self.preview_bar.controls[0].controls[0].color = colors["text_color"]
-        self.export_button.style.bgcolor = colors["accent_color_1"]
-        self.export_button.style.color = colors["text_color"]
+        
+        self.preview_bar.color = colors["text_color"]
         self.preview_view.border = border.all(1, colors["divider_color"])
         self.preview_view.bgcolor = colors["bg_color"]
         self.update()

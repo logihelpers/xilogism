@@ -108,7 +108,7 @@ class OpenExistingView(Container):
         self.pinned_text.color = colors["text_color"]
         self.local_text.color = colors["text_color"]
 
-        self.search_tf.bgcolor = colors["accent_color_2"]
+        self.search_tf.bgcolor = colors["accent_color_1"]
         self.search_tf.border = border.all(1, colors["divider_color"])
         self.search_tf.hint_style.color = colors["text_color"]
 

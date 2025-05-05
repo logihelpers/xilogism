@@ -11,6 +11,7 @@ from presentation.views.open_existing_view import OpenExistingView
 from presentation.views.widgets.sidebar.sidebar import SideBar
 from presentation.views.widgets.existing_view.local_button import LocalButton
 from presentation.views.widgets.existing_view.pinned_button import PinnedButton
+from presentation.states.accent_color_state import AccentColorState
 
 from data.files import Files
 
@@ -30,10 +31,12 @@ class ActiveSideBarButtonController(Controller):
         self.dia_state = DialogState()
         self.ns_state = NewSaveState()
         self.ec_state = EditorContentState()
+        self.ac_state = AccentColorState()
 
         self.asbb_state.on_change = self.change_active
         self.asbb_state.on_pin = self.button_pinned
         self.ns_state.on_change = lambda: setattr(self, 'save_state_changed', True)
+        self.ac_state.on_change = self.change_active
 
         self.titlebar: TitleBar = self.page.session.get("titlebar")
         self.window: WindowView = self.page.session.get("window")
@@ -135,7 +138,7 @@ class ActiveSideBarButtonController(Controller):
                     self.ns_state.state = False
                     self.save_state_changed = False
 
-                widget.bgcolor = "#4d191f51"
+                widget.bgcolor = self.ac_state.color_values["accent_color_1"]
                 widget.active = True
 
                 if active == "Start" or active == "Open Xilogism" or active == "New Xilogism":
@@ -160,10 +163,10 @@ class ActiveSideBarButtonController(Controller):
                 self.titlebar.filename_tf.suffix_icon = Icons.EDIT
                 self.titlebar.filename_tf.update()
             else:
-                if widget.bgcolor == "#d9d9d9":
+                if widget.bgcolor == self.ac_state.color_values["sidebar_color"]:
                     continue
 
-                widget.bgcolor = "#d9d9d9"
+                widget.bgcolor = self.ac_state.color_values["sidebar_color"]
                 widget.active = False
 
             try:
@@ -175,3 +178,4 @@ class ActiveSideBarButtonController(Controller):
 
         self.titlebar.filename_tf.value = active.upper()
         self.titlebar.filename_tf.update()
+

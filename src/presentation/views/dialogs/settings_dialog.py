@@ -8,6 +8,7 @@ from presentation.views.widgets.settings.language_settings import LanguageSettin
 from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.settings_navigator_state import SettingsNavigatorState
+from presentation.states.accent_color_state import AccentColorState
 
 from services.singleton import Singleton
 

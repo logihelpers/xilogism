@@ -10,6 +10,7 @@ from presentation.views.open_existing_view import OpenExistingView
 from presentation.views.widgets.existing_view.local_button import LocalButton
 from presentation.views.widgets.existing_view.pinned_button import PinnedButton
 from presentation.views.window_view import WindowView
+from presentation.states.accent_color_state import AccentColorState
 
 from models.xilofile_model import XiloFile
 
@@ -33,6 +34,7 @@ class XiloFilesController(Controller):
         self.xf_state.on_file_appended = self.append_view
         self.asb_state = ActiveSideBarButtonState()
         self.ec_state = EditorContentState()
+        self.ac_state = AccentColorState()
 
         window: WindowView = self.page.session.get("window")
         self.switcher: Switcher = window.switcher
@@ -85,6 +87,8 @@ class XiloFilesController(Controller):
                 on_pin=lambda label: setattr(self.asb_state, 'pin', label)
             )
             button.tooltip = xilofile.path
+            button.bgcolor = self.ac_state.color_values["sidebar_color"]
+            button.button_label.color = self.ac_state.color_values["text_color"]
 
             if xilofile.path in self.pinned_list:
                 self.sidebar.pinned_files.controls.append(button)

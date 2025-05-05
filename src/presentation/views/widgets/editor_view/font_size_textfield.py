@@ -2,10 +2,14 @@ from flet import *
 from math import pi
 
 from presentation.states.active_font_state import ActiveFontState
+from presentation.states.accent_color_state import AccentColorState
 
 class FontSizeTextField(Container):
     def __init__(self):
         super().__init__()
+
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.af_state = ActiveFontState()
 
@@ -70,3 +74,8 @@ class FontSizeTextField(Container):
         button: Container = event.control
         button.bgcolor = "#4d191f51" if event.data == "true" else "#1a191f51"
         button.update()
+
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["accent_color_1"]
+        self.border = border.all(1, colors["divider_color"])
