@@ -19,11 +19,13 @@ from presentation.views.widgets.logic_circuit.abstract_element import LogicEleme
 class RenderController(Controller):
     priority = Priority.NONE
     
-    # Constants for layout
-    HORIZONTAL_SPACING = 100  # Space between hierarchy levels
-    VERTICAL_SPACING = 80     # Base vertical spacing between nodes
-    MARGIN_LEFT = 50         # Left margin
-    MARGIN_TOP = 50          # Top margin
+    # Constants for layout with more emphasis on horizontal layout
+    HORIZONTAL_SPACING = 180  # Increased space between hierarchy levels
+    VERTICAL_SPACING = 60     # Reduced vertical spacing between nodes
+    MARGIN_LEFT = 50          # Left margin
+    INPUT_MARGIN_TOP = 50     # INPUT Top margin
+    BLOCK_MARGIN_TOP = 130    # BLOCK Top margin
+    OUTPUT_MARGIN_TOP = 100   # OUTPUT Top Margin
     
     def __init__(self, page: Page):
         self.page = page
@@ -94,9 +96,9 @@ class RenderController(Controller):
     def _create_input_nodes(self, nodes: List, input_nodes: List[Tuple[str, Dict]]):
         """Create input node components - arranged horizontally (left to right)"""
         for i, (name, info) in enumerate(input_nodes):
-            # Position input nodes horizontally instead of vertically
-            x = self.MARGIN_LEFT + (i * self.HORIZONTAL_SPACING * 0.6)  # Slightly closer spacing for inputs
-            y = self.MARGIN_TOP
+            # Position input nodes horizontally with improved spacing
+            x = self.MARGIN_LEFT + (i * 80)  # Closer horizontal spacing for inputs
+            y = self.INPUT_MARGIN_TOP
             
             input_node = InputNode(x, y)
             nodes.append(input_node)
@@ -106,11 +108,18 @@ class RenderController(Controller):
             self.node_positions[name] = (x, y)
     
     def _create_output_nodes(self, nodes: List, output_nodes: List[Tuple[str, Dict]], hierarchy: int):
-        """Create output node components"""
+        """Create output node components - arranged horizontally"""
+        # Calculate the total horizontal distance based on max hierarchy
+        rightmost_x = self.MARGIN_LEFT + ((hierarchy + 1) * (self.HORIZONTAL_SPACING * 0.6))
+        
         for i, (name, info) in enumerate(output_nodes):
-            # Place outputs at the rightmost hierarchy level
-            x = self.MARGIN_LEFT + ((hierarchy + 1) * self.HORIZONTAL_SPACING)
-            y = self.MARGIN_TOP + 100 + (i * self.VERTICAL_SPACING)
+            # Place outputs at the rightmost hierarchy level, but distribute horizontally
+            x = rightmost_x
+            # Distribute outputs horizontally when there are multiple
+            if len(output_nodes) > 1:
+                y = self.OUTPUT_MARGIN_TOP + (i * self.VERTICAL_SPACING)
+            else:
+                y = self.OUTPUT_MARGIN_TOP + (self.VERTICAL_SPACING * 1.5)  # Center single output
             
             output_node = OutputNode(x, y)
             nodes.append(output_node)
@@ -120,30 +129,35 @@ class RenderController(Controller):
             self.node_positions[name] = (x, y)
     
     def _create_block_nodes(self, nodes: List, blocks: List[Tuple[str, Dict]], hierarchy: int):
-        """Create logic gate components for blocks with improved positioning"""
-        # Calculate vertical distribution
+        """Create logic gate components with improved horizontal distribution"""
+        # Calculate the number of blocks at this hierarchy level
         total_blocks = len(blocks)
         
-        # Group blocks by their inputs to improve layout
+        # Group blocks by common input patterns
         blocks_by_input = self._group_blocks_by_common_inputs(blocks)
         
-        # Process each input group separately
+        # Process each input group with a more horizontal layout
+        x_base = self.MARGIN_LEFT + (hierarchy * self.HORIZONTAL_SPACING)
         y_offset = 0
+        
         for input_group, group_blocks in blocks_by_input.items():
+            # Calculate vertical range for this group
+            group_height = len(group_blocks) * self.VERTICAL_SPACING
+            
+            # Position gates in a more horizontal arrangement
             for i, (name, info) in enumerate(group_blocks):
-                x = self.MARGIN_LEFT + (hierarchy * self.HORIZONTAL_SPACING)
-                # Distribute nodes vertically with proper spacing between groups
-                y = self.MARGIN_TOP + y_offset + 100 + (i * self.VERTICAL_SPACING)
+                # Add slight horizontal offset within the same hierarchy level
+                x = x_base + (i % 2) * 40  # Slight zigzag pattern for better visibility
+                y = self.BLOCK_MARGIN_TOP + y_offset + (i * self.VERTICAL_SPACING)
                 
-                # Create the appropriate gate based on block_type
                 gate = self._create_gate_by_type(name, info, x, y)
                 if gate:
                     nodes.append(gate)
                     self.node_map[name] = gate
                     self.node_positions[name] = (x, y)
             
-            # Add extra spacing between groups
-            y_offset += len(group_blocks) * self.VERTICAL_SPACING + (self.VERTICAL_SPACING * 0.5)
+            # Add spacing between groups
+            y_offset += group_height + (self.VERTICAL_SPACING * 0.3)  # Reduced spacing between groups
     
     def _group_blocks_by_common_inputs(self, blocks: List[Tuple[str, Dict]]) -> Dict[str, List[Tuple[str, Dict]]]:
         """Group blocks by their common input sources to improve layout"""
@@ -241,7 +255,7 @@ class RenderController(Controller):
                                     wires.append(wire)
                                     processed_connections.add(connection_key)
         
-        # NEW: Process output connections
+        # Process output connections
         for name, info in input_dict.items():
             if info["type"] == "OUTPUT_NODE":
                 # Find blocks that have this output in their outputs list

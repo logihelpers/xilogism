@@ -371,7 +371,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 1
+            hierarchy_level = 2  # CHANGED: Set AND gate hierarchy to 2
             self.nodes[and_name] = {
                 "type": "BLOCK",
                 "block_type": "AND",
@@ -399,7 +399,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 1
+            hierarchy_level = 2  # CHANGED: Set OR gate hierarchy to 2
             self.nodes[or_name] = {
                 "type": "BLOCK",
                 "block_type": "OR",
@@ -427,7 +427,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 1
+            hierarchy_level = 2  # CHANGED: Set XOR gate hierarchy to 2
             self.nodes[xor_name] = {
                 "type": "BLOCK",
                 "block_type": "XOR",
@@ -456,7 +456,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 1
+            hierarchy_level = 2  # CHANGED: Set AND gate hierarchy to 2
             self.nodes[and_name] = {
                 "type": "BLOCK",
                 "block_type": "AND",
@@ -484,7 +484,7 @@ class BooleanConverter:
                 processed_term = self.process_expr(term, from_var)
                 inputs.append(processed_term)
                 
-            hierarchy_level = 1
+            hierarchy_level = 2  # CHANGED: Set OR gate hierarchy to 2
             self.nodes[or_name] = {
                 "type": "BLOCK",
                 "block_type": "OR",
@@ -509,7 +509,7 @@ class BooleanConverter:
             not_name = self._new_name("not")
             processed_operand = self.process_expr(operand, from_var)
             
-            hierarchy_level = 1  # Lowest hierarchy for NOT gate
+            hierarchy_level = 1  # Keep NOT gate at lowest hierarchy level
             self.nodes[not_name] = {
                 "type": "BLOCK",
                 "block_type": "NOT",
@@ -533,7 +533,32 @@ class BooleanConverter:
             not_name = self._new_name("not")
             processed_operand = self.process_expr(operand, from_var)
             
-            hierarchy_level = 1  # Lowest hierarchy for NOT gate
+            hierarchy_level = 1  # Keep NOT gate at lowest hierarchy level
+            self.nodes[not_name] = {
+                "type": "BLOCK",
+                "block_type": "NOT",
+                "inputs": [processed_operand],
+                "output": not_name,
+                "hierarchy": hierarchy_level
+            }
+            
+            self.max_hierarchy = max(self.max_hierarchy, hierarchy_level)
+            
+            # Track this output for later connection to destination
+            if from_var in self.nodes and self.nodes[from_var]["type"] == "OUTPUT_NODE":
+                if from_var not in self.output_connections:
+                    self.output_connections[from_var] = []
+                self.output_connections[from_var].append(not_name)
+                
+            return not_name
+        
+        # ADDED: Special case for negation operator "-" at the beginning
+        elif expr.startswith("-") and not expr[1:].isdigit():  # Handle negation operation
+            operand = expr[1:].strip()
+            not_name = self._new_name("not")
+            processed_operand = self.process_expr(operand, from_var)
+            
+            hierarchy_level = 1  # Keep NOT gate at the lowest hierarchy level
             self.nodes[not_name] = {
                 "type": "BLOCK",
                 "block_type": "NOT",
@@ -699,5 +724,4 @@ class BooleanConverter:
                         "hierarchy": self.nodes[output_name]["hierarchy"] - 1
                     }
 
-        print(self.nodes)
         return self.nodes
