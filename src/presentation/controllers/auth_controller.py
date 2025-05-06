@@ -8,15 +8,17 @@ import pyrebase
 from PIL import Image
 import io
 from presentation.states.auth_state import AuthState
-from presentation.controllers.controller import Priority
+from presentation.controllers.controller import Controller, Priority
+from presentation.controllers.google_drive_controller import GoogleDriveController
+from services.auth_persistence import AuthPersistence
 
 # Load Firebase configuration from JSON file
 with open('src/assets/firebase_config.json') as f:
     firebase_config = json.load(f)
 
-class AuthController:
+class AuthController(Controller):
     _instance = None
-    priority = Priority.SETTINGS_BOUND
+    priority = Priority.ENTRY_POINT
 
     GOOGLE_CLIENT_SECRET_FILE = 'src/assets/credentials.json'
     GOOGLE_SCOPES = [
@@ -30,69 +32,84 @@ class AuthController:
         return cls._instance
 
     def __init__(self, page=None, auth_dialog=None):
+        super().__init__(page)
         AuthController._instance = self
         self.page = page
         self.auth_dialog = auth_dialog
 
+        self._is_restoring_session = False
+
         self.firebase = pyrebase.initialize_app(firebase_config)
-        self.auth    = self.firebase.auth()
-        self.db      = self.firebase.database()
+        self.auth = self.firebase.auth()
+        self.db = self.firebase.database()
         self.storage = self.firebase.storage()
 
         self.user_token = None
-        self.user_uid   = None
+        self.user_uid = None
+        self.refresh_token = None
 
         self.state = AuthState()
         self.state.register_listener(self.on_auth_change)
 
-    def register_email(self, name: str, email: str, password: str):
+        if page:
+            page.after = self._restore_session
+        else:
+            self._restore_session()
+
+    def _restore_session(self):
+        print("Attempting to restore auth session...")
+        self._is_restoring_session = True
+
         try:
-            user = self.auth.create_user_with_email_and_password(email, password)
-            self.user_token = user['idToken']
-            self.user_uid   = user['localId']
+            auth_data = AuthPersistence.load_firebase_auth()
+            if auth_data:
+                self.user_token = auth_data["token"]
+                self.user_uid = auth_data["uid"]
+                self.refresh_token = auth_data.get("refreshToken")
+                user_data = auth_data["user"]
 
-            self.db.child("users").child(self.user_uid).set({
-                "name": name,
-                "email": email,
-                "photoUrl": ""
-            })
+                try:
+                    self.auth.get_account_info(self.user_token)
+                    print(f"Token validated for user {user_data.get('displayName', 'Unknown')}")
+                except Exception as e:
+                    print(f"Token validation failed: {e}")
+                    if self.refresh_token:
+                        try:
+                            refreshed = self.auth.refresh(self.refresh_token)
+                            self.user_token = refreshed["idToken"]
+                            self.refresh_token = refreshed["refreshToken"]
+                            self.user_uid = refreshed["userId"]
+                            print("Token refreshed successfully.")
+                            AuthPersistence.save_firebase_auth(
+                                self.user_token, self.user_uid, user_data, self.refresh_token
+                            )
+                        except Exception as refresh_error:
+                            print(f"Token refresh failed: {refresh_error}")
+                            self.user_token = None
+                            self.user_uid = None
+                            AuthPersistence.clear_firebase_auth()
+                            self.state.clear()
+                            return False
+                    else:
+                        print("No refresh token available.")
+                        return False
 
-            self.state.set_user({
-                "displayName": name,
-                "email": email,
-                "photoUrl": ""
-            })
+                self.state.set_user(user_data)
+                print(f"Authentication session restored for {user_data.get('displayName', 'Unknown')}")
 
-            self._close_dialog()
-            self._snack("Registered successfully!")
-            return user
+                if self.page and hasattr(self.page, "sidebar"):
+                    self.page.sidebar.refresh_user_profile()
+                    self.page.update()
+
+                return True
         except Exception as e:
-            self._snack(f"Registration failed: {e}")
-            return None
+            print(f"Failed to restore auth session: {e}")
+            traceback.print_exc()
+            AuthPersistence.clear_firebase_auth()
+        finally:
+            self._is_restoring_session = False
 
-    def login_email(self, email: str, password: str):
-        try:
-            user = self.auth.sign_in_with_email_and_password(email, password)
-            self.user_token = user['idToken']
-            self.user_uid   = user['localId']
-
-            info = self.auth.get_account_info(self.user_token)['users'][0]
-            db_user = self.db.child("users").child(self.user_uid).get().val() or {}
-            display_name = db_user.get("name") or info.get("displayName") or info.get("email")
-            photo_url    = db_user.get("photoUrl") or info.get("photoUrl", "")
-
-            self.state.set_user({
-                "displayName": display_name,
-                "email": info.get("email"),
-                "photoUrl": photo_url
-            })
-
-            self._close_dialog()
-            self._snack("Logged in successfully!")
-            return user
-        except Exception as e:
-            self._snack(f"Login failed: {e}")
-            return None
+        return False
 
     def login_google(self):
         try:
@@ -122,7 +139,8 @@ class AuthController:
 
             result = firebase_resp.json()
             self.user_token = result["idToken"]
-            self.user_uid   = result["localId"]
+            self.user_uid = result["localId"]
+            self.refresh_token = result["refreshToken"]
 
             user_data = self.db.child("users").child(self.user_uid).get().val()
             if not user_data:
@@ -132,81 +150,27 @@ class AuthController:
                     "photoUrl": profile_info["picture"]
                 })
 
-            self.state.set_user({
+            user_data = {
                 "displayName": profile_info["name"],
                 "email": profile_info["email"],
                 "photoUrl": profile_info["picture"]
-            })
+            }
+
+            self.state.set_user(user_data)
+            AuthPersistence.save_firebase_auth(self.user_token, self.user_uid, user_data, self.refresh_token)
 
             self._close_dialog()
             self._snack("Signed in with Google!")
+
+            # After Google login, pass the credentials to GoogleDriveController
+            if self.page:
+                # Assuming page has a GoogleDriveController instance.
+                drive_controller = GoogleDriveController(page=self.page)
+                drive_controller.login_with_creds(creds)  # Pass Google credentials to the drive controller
         except Exception as e:
             self._snack(f"Google login failed: {e}")
             print(f"[Google Login Error] {e}")
-
-    def upload_profile_picture(
-        self,
-        file_path: str,
-        content_type: str = "image/jpeg",
-        max_size: tuple = (512, 512),
-        quality: int = 75
-    ):
-        if not (self.user_token and self.user_uid):
-            self._snack("You must be signed in to upload.")
-            return
-
-        try:
-            with Image.open(file_path) as img:
-                img.thumbnail(max_size)
-                buffer = io.BytesIO()
-                img.save(buffer, format="JPEG", quality=quality)
-                raw_data = buffer.getvalue()
-
-            base64_str = base64.b64encode(raw_data).decode('utf-8')
-            data_uri = f"data:{content_type};base64,{base64_str}"
-
-            self.db.child("users") \
-                .child(self.user_uid) \
-                .update({
-                    "photoBase64": base64_str,
-                    "photoUrl": data_uri
-                })
-
-            requests.post(
-                f"https://identitytoolkit.googleapis.com/v1/accounts:update?key={firebase_config['apiKey']}",
-                headers={"Content-Type": "application/json"},
-                json={
-                    "idToken": self.user_token,
-                    "photoUrl": data_uri,
-                    "returnSecureToken": True
-                }
-            )
-
-            user = self.state.user.copy()
-            user["photoUrl"] = data_uri
-            self.state.set_user(user)
-
-            print("Profile picture uploaded.")
-            self._snack("Profile picture uploaded successfully!")
-        except Exception as e:
             traceback.print_exc()
-            self._snack(f"Upload failed: {e}")
-
-    def forgot_password(self, email: str):
-        try:
-            self.auth.send_password_reset_email(email)
-            self._snack("Password reset email sent—check your inbox.")
-        except Exception as e:
-            err = str(e)
-            if "PASSWORD_LOGIN_NOT_SUPPORTED" in err or "USER_NOT_FOUND" in err:
-                self._snack(
-                    "This account is managed by Google Sign-In. "
-                    "Please use Google account recovery instead."
-                )
-            else:
-                self._snack(f"Could not send reset email: {e}")
-        finally:
-            self._close_dialog()  # <- Always close dialog after handling
 
     def _close_dialog(self):
         if self.auth_dialog:

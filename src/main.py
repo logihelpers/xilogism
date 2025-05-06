@@ -2,8 +2,10 @@ from flet import *
 import splash
 
 from presentation.controllers import Controller
+from presentation.controllers.auth_controller import AuthController
 from services.init_fonts import InitFonts
 from services.init_files import InitFiles
+
 
 class Xilogism(Page):
     def __init__(self, page: Page):
@@ -11,8 +13,8 @@ class Xilogism(Page):
 
         self.theme_mode = ThemeMode.LIGHT
         self.theme = Theme(
-            color_scheme_seed = "#4169e1",
-            dialog_theme= DialogTheme(
+            color_scheme_seed="#4169e1",
+            dialog_theme=DialogTheme(
                 bgcolor="#ededed",
                 shape=RoundedRectangleBorder(radius=8)
             ),
@@ -23,7 +25,11 @@ class Xilogism(Page):
 
         Controller.initialize_controllers(target=self)
 
-        self.theme = Theme(color_scheme_seed = "#4169e1", font_family="Inter")
+        from presentation.controllers.auth_controller import AuthController
+        auth_controller = Controller.get(AuthController)
+        auth_controller._restore_session()
+
+        self.theme = Theme(color_scheme_seed="#4169e1", font_family="Inter")
         self.window.title_bar_hidden = True
         self.padding = padding.all(0)
         self.window.min_height = 640
@@ -33,6 +39,7 @@ class Xilogism(Page):
         self.spacing = 0
         self.bgcolor = "#ededed"
         self.window.center()
+
 
 # app(splash.app)
 app(Xilogism)
