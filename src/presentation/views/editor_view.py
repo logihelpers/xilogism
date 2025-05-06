@@ -12,13 +12,13 @@ from presentation.views.widgets.editor_view.diagram_mode_chooser import DiagramM
 from presentation.views.widgets.editor_view.export_button import ExportButton
 from presentation.views.widgets.editor_view.expand_button import ExpandButton
 
-from presentation.views.widgets.logic_circuit.canvas import LogicCanvas
+from presentation.views.widgets.circuit_components.canvas import Canvas
 
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 from presentation.states.render_state import RenderState
 from presentation.states.animation_disable_state import AnimationDisableState
 
-from xilowidgets import Editor, Revealer, Zoomer
+from xilowidgets import Editor, Revealer, Zoomer, Switcher
 from flet_layoutbuilder import LayoutBuilder
 
 class EditorView(Container):
@@ -118,7 +118,7 @@ class EditorView(Container):
             right=8
         )
 
-        self.canvas = LogicCanvas(
+        self.canvas = Canvas(
             expand=True,
         )
         self.canvas.height = 1000
@@ -260,11 +260,6 @@ class EditorView(Container):
         self.code_editor.update()
     
     def update_status_icon(self):
-        # if not self.af_state.active or \
-        #     type(self.af_state.active) != XiloFile or \
-        #     (type(self.af_state.active) == XiloFile and \
-        #      self.af_state.active.title != self.key_name):
-        #     return
         if not self.af_state.active:
             return
         elif self.af_state.active == "New Xilogism":

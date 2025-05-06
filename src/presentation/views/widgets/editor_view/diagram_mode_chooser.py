@@ -1,8 +1,11 @@
 from flet import *
+from presentation.states.viewing_mode_state import ViewingMode, ViewingModeState
 
 class DiagramModeChooser(DropdownM2):
     def __init__(self):
         super().__init__()
+
+        self.vm_state = ViewingModeState()
 
         self.value="Logic Diagram"
         self.border_radius=8
@@ -49,14 +52,12 @@ class DiagramModeChooser(DropdownM2):
 
         self.options=[
             DropdownOption(
-                key="Logic Diagram",
-                content=Text("Logic Diagram")
-            ),
-            DropdownOption(
-                key="Circuit Diagram",
-                content=Text("Circuit Diagram")
-            )
+                key=mode.value,
+                content=Text(mode.value)
+            ) for mode in ViewingMode
         ]
+
+        self.on_change = self.change_state
     
     def _hover__(self, event: ControlEvent):
         button: Container = event.control
@@ -64,3 +65,6 @@ class DiagramModeChooser(DropdownM2):
         button.shape = BoxShape.CIRCLE
         button.padding = 4
         button.update()
+    
+    def change_state(self, event: ControlEvent):
+        self.vm_state.state = ViewingMode(event.data)

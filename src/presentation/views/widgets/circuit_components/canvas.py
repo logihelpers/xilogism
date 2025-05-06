@@ -1,7 +1,7 @@
 from xilowidgets import Drawboard
-from .abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 
-class LogicCanvas(Drawboard):
+class Canvas(Drawboard):
     def __init__(self, expand: bool = True):
         super().__init__(
             expand=expand

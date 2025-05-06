@@ -1,9 +1,9 @@
-import flet as ft
+from flet import *
 import flet.canvas as cv
 import numpy as np
 from scipy.interpolate import CubicSpline
 
-from ..abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 
 class ORGate(LogicElement):
     FULL_SIDE_LENGTH = 50
@@ -45,9 +45,9 @@ class ORGate(LogicElement):
                 start_x + self.FULL_SIDE_LENGTH + (self.__CIRCLE_DIAMETER / 2),
                 start_y + (self.FULL_SIDE_LENGTH) / 2,
                 (self.__CIRCLE_DIAMETER / 2),
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             )
 
@@ -82,9 +82,9 @@ class ORGate(LogicElement):
         self.shapes = [
             cv.Path(
                 elements=symbol_elements,
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             ),
         ]
