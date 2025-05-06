@@ -1,22 +1,27 @@
 from presentation.states.render_state import RenderState
-from models.xilofile_model import XiloFile
+from presentation.states.viewing_mode_state import ViewingModeState, ViewingMode
 from typing import List, Tuple, Dict, Any, Optional
-import math
 
 from flet import *
 
 from presentation.controllers.controller import Controller, Priority
 
-from presentation.views.widgets.logic_circuit.input_node import InputNode
-from presentation.views.widgets.logic_circuit.output_node import OutputNode
-from presentation.views.widgets.logic_circuit.wire import Wire
-from presentation.views.widgets.logic_circuit.gates.and_gate import ANDGate
-from presentation.views.widgets.logic_circuit.gates.or_gate import ORGate
-from presentation.views.widgets.logic_circuit.gates.xor_gate import XORGate
-from presentation.views.widgets.logic_circuit.gates.not_gate import NOTGate
-from presentation.views.widgets.logic_circuit.abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.input_node import InputNode
+from presentation.views.widgets.circuit_components.output_node import OutputNode
+from presentation.views.widgets.circuit_components.wire import Wire
+from presentation.views.widgets.circuit_components.gates.and_gate import ANDGate
+from presentation.views.widgets.circuit_components.gates.or_gate import ORGate
+from presentation.views.widgets.circuit_components.gates.xor_gate import XORGate
+from presentation.views.widgets.circuit_components.gates.not_gate import NOTGate
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
+
+from presentation.views.widgets.circuit_components.ic.and_740x import AND740XIC
+from presentation.views.widgets.circuit_components.ic.or_74x2 import OR74x2
+from presentation.views.widgets.circuit_components.ic.xor_74x6 import XOR74x6
+from presentation.views.widgets.circuit_components.ic.not_7404 import NOT7404
 
 class RenderController(Controller):
+    current_input: dict = None
     priority = Priority.NONE
     
     # Constants for layout with more emphasis on horizontal layout
@@ -27,19 +32,30 @@ class RenderController(Controller):
     BLOCK_MARGIN_TOP = 130    # BLOCK Top margin
     OUTPUT_MARGIN_TOP = 100   # OUTPUT Top Margin
     
+    # Constants for IC Layout
+    IC_HORIZONTAL_SPACING = 180  # Wider spacing for ICs
+    IC_VERTICAL_SPACING = 160    # More vertical space for ICs
+    
     def __init__(self, page: Page):
         self.page = page
         self.render_state = RenderState()
         self.render_state.on_input_change = self.process_input
+        self.vm_state = ViewingModeState()
+        self.vm_state.on_change = lambda: self.process_input(self.current_input)
         self.node_map = {}  # Maps node names to rendered components
         self.node_positions = {}  # Track the position of each node
         self.gates_by_hierarchy = {}  # Group gates by hierarchy level
 
     def process_input(self, input: dict):
         """Main entry point to process the input dictionary and create visual elements"""
+        if not input:
+            return
+            
         key_name, input_dict = input.popitem()
         nodes = []
-        
+
+        self.current_input = {key_name: input_dict}
+
         # Reset tracking dictionaries
         self.node_map = {}
         self.node_positions = {}
@@ -49,7 +65,10 @@ class RenderController(Controller):
         max_hierarchy = self._analyze_hierarchy(input_dict)
         
         # Second pass: create nodes by hierarchy
-        self._create_all_nodes(nodes, input_dict, max_hierarchy)
+        if self.vm_state.state == ViewingMode.LOGIC:
+            self._create_all_nodes(nodes, input_dict, max_hierarchy, use_ic=False)
+        else:  # IC mode
+            self._create_all_nodes(nodes, input_dict, max_hierarchy, use_ic=True)
         
         # Third pass: create connections
         wires = self._create_connections(input_dict)
@@ -71,7 +90,7 @@ class RenderController(Controller):
         
         return max_hierarchy
     
-    def _create_all_nodes(self, nodes: List, input_dict: Dict[str, Any], max_hierarchy: int):
+    def _create_all_nodes(self, nodes: List, input_dict: Dict[str, Any], max_hierarchy: int, use_ic: bool = False):
         """Create all node visual elements ordered by hierarchy"""
         # Create nodes by hierarchy level, from lowest to highest
         for hierarchy in range(max_hierarchy + 1):
@@ -88,7 +107,7 @@ class RenderController(Controller):
                 if inputs:
                     self._create_input_nodes(nodes, inputs)
                 if blocks:
-                    self._create_block_nodes(nodes, blocks, hierarchy)
+                    self._create_block_nodes(nodes, blocks, hierarchy, use_ic)
                 # Wires are created later in the connection phase
                 if outputs:
                     self._create_output_nodes(nodes, outputs, hierarchy)
@@ -128,36 +147,47 @@ class RenderController(Controller):
             self.node_map[name] = output_node
             self.node_positions[name] = (x, y)
     
-    def _create_block_nodes(self, nodes: List, blocks: List[Tuple[str, Dict]], hierarchy: int):
-        """Create logic gate components with improved horizontal distribution"""
+    def _create_block_nodes(self, nodes: List, blocks: List[Tuple[str, Dict]], hierarchy: int, use_ic: bool = False):
+        """Create logic gate or IC components with appropriate layout"""
         # Calculate the number of blocks at this hierarchy level
         total_blocks = len(blocks)
         
         # Group blocks by common input patterns
         blocks_by_input = self._group_blocks_by_common_inputs(blocks)
         
-        # Process each input group with a more horizontal layout
-        x_base = self.MARGIN_LEFT + (hierarchy * self.HORIZONTAL_SPACING)
+        # Adjust spacing based on rendering mode
+        horiz_spacing = self.IC_HORIZONTAL_SPACING if use_ic else self.HORIZONTAL_SPACING
+        vert_spacing = self.IC_VERTICAL_SPACING if use_ic else self.VERTICAL_SPACING
+        
+        # Process each input group with appropriate layout
+        x_base = self.MARGIN_LEFT + (hierarchy * horiz_spacing)
         y_offset = 0
         
         for input_group, group_blocks in blocks_by_input.items():
             # Calculate vertical range for this group
-            group_height = len(group_blocks) * self.VERTICAL_SPACING
+            group_height = len(group_blocks) * vert_spacing
             
             # Position gates in a more horizontal arrangement
             for i, (name, info) in enumerate(group_blocks):
                 # Add slight horizontal offset within the same hierarchy level
-                x = x_base + (i % 2) * 40  # Slight zigzag pattern for better visibility
-                y = self.BLOCK_MARGIN_TOP + y_offset + (i * self.VERTICAL_SPACING)
+                x_offset = (i % 2) * 40 if not use_ic else 0  # No zigzag for ICs
+                x = x_base + x_offset
+                y = self.BLOCK_MARGIN_TOP + y_offset + (i * vert_spacing)
                 
-                gate = self._create_gate_by_type(name, info, x, y)
-                if gate:
-                    nodes.append(gate)
-                    self.node_map[name] = gate
+                # Create the appropriate component based on mode
+                if use_ic:
+                    component = self._create_ic_by_type(name, info, x, y)
+                else:
+                    component = self._create_gate_by_type(name, info, x, y)
+                    
+                if component:
+                    nodes.append(component)
+                    self.node_map[name] = component
                     self.node_positions[name] = (x, y)
             
             # Add spacing between groups
-            y_offset += group_height + (self.VERTICAL_SPACING * 0.3)  # Reduced spacing between groups
+            spacing_factor = 0.5 if use_ic else 0.3
+            y_offset += group_height + (vert_spacing * spacing_factor)
     
     def _group_blocks_by_common_inputs(self, blocks: List[Tuple[str, Dict]]) -> Dict[str, List[Tuple[str, Dict]]]:
         """Group blocks by their common input sources to improve layout"""
@@ -182,7 +212,7 @@ class RenderController(Controller):
         return groups
     
     def _create_gate_by_type(self, name: str, info: Dict[str, Any], x: int, y: int) -> Optional[LogicElement]:
-        """Create the appropriate gate based on the block type"""
+        """Create the appropriate logic gate based on the block type"""
         block_type = info.get("block_type", "")
         
         # Count inputs for the gate
@@ -211,6 +241,29 @@ class RenderController(Controller):
         
         # Default to AND gate for unknown types
         return ANDGate(x, y, input_count=input_count)
+    
+    def _create_ic_by_type(self, name: str, info: Dict[str, Any], x: int, y: int) -> Optional[LogicElement]:
+        """Create the appropriate IC based on the block type"""
+        block_type = info.get("block_type", "")
+        
+        # Match block type to create appropriate IC
+        if block_type in ["AND", "NAND"]:
+            return AND740XIC(x, y, nand=(block_type == "NAND"))
+        elif block_type in ["OR", "NOR"]:
+            return OR74x2(x, y, nor=(block_type == "NOR"))
+        elif block_type == "NOT":
+            return NOT7404(x, y)
+        elif block_type in ["XOR", "XNOR"]:
+            return XOR74x6(x, y, xnor=(block_type == "XNOR"))
+        elif block_type in ["ADD", "ADDER", "SUBTRACTOR", "MULTIPLIER", "DIVIDER", "MODULO"]:
+            # Use generic ICs for arithmetic operations (could be customized further)
+            return AND740XIC(x, y)  # Placeholder
+        elif block_type in ["COMPARATOR"]:
+            # For comparison operations
+            return AND740XIC(x, y)  # Placeholder
+        
+        # Default to AND IC for unknown types
+        return AND740XIC(x, y)
     
     def _create_connections(self, input_dict: Dict[str, Any]) -> List[Wire]:
         """Create wire connections between components"""

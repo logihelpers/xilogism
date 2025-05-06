@@ -1,7 +1,7 @@
-import flet as ft
+from flet import *
 import flet.canvas as cv
 
-from .abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 
 class OutputNode(LogicElement):
     FULL_LENGTH: int = 50
@@ -21,18 +21,18 @@ class OutputNode(LogicElement):
                 start_x + (OutputNode.__CIRCLE_DIAMETER / 2),
                 start_y + (OutputNode.__CIRCLE_DIAMETER / 2),
                 OutputNode.__CIRCLE_DIAMETER / 2,
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             ),
             cv.Circle(
                 start_x + (OutputNode.__CIRCLE_DIAMETER / 2),
                 start_y + (OutputNode.__CIRCLE_DIAMETER / 2),
                 OutputNode.__INNER_CIRCLE_DIAMETER / 2,
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             ),
             cv.Path(
@@ -40,9 +40,9 @@ class OutputNode(LogicElement):
                     cv.Path.MoveTo(start_x, start_y + (OutputNode.__CIRCLE_DIAMETER / 2)),
                     input_line
                 ],
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             ),
         ]

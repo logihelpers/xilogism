@@ -1,8 +1,7 @@
-import flet as ft
 import flet.canvas as cv
 import random
-
-from .abstract_element import LogicElement
+from flet import *
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 
 light_mode_colors = [
     "#B30000", "#B31A00", "#B33300", "#B34D00", "#B36600", "#B38000", "#B39A00", "#B3B300",
@@ -29,20 +28,39 @@ dark_mode_colors = [
 class Wire(LogicElement):
     def __init__(self, start_element: LogicElement, end_element: LogicElement, multiple_input_index: int = 0):
         super().__init__()
-
-        x0, y0 = start_element.output_coord
+        
+        # Handle output coordinates from start element
+        # For ICs, output_coord is a list of tuples; for gates, it's a single tuple
+        if isinstance(start_element.output_coord, list) and len(start_element.output_coord) > 0:
+            # For ICs, use the first output pin by default
+            # Ideally, this could be parameterized to select specific output pins
+            x0, y0 = start_element.output_coord[0]
+        else:
+            # For standard gates
+            x0, y0 = start_element.output_coord
+        
+        # Handle input coordinates for end element
+        # Ensure the index is within range
+        if multiple_input_index >= len(end_element.input_coord):
+            multiple_input_index = 0  # Default to first input if index is out of range
+            
         x1, y1 = end_element.input_coord[multiple_input_index]
-
+        
         wire_elements = [
             cv.Path.MoveTo(x0, y0)
         ]
         
-        if start_element.output_node_position == LogicElement.Position.BOTTOM:
+        # Determine routing based on start element's output position
+        # Default to RIGHT if not specified
+        output_position = getattr(start_element, 'output_node_position', LogicElement.Position.RIGHT)
+        
+        if output_position == LogicElement.Position.BOTTOM:
             wire_elements.extend([
                 cv.Path.LineTo(x0, y1),
                 cv.Path.LineTo(x1, y1)
             ])
-        elif start_element.output_node_position == LogicElement.Position.RIGHT:
+        else:  # Default to RIGHT positioning
+            # Calculate midpoint for better routing
             mid = (x1 - x0) / 2
             wire_elements.extend([
                 cv.Path.LineTo(x0 + mid, y0),
@@ -53,9 +71,9 @@ class Wire(LogicElement):
         self.shapes = [
             cv.Path(
                 elements=wire_elements,
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                     color=random.choice(light_mode_colors)
                 )
             )

@@ -1,22 +1,19 @@
-import flet as ft
+from flet import *
 import flet.canvas as cv
-import numpy as np
-from scipy.interpolate import CubicSpline
+import math
 
-from ..abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 
-class XORGate(LogicElement):
+class ANDGate(LogicElement):
     FULL_SIDE_LENGTH = 50
     INPUT_ARM_WIDTH: int = 20
     OUTPUT_ARM_WIDTH: int = 20
 
     __CIRCLE_DIAMETER: int = 10
 
-    __XOR_ADJUSTMENT: int = 5
+    FULL_WIDTH: int = FULL_SIDE_LENGTH + __CIRCLE_DIAMETER + INPUT_ARM_WIDTH + OUTPUT_ARM_WIDTH
 
-    FULL_WIDTH: int = FULL_SIDE_LENGTH + __CIRCLE_DIAMETER + INPUT_ARM_WIDTH + OUTPUT_ARM_WIDTH + __XOR_ADJUSTMENT
-
-    def __init__(self, start_x: int, start_y: int, input_count: int = 2, xnor: bool = False):
+    def __init__(self, start_x: int, start_y: int, input_count: int = 2, nand: bool = False):
         super().__init__()
 
         self.input_coord = []
@@ -26,33 +23,29 @@ class XORGate(LogicElement):
             scale = 1 + ((input_count - 4) * 0.25)
             self.FULL_SIDE_LENGTH *= scale
             self.__CIRCLE_DIAMETER *= scale
-            self.__XOR_ADJUSTMENT *= scale
-            self.FULL_WIDTH = self.FULL_SIDE_LENGTH + self.INPUT_ARM_WIDTH + self.OUTPUT_ARM_WIDTH + self.__XOR_ADJUSTMENT
-
+            self.FULL_WIDTH = self.FULL_SIDE_LENGTH + self.INPUT_ARM_WIDTH + self.OUTPUT_ARM_WIDTH
+        
         symbol_elements = [
             cv.Path.MoveTo(start_x, start_y),
-            cv.Path.QuadraticTo(start_x + (self.FULL_SIDE_LENGTH / 2), start_y, start_x + self.FULL_SIDE_LENGTH, start_y + (self.FULL_SIDE_LENGTH / 2), 1.5),
+            cv.Path.LineTo(start_x + (self.FULL_SIDE_LENGTH / 2), start_y),
+            cv.Path.ArcTo(start_x + (self.FULL_SIDE_LENGTH / 2), start_y + self.FULL_SIDE_LENGTH, (self.FULL_SIDE_LENGTH / 2), math.pi / 2),
+            cv.Path.LineTo(start_x, start_y + self.FULL_SIDE_LENGTH),
+            cv.Path.LineTo(start_x, start_y),
             cv.Path.MoveTo(start_x + self.FULL_SIDE_LENGTH, start_y + (self.FULL_SIDE_LENGTH / 2)),
-            cv.Path.QuadraticTo(start_x + (self.FULL_SIDE_LENGTH / 2), start_y + self.FULL_SIDE_LENGTH, start_x, start_y + self.FULL_SIDE_LENGTH, 1.5),
-            cv.Path.MoveTo(start_x, start_y + self.FULL_SIDE_LENGTH),
-            cv.Path.QuadraticTo(start_x + (self.FULL_SIDE_LENGTH / 2), start_y + (self.FULL_SIDE_LENGTH / 2), start_x, start_y),
-            cv.Path.MoveTo(start_x - self.__XOR_ADJUSTMENT, start_y + self.FULL_SIDE_LENGTH),
-            cv.Path.QuadraticTo(start_x + (self.FULL_SIDE_LENGTH / 2) - self.__XOR_ADJUSTMENT, start_y + (self.FULL_SIDE_LENGTH / 2), start_x - self.__XOR_ADJUSTMENT, start_y),
-            cv.Path.MoveTo(start_x + self.FULL_SIDE_LENGTH, start_y + (self.FULL_SIDE_LENGTH / 2))
         ]
 
         dot = None
 
         output_line = cv.Path.LineTo(start_x + self.FULL_SIDE_LENGTH + self.INPUT_ARM_WIDTH, start_y + (self.FULL_SIDE_LENGTH / 2))
 
-        if xnor:
+        if nand:
             dot = cv.Circle(
                 start_x + self.FULL_SIDE_LENGTH + (self.__CIRCLE_DIAMETER / 2),
                 start_y + (self.FULL_SIDE_LENGTH) / 2,
                 (self.__CIRCLE_DIAMETER / 2),
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             )
 
@@ -65,19 +58,9 @@ class XORGate(LogicElement):
 
         points = self.get_spaced_points(self.FULL_SIDE_LENGTH, input_count)
 
-        y_values = np.array([50, 25, 37.5, 12.5]) * scale
-        x_values = np.array([0, 12.5, 9, 9]) * scale
-
-        sorted_indices = np.argsort(y_values)
-        y_sorted = y_values[sorted_indices]
-        x_sorted = x_values[sorted_indices]
-
-        spline = CubicSpline(y_sorted, x_sorted)
-
         for point in points:
-            x = spline(point)
-            move = cv.Path.MoveTo(start_x + x - self.__XOR_ADJUSTMENT, start_y + point)
-            input_line = cv.Path.LineTo(start_x - self.INPUT_ARM_WIDTH - self.__XOR_ADJUSTMENT, start_y + point)
+            move = cv.Path.MoveTo(start_x, start_y + point)
+            input_line = cv.Path.LineTo(start_x - self.INPUT_ARM_WIDTH, start_y + point)
 
             symbol_elements.append(move)
             symbol_elements.append(input_line)
@@ -87,14 +70,14 @@ class XORGate(LogicElement):
         self.shapes = [
             cv.Path(
                 elements=symbol_elements,
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             ),
         ]
 
-        if xnor:
+        if nand:
             self.shapes.append(dot)
             self.FULL_WIDTH += self.__CIRCLE_DIAMETER
         

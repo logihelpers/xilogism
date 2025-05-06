@@ -1,6 +1,6 @@
-import flet as ft
+from flet import *
 import flet.canvas as cv
-from ..abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 
 class NOTGate(LogicElement):
     FULL_HEIGHT: int = 50
@@ -26,18 +26,18 @@ class NOTGate(LogicElement):
                     cv.Path.MoveTo(start_x + (NOTGate.__TRIANGLE_WIDTH / 2) + NOTGate.__CIRCLE_DIAMETER, start_y + (NOTGate.FULL_HEIGHT / 2)),
                     cv.Path.LineTo(start_x + (NOTGate.__CIRCLE_DIAMETER / 2) + NOTGate.__TRIANGLE_WIDTH, start_y + (NOTGate.FULL_HEIGHT / 2))
                 ],
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             ),
             cv.Circle(
                 start_x + (NOTGate.__TRIANGLE_WIDTH / 2) + (NOTGate.__CIRCLE_DIAMETER / 2),
                 start_y + (NOTGate.FULL_HEIGHT / 2),
                 NOTGate.__CIRCLE_DIAMETER / 2,
-                paint=ft.Paint(
+                paint=Paint(
                     stroke_width=2,
-                    style=ft.PaintingStyle.STROKE,
+                    style=PaintingStyle.STROKE,
                 )
             )
         ]
