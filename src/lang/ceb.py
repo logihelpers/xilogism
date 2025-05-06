@@ -1,52 +1,124 @@
 text_values = {
     "__LANG__": "ceb",
-    "start": "SUGOD",
-    "get_your_hands_dirty": "SUGDI NA\n",
-    "tagline": "GIKAN SA KODIGO PAINGON SA SIRKITO, XILOGIZED!",
-    "create_title": "HIMOA ANG AKONG XILOGISM\n",
-    "format": "PSEUDOCODE NGA PORMAT",
-    "open_existing": "ABLI ANG DAAANG FILE",
-    "view_mode": "Paagi sa Paglantaw",
-    "exp": "I-export",
-    "exp_xilo": "I-export ang Xilogism",
-    "print_opt": "I-print",
-    "file_formatopt": "Porma sa File",
-    "file_size": "Gidak-on sa Panid",
-    "margin_option": "Margin",
-    "tb_opt": "Title Block",
-    "projname_field": "Ngalan sa Proyekto",
-    "creator_field": "Tigbuhat",
-    "date_field": "Petsa",
-    "print_button": "I-print",
-    "cancel_button": "I-kansela",
-    "export_button":"I-eksport",
-    "dark_mode": "Ngitngit nga Mode",
-    "default_color_mode": "Default",
-    "dark_color_mode": "Ngitngit",
-    "follow_color": "Sunda ang System Settings",
-    "accent_color": "Accent nga Kulay",
-    "editor_theme": "Tema sa Editor",
-    "dyslexia_options": "Mga Opsyon para sa Dyslexia",
-    "dys_default": "Default",
-    "dys_on": "Mabasa",
-    "vision_friendly_options": "Opsyon para sa Panan-aw",
-    "vis_default": "Default",
-    "vis_highcontrast": "Taas nga Kontraste",
-    "vis_deuteranopia": "Deuteranopia",
-    "vis_protonopia": "Protonopia",
-    "vis_tritonopia": "Tritonopia",
-    "lefthanded_title": "Mode para sa Left-Handed",
-    "left_default": "Default",
-    "left_on": "Para sa Left-Handed",
-    "anim_settings": "Mga Setting sa Animasyon",
-    "disable_anim": "Walay Animasyon",
-    "keeb_shortcuts": "Keyboard Shortcuts",
-    "keeb_action": "Aksyon",
-    "keeb_shortcut": "Shortcut",
-    "keeb_hide": "Itago ang Sidebar",
-    "language": "Pinulongan",
-    "greetings": "Kumusta, higala!",
-    "search": "Pangita",
-    "pinned_projects": "Gipin nga mga Proyekto",
-    "local_projects": "Lokal nga mga Proyekto"
+
+    # Registration Dialog
+    "text_register": "Pagparehistro",
+    "text_createacc": "Paghimo og imong account",
+    "button_signup_google": "SIGN UP SA GOOGLE",
+    "field_name": "Ngalan",
+    "field_email": "E-mail",
+    "field_password": "Password",
+    "button_register": "PAGPAREHISTRO",
+    "button_register_signin": "Naa nay account? Pag-sign in",
+
+    # Login Dialog
+    "text_login": "Pag-login",
+    "text_pleaselogin": "Palihug pag-login aron magpadayon",
+    "field_email_login": "E-mail",
+    "field_pw_login": "Password",
+    "button_forgotpw": "Nakalimot sa password?",
+    "button_login": "PAG-LOGIN",
+    "button_login_google": "LOGIN SA GOOGLE",
+    "button_signup_login": "Wala pa'y account? Pag-sign up",
+
+    # Save Dialog
+    "button_save": "I-save",
+    "button_close": "Isira",
+    "text_title": "Gusto ba nimo nga i-save ang bag-ong Xilogism?",
+    "text_projectname": "Ngalan sa Proyekto:",
+    "text_filename": "Ngalan sa File:",
+
+    # Export Dialog
+    "text_fileformat": "File Format:",
+    "text_pagesize": "Gidak-on sa Panid:",
+    "button_export": "I-export",
+    "button_print": "I-print",
+    "text_creator": "Gihimo ni:",
+    "text_date": "Petsa:",
+    "text_margin": "Margin:",
+    "text_titleblock": "Title Block",
+    "button_cancel": "Cancel",
+    "text_exportxilogism": "I-export ang Xilogism",
+
+    # Settings Dialog
+    "text_appearance": "Panagway",
+    "text_accessibility": "Accessibility",
+    "text_language": "Pinulongan",
+    "button_close_settings": "Isira",
+
+    # Tutorial Dialog
+    "button_tutclose": "Isira",
+    "button_next": "Sunod",
+    "text_title1": "Start Page – Pilia ang Buhaton",
+    "text_desc1": "Ang Xilogism app gihimo para sayon ug hayag nga pag-navigate.\n\n"
+                  "Sa sidebar sa wala, makapili ka og bag-ong proyekto, open existing, o adto sa imong recent files. "
+                  "Pwede sad nimo i-pin ang importante nga mga proyekto ug i-connect sa Google Drive para sa organisadong pagpangdumala.\n\n"
+                  "Sa Start Page, makita nimo ang duha ka kapilian:\n"
+                  "• Himoa ang Akong Xilogism: Sugdi ang circuit gamit ang pseudocode.\n"
+                  "• I-open ang Existing: I-load ang karaang proyekto.",
+    "text_title2": "Settings – I-customize ang Imong Style!",
+    "text_desc2": "Pwede nimo usbon ang panagway sa Xilogism base sa imong gusto. Pilia ang dark o light mode, "
+                  "ug pili og accent color nga bagay sa imo.\n\n"
+                  "Sulayi: Adto sa Settings ug usba ang tema. Pilia usab ang color.\n\n"
+                  "Makit-an dayon nimo ang kausaban — himoa nga komportable ang workspace sa imong logic project.",
+    "text_title3": "Input – I-type ang Imong Pseudocode!",
+    "text_desc3": "Dinhi nimo i-type ang imong pseudocode o logic statements. Kini ang sinugdanan sa proseso aron mahimo og circuit.\n\n"
+                  "Sulayi: I-type ang simple nga logic sama sa A AND B.\n\n"
+                  "Ang Xilogism mo-process niini ug andam na sa diagram.",
+    "text_title4": "Logic Gates – Himoa ang Circuit!",
+    "text_desc4": "Sa Xilogism, mogamit ka og logic gates aron i-representa ang imong pseudocode. Ang matag gate naay unique nga gamit "
+                  "ug mahimo nimo kini i-combine para sa mas komplikado nga systema.\n\n"
+                  "Sulayi: Pilia ug i-connect ang gates base sa imong logic.\n\n"
+                  "Kini ang mga pundasyon sa digital circuits!",
+    "text_title5": "Output – Tan-awa ang Diagram sa Imong Code!",
+    "text_desc5": "Makita nimo dinhi ang diagram nga gikan sa imong code. Samtang mag-type ka, automatic nga mag-usab ang diagram.\n\n"
+                  "Sulayi: Usba ang pseudocode. Ang Output mo-reflect sa kausaban.\n\n"
+                  "Pwede gihapon nimo kini i-edit sa dili pa nimo i-export.",
+    "text_title6": "Export – I-save ang Imong Output!",
+    "text_desc6": "Kung kontento naka sa diagram, gamita ang Export aron ma-save para sa ubang gamit.\n\n"
+                  "Sulayi: I-export sa .PDF o .png format.\n\n"
+                  "Andam na ang imong proyekto para i-share o i-run sa simulator!",
+    "button_tutnext": "Sunod",
+    "button_tutprev": "Niana",
+    "button_tutfinish": "Human na",
+
+    # Diagram View
+    "text_logicdiagram": "Logic Diagram",
+    "text_circuitdiagram": "Circuit Diagram",
+
+    # Accessibility Settings
+    "text_animswitch": "Mga Animasyon:",
+    "text_dysoptions": "Opsyon para sa Dyslexia",
+    "text_lhand": "Left-Handed Mode",
+    "text_keebshortcuts": "Keyboard Shortcuts",
+    "text_action": "Aksyon",
+    "text_shortcut": "Shortcut",
+    "text_hidesbar": "Tagoa ang Sidebar",
+    "text_save": "I-save ang Xilogism",
+    "button_default": "Default",
+    "button_readable": "Mas mabasa",
+    "button_defaultpos": "Default",
+    "button_lefth": "Left-Handed",
+
+    # Appearance Settings
+    "text_colordefault": "Default",
+    "text_colordark": "Ngitngit",
+    "text_sourcepath": "Source Path:",
+    "button_usedefault": "Gamiton ang Default",
+    "title_darkmode": "Dark Theme",
+    "label_followdmsetts": "Sunda ang Dark Mode sa System:",
+    "text_acccolor": "Accent Color",
+    "text_editortheme": "Editor Theme",
+    "text_custbg": "Custom nga Background",
+    "button_chooseimg": "Pilia ang Imahe",
+
+    # Language Settings
+    "text_language": "Pinulongan",
+
+    # Start Page
+    "text_start": "Sugdan",
+    "text_newxilo": "Bag-ong Xilogism",
+    "text_openxilo": "I-open nga Xilogism",
+    "text_pinned": "Naka-pin",
+    "text_localfiles": "Local nga Files",
 }
