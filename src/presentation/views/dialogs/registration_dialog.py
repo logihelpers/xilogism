@@ -1,5 +1,8 @@
 from flet import *
 
+from presentation.states.dialogs_state import *
+from presentation.states.animation_disable_state import AnimationDisableState
+from presentation.states.language_state import LanguageState
 from utils.singleton import Singleton
 from xilowidgets import XDialog
 from presentation.states.auth_state import AuthState
@@ -11,6 +14,12 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
 
     def __init__(self):
         super().__init__()
+        self.dia_state = DialogState()
+        self.ad_state = AnimationDisableState()
+        self.lang_state = LanguageState()
+
+        self.ad_state.on_change = lambda: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
+
         self.bgcolor = "#ededed"
         self.width = 320
         self.height = 540
@@ -67,6 +76,11 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         )
 
         super().build()
+    
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
 
     def _create_text_field(self, label, icon, password=False):
         return TextField(
@@ -87,10 +101,21 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
             width=self.FIELD_WIDTH,
             style=ButtonStyle(
                 shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
-                padding=padding.all(15),
-            ),
-            on_click=on_click
+                padding=padding.all(15)
+            )
         )
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.content.content.controls[1].value = lang_values["register_title"]
+        self.content.content.controls[2].content.value = lang_values["create_account"]
+        self.content.content.controls[3].content.value = lang_values["sign_up_google"]
+        self.content.content.controls[4].label = lang_values["name_field"]
+        self.content.content.controls[5].label = lang_values["email_field"]
+        self.content.content.controls[6].label = lang_values["password_field"]
+        self.content.content.controls[7].content.value = lang_values["register_button"]
+        self.content.content.controls[8].controls[0].content.value = lang_values["sign_in_link"]
+        self.update()
 
     def _on_register_click(self, e):
         name = self.name_field.value.strip()

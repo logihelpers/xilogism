@@ -3,6 +3,7 @@ from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.render_state import RenderState
 from presentation.states.export_state import ExportState, FileFormat
 from presentation.states.animation_disable_state import AnimationDisableState
+from presentation.states.language_state import LanguageState
 
 from xilowidgets import Revealer, XDialog, Switcher
 
@@ -16,6 +17,7 @@ class ExportPrintDialog(XDialog):
         self.r_state.on_image_change = self.update_preview
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
+        self.lang_state = LanguageState()
 
         self.content_padding = 0
         self.title_padding = 0
@@ -113,17 +115,19 @@ class ExportPrintDialog(XDialog):
         )
 
         self.export_button = FilledButton(
-            "Export", 
+            "Export",
+            key="Export",
             expand=True,
             disabled=True,
-            on_click= lambda e: self.export_state.export() if e.control.text == "Export" else print("HAHA")
+            on_click= lambda e: self.export_state.export() if e.control.key == "Export" else print("HAHA")
         )
 
         self.print_button = FilledButton(
-            "Print", 
+            "Print",
+            key="Print",
             expand=True,
             disabled=True,
-            on_click= lambda e: self.export_state.print() if e.control.text == "Print" else print("HAHA")
+            on_click= lambda e: self.export_state.print() if e.control.key == "Print" else print("HAHA")
         )
 
         self.project_name_tf = TextField(
@@ -193,6 +197,13 @@ class ExportPrintDialog(XDialog):
         self.margin_switch = Switch("", value=True, on_change = self.update_margin)
         self.titleblock_switch = Switch("", value=True, on_change = self.update_titleblock)
 
+        self.cancel_button = FilledButton(
+            "Cancel", 
+            expand=True,
+            bgcolor="#73ff0000",
+            on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
+        )
+
         self.main_options = Container(
             expand=True,
             padding=padding.symmetric(8, 0),
@@ -231,12 +242,7 @@ class ExportPrintDialog(XDialog):
                             controls = [
                                 self.export_button,
                                 self.print_button,
-                                FilledButton(
-                                    "Cancel", 
-                                    expand=True,
-                                    bgcolor="#73ff0000",
-                                    on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
-                                )
+                                self.cancel_button
                             ],
                             alignment=MainAxisAlignment.START
                         )
@@ -388,3 +394,35 @@ class ExportPrintDialog(XDialog):
 
         self.export_button.update()
         self.print_button.update()
+    
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.content.content.controls[0].content.controls[0].controls[0].value = lang_values["export_title"]
+        self.print_export_setting.controls[0].content.controls[0].value = lang_values["file_format_label"]
+        self.print_export_setting.controls[1].content.controls[0].value = lang_values["page_size_label"]
+        self.extra_options.content.content.controls[0].controls[0].value = lang_values["project_name_label"]
+        self.extra_options.content.content.controls[1].controls[0].value = lang_values["creator_label"]
+        self.extra_options.content.content.controls[2].controls[0].value = lang_values["date_label"]
+        self.main_options.content.controls[1].controls[0].value = lang_values["margin_label"]
+        self.main_options.content.controls[2].controls[0].value = lang_values["title_block_label"]
+        self.export_button.text = lang_values["export_button"]
+        self.print_button.text = lang_values["print_button"]
+        self.main_options.content.controls[4].content.controls[2].text = lang_values["cancel_button"]
+        self.project_name_tf.hint_text = lang_values["project_name_hint"]
+        self.creator_tf.hint_text = lang_values["creator_hint"]
+        self.date_tf.hint_text = lang_values["date_hint"]
+        self.print_export_setting.controls[0].content.controls[1].options[0].text = lang_values["pdf_option"]
+        self.print_export_setting.controls[0].content.controls[1].options[1].text = lang_values["png_option"]
+        self.print_export_setting.controls[0].content.controls[1].options[2].text = lang_values["docx_option"]
+        self.print_export_setting.controls[0].content.controls[1].options[3].text = lang_values["raw_png_option"]
+        self.print_export_setting.controls[1].content.controls[1].options[0].text = lang_values["letter_option"]
+        self.print_export_setting.controls[1].content.controls[1].options[1].text = lang_values["folio_option"]
+        self.print_export_setting.controls[1].content.controls[1].options[2].text = lang_values["legal_option"]
+        self.print_export_setting.controls[1].content.controls[1].options[3].text = lang_values["a4_option"]
+        self.print_export_setting.controls[1].content.controls[1].options[4].text = lang_values["b4_option"]
+        self.update()

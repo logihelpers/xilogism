@@ -5,6 +5,7 @@ from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.dialogs_state import DialogState, Dialogs
+from presentation.states.language_state import LanguageState
 
 from presentation.views.widgets.editor_view.fontface_chooser_button import FontFaceChooserButton
 from presentation.views.widgets.editor_view.font_size_textfield import FontSizeTextField
@@ -19,7 +20,7 @@ from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoBut
 from presentation.states.render_state import RenderState
 from presentation.states.animation_disable_state import AnimationDisableState
 
-from xilowidgets import Editor, Revealer, Zoomer, Switcher
+from xilowidgets import Editor, Revealer, Zoomer
 from flet_layoutbuilder import LayoutBuilder
 
 class EditorView(Container):
@@ -41,6 +42,8 @@ class EditorView(Container):
         self.render_state = RenderState()
         self.dia_state = DialogState()
         self.af_state = ActiveFileState()
+        self.lang_state = LanguageState()
+        self.lang_state.on_lang_updated = self.update_lang
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
 
@@ -170,13 +173,15 @@ class EditorView(Container):
             clip_behavior=ClipBehavior.ANTI_ALIAS
         )
 
+        self.viewing_mode_text = Text("Viewing Mode:", color="black")
+
         preview_bar = Row(
             height=32,
             alignment=MainAxisAlignment.SPACE_BETWEEN,
             controls= [
                 Row(
                     controls=[
-                        Text("Viewing Mode:", color="black"),
+                        self.viewing_mode_text,
                         self.diagram_mode,
                     ]
                 ),
@@ -266,6 +271,7 @@ class EditorView(Container):
         self.code_editor.update()
     
     def update_status_icon(self):
+        lang_values = self.lang_state.lang_values
         if not self.af_state.active:
             return
         elif self.af_state.active == "New Xilogism":
@@ -287,13 +293,13 @@ class EditorView(Container):
         match active_instance.ec_state.code_state[key_name]:
             case CodeState.BLANK:
                 active_instance.edit_status_icon.image.src = "/icons_light/blank.png"
-                active_instance.edit_status_icon.tooltip = "Content is currently blank..."
+                active_instance.edit_status_icon.tooltip = lang_values["blank_content_tooltip"]
             case CodeState.CORRECT:
                 active_instance.edit_status_icon.image.src = "/icons_light/correct.png"
-                active_instance.edit_status_icon.tooltip = "Content is correct..."
+                active_instance.edit_status_icon.tooltip = lang_values["correct_content_tooltip"]
             case CodeState.WRONG:
                 active_instance.edit_status_icon.image.src = "/icons_light/wrong.png"
-                active_instance.edit_status_icon.tooltip = "Content is containing errors..."
+                active_instance.edit_status_icon.tooltip = lang_values["wrong_content_tooltip"]
         
         active_instance.edit_status_icon.update()
   
@@ -330,3 +336,11 @@ class EditorView(Container):
         self.hidden_options.animation_duration = 500 if animate else 0
         self.code_pane.animation_duration = 500 if animate else 0
         self.update()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        instance: EditorView = None
+        for instance in EditorView.instances:
+            instance.viewing_mode_text.value = lang_values["viewing_mode"]
+            instance.viewing_mode_text.update()
+            instance.export_button.update_lang()

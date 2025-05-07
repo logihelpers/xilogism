@@ -185,11 +185,11 @@ class StartView(Container):
         button.update()
     
     def update_lang(self):
-        self.create_xilogism_span.text = self.lang_state.lang_values['create_title']
-        self.format_span.text = self.lang_state.lang_values["format"]
-        self.open_existing_text.value = self.lang_state.lang_values["open_existing"]
-        self.get_dirty_span.text = self.lang_state.lang_values["get_your_hands_dirty"]
-        self.code_to_circuits_text.value = self.lang_state.lang_values["tagline"]
+        self.create_xilogism_span.text = self.lang_state.lang_values['text_newxilo']
+        self.format_span.text = self.lang_state.lang_values['format']
+        self.open_existing_text.value = self.lang_state.lang_values['text_openxilo']
+        self.get_dirty_span.text = self.lang_state.lang_values['get_your_hands_dirty']
+        self.code_to_circuits_text.value = self.lang_state.lang_values['tagline']
         self.update()
     
     def update_colors(self):
