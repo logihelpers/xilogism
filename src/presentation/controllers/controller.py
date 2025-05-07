@@ -29,3 +29,10 @@ class Controller:
     @staticmethod
     def initialize_controllers(target: Page = None):
         Controller(target)
+    
+    @staticmethod
+    def get(controller_type):
+        for instance in Controller.instances:
+            if isinstance(instance, controller_type):
+                return instance
+        raise ValueError(f"Controller of type {controller_type.__name__} not found.")

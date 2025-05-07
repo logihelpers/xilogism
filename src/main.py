@@ -2,6 +2,7 @@ from flet import *
 import splash
 
 from presentation.controllers import Controller
+from presentation.controllers.auth_controller import AuthController
 from services.init_fonts import InitFonts
 from services.init_files import InitFiles
 
@@ -21,6 +22,8 @@ class Xilogism(Page):
         InitFiles(self)
 
         Controller.initialize_controllers(target=self)
+        auth_controller = Controller.get(AuthController)
+        auth_controller._restore_session()
 
         self.theme = Theme(font_family="Inter")
         self.window.title_bar_hidden = True
