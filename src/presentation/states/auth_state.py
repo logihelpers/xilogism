@@ -67,14 +67,8 @@ class AuthState(metaclass=Singleton):
     def on_request_pw_change(self, email: str):
         pass
 
-    def request_register_email(self, name: str, email: str, password: str, photo_path: str = None) -> bool:
-        return self.on_request_register_email(name, email, password, photo_path)
+    def request_register_email(self, name: str, email: str, password: str) -> bool:
+        return self.on_request_register_email(name, email, password)
     
-    def on_request_register_email(self, name: str, email: str, password: str, photo_path: str = None) -> bool:
-        pass
-
-    def request_update_profile(self, photo_path: str = None) -> bool:
-        return self.on_request_update_profile(photo_path)
-    
-    def on_request_update_profile(self, photo_path: str = None) -> bool:
+    def on_request_register_email(self, name, email: str, password: str) -> bool:
         pass

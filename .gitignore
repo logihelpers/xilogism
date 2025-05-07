@@ -3,7 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-src/assets/credentials.json
+src/assets/*.json
+src/assets/*.pickle
+
 
 # C extensions
 *.so

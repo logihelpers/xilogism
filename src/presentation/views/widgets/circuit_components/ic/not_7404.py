@@ -39,12 +39,14 @@ class NOT7404(LogicElement):
             coord = (start_x, start_y + (x * 20))
             symbol_elements.append(cv.Path.MoveTo(coord[0], coord[1]))
             symbol_elements.append(cv.Path.LineTo(coord[0] - self.INPUT_ARM_WIDTH, coord[1]))
+            coord = (coord[0] - self.INPUT_ARM_WIDTH, coord[1])
             self.input_coord.append(coord)
         
         for x in range(1, 7):
             coord = (start_x + self.FULL_SIDE_WIDTH, start_y + (x * 20))
             symbol_elements.append(cv.Path.MoveTo(coord[0], coord[1]))
             symbol_elements.append(cv.Path.LineTo(coord[0] + self.INPUT_ARM_WIDTH, coord[1]))
+            coord = (coord[0] + self.INPUT_ARM_WIDTH, coord[1])
             self.output_coord.append(coord)
 
         self.shapes = [
