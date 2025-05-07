@@ -7,6 +7,8 @@ from utils.singleton import Singleton
 from xilowidgets import XDialog
 from presentation.states.auth_state import AuthState
 from presentation.states.dialogs_state import Dialogs, DialogState
+from presentation.states.dark_mode_state import *
+from presentation.states.accent_color_state import AccentColorState
 
 class RegistrationDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -19,6 +21,8 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         self.lang_state = LanguageState()
         self.auth_state = AuthState()
         self.dia_state = DialogState()
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
 
         self.ad_state.on_change = lambda: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
 
@@ -81,6 +85,34 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.content.content.controls[1].color = colors["primary_color"]  # Title
+        self.content.content.controls[2].color = colors["text_color"]  # Subtitle
+        self.google_register_button.bgcolor = colors["primary_color"]
+        self.google_register_button.content.color = colors["text_color"]
+        self.google_register_button.style = ButtonStyle(
+            shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
+            padding=padding.all(15),
+        )
+        self.register_button.bgcolor = colors["primary_color"]
+        self.register_button.content.color = colors["text_color"]
+        self.register_button.style = ButtonStyle(
+            shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
+            padding=padding.all(15),
+        )
+        self.name_field.bgcolor = colors["field_bgcolor"]
+        self.name_field.border_color = colors["field_border_color"]
+        self.email_field.bgcolor = colors["field_bgcolor"]
+        self.email_field.border_color = colors["field_border_color"]
+        self.password_field.bgcolor = colors["field_bgcolor"]
+        self.password_field.border_color = colors["field_border_color"]
+        self.content.content.controls[8].controls[0].content.style.color = colors["primary_color"]  # Sign In link
+        self.update()
 
     def _create_text_field(self, label, icon, password=False):
         return TextField(

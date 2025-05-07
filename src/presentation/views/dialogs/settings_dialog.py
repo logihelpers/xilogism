@@ -9,6 +9,8 @@ from presentation.states.language_state import LanguageState
 from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.settings_navigator_state import SettingsNavigatorState
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 
 from utils.singleton import Singleton
 
@@ -25,6 +27,8 @@ class SettingsDialog(XDialog, metaclass = Singleton):
         self.language_settings = LanguageSettings()
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
 
         self.content_padding = 0
         self.title_padding = 0
@@ -126,6 +130,11 @@ class SettingsDialog(XDialog, metaclass = Singleton):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+        if self.ac_state.active == DarkModeScheme.DARK:
+            self.bgcolor = "#333333"
+            self.update()
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values
@@ -133,4 +142,11 @@ class SettingsDialog(XDialog, metaclass = Singleton):
         self.navigator.segments[1].label.value = lang_values["accessibility_label"]
         self.navigator.segments[2].label.value = lang_values["language_label"]
         self.actions[0].text = lang_values["close_button"]
+        self.update()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.actions[0].style.color = colors["text_color"]
+        self.actions[0].style.bgcolor = colors["button_bgcolor"]
         self.update()

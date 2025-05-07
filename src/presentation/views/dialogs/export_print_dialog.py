@@ -4,6 +4,7 @@ from presentation.states.render_state import RenderState
 from presentation.states.export_state import ExportState, FileFormat
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
 
 from xilowidgets import Revealer, XDialog, Switcher
 
@@ -18,6 +19,7 @@ class ExportPrintDialog(XDialog):
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
 
         self.content_padding = 0
         self.title_padding = 0
@@ -399,6 +401,50 @@ class ExportPrintDialog(XDialog):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.content.content.controls[0].content.controls[0].controls[0].color = colors["text_color"]  # Export Xilogism
+        self.content.content.controls[0].content.controls[0].controls[1].border = border.all(1, colors["border_color"])  # Preview image
+        self.print_export_setting.controls[0].content.controls[0].color = colors["text_color"]  # File Format
+        self.print_export_setting.controls[0].content.controls[1].text_style = TextStyle(size=16, color=colors["text_color"])  # File Format dropdown
+        for option in self.print_export_setting.controls[0].content.controls[1].options:
+            option.text_style = TextStyle(size=16, color=colors["text_color"])
+        self.print_export_setting.controls[1].content.controls[0].color = colors["text_color"]  # Page Size
+        self.print_export_setting.controls[1].content.controls[1].text_style = TextStyle(size=14, color=colors["text_color"])  # Page Size dropdown
+        for option in self.print_export_setting.controls[1].content.controls[1].options:
+            option.text_style = TextStyle(size=12, color=colors["text_color"])
+        self.main_options.content.controls[1].controls[0].color = colors["text_color"]  # Margin
+        self.main_options.content.controls[2].controls[0].color = colors["text_color"]  # Title Block
+        self.extra_options.content.border = border.all(1, colors["border_color"])  # Extra options border
+        self.extra_options.content.content.controls[0].controls[0].color = colors["text_color"]  # Project Name
+        self.extra_options.content.content.controls[1].controls[0].color = colors["text_color"]  # Creator
+        self.extra_options.content.content.controls[2].controls[0].color = colors["text_color"]  # Date
+        self.project_name_tf.bgcolor = colors["field_bgcolor"]
+        self.project_name_tf.border_color = colors["field_border_color"]
+        self.creator_tf.bgcolor = colors["field_bgcolor"]
+        self.creator_tf.border_color = colors["field_border_color"]
+        self.date_tf.bgcolor = colors["field_bgcolor"]
+        self.date_tf.border_color = colors["field_border_color"]
+        self.export_button.style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"])
+        )
+        self.export_button.color = colors["text_color"]
+        self.print_button.style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"])
+        )
+        self.print_button.color = colors["text_color"]
+        self.cancel_button.style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"])
+        )
+        self.cancel_button.color = colors["text_color"]
+        self.update()
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values
