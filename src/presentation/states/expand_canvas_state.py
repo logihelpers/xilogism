@@ -1,6 +1,6 @@
 from flet import *
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class ExpandCanvasState(metaclass = Singleton):
     def __init__(self):

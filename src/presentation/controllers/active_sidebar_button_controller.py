@@ -49,6 +49,15 @@ class ActiveSideBarButtonController(Controller):
         pinned_name = self.asbb_state.pin
         xilofile = Files.parse(pinned_name)
 
+        if xilofile.storage_type == StorageType.GDRIVE:
+            self.page.open(
+                SnackBar(
+                    Text("File cannot be pinned because it cannot be tracked..."),
+                    duration=3000
+                )
+            )
+            return
+
         if xilofile.path not in self.pinned_list: # ADD
             name: str = ""
             for index, (name, widget) in enumerate(SideBarButton.refs):

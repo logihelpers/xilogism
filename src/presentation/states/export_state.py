@@ -1,7 +1,7 @@
 from flet import *
 from enum import Enum
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class FileFormat:
     PDF = 0

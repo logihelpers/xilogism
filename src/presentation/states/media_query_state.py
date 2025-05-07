@@ -2,7 +2,7 @@ from enum import Enum
 from flet import *
 from typing import Tuple, Optional
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class MediaQueryState(metaclass = Singleton):
     def __init__(self):

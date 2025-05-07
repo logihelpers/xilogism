@@ -1,16 +1,19 @@
 from flet import *
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.sidebar_hide_state import *
-from presentation.states.active_file_state import ActiveFileState, XiloFile
+from presentation.states.active_file_state import ActiveFileState
 from presentation.states.render_state import *
 from presentation.states.new_save_state import NewSaveState
-
-from services.process_pipeline import PseudocodeParser, PythonValidator, PythonGenerator, BooleanConverter
-from services.init_files import AppendFile
+from presentation.states.auth_state import AuthState
+from models.xilofile_model import XiloFile, StorageType
+from services.processing_pipeline import PseudocodeParser, PythonValidator, PythonGenerator, BooleanConverter
+from services.init.init_files import AppendFile
 
 from presentation.controllers.controller import Controller, Priority
 from presentation.views.editor_view import EditorView
-
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseUpload
+import io
 import json
 from pathlib import Path
 
@@ -33,6 +36,7 @@ class EditorContentStateController(Controller):
         self.render_state = RenderState()
         self.af_state = ActiveFileState()
         self.ns_state = NewSaveState()
+        self.auth_state = AuthState()
         
         self.ns_state.on_change = self.save_file
         self.ec_state.on_change = self.parse_content
@@ -41,6 +45,8 @@ class EditorContentStateController(Controller):
         self.pygen = PythonGenerator()
         self.validator = PythonValidator()
         self.boolean_converter = BooleanConverter()
+
+        self.update_count = 0
     
     def save_file(self):
         save: bool = self.ns_state.state
@@ -84,12 +90,31 @@ class EditorContentStateController(Controller):
 
         self.old_active = active
 
-        if not isinstance(self.af_state.active, str):
+        if not isinstance(self.af_state.active, str) and not self.af_state.active.storage_type == StorageType.GDRIVE:
             json_file: dict = {}
             json_file['name'] = self.key_name
             json_file['content'] = active
             with open(self.af_state.active.path, "w", encoding="utf-8") as f:
                 json.dump(json_file, f, indent=4)
+        elif self.af_state.active.storage_type == StorageType.GDRIVE:
+            if self.update_count == 0:
+                json_file: dict = {}
+                json_file['name'] = self.key_name
+                json_file['content'] = active
+
+                file_stream = io.BytesIO(json.dumps(json_file).encode('utf-8'))
+                media = MediaIoBaseUpload(file_stream, mimetype='application/json', resumable=True)
+
+                file_id = self.af_state.active.path
+
+                service = build('drive', 'v3', credentials=self.auth_state.google_creds)
+                request = service.files().update(
+                    fileId=file_id,
+                    media_body=media
+                ).execute()
+
+                self.update_count += 1
+                self.update_count = 0 if self.update_count >= 20 else self.update_count
 
         try:
             self.editor_view.code_editor.value = self.ec_state.content[self.key_name]
