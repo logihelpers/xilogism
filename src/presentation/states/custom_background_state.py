@@ -1,4 +1,4 @@
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class CustomBackgroundState(metaclass = Singleton):
     def __init__(self):

@@ -10,14 +10,14 @@ import io
 from presentation.states.auth_state import AuthState
 from presentation.controllers.controller import Controller, Priority
 from presentation.controllers.google_drive_controller import GoogleDriveController
-from services.auth_persistence import AuthPersistence
+from services.auth.auth_persistence import AuthPersistence
+from utils.singleton import Singleton
 
 # Load Firebase configuration from JSON file
 with open('src/assets/firebase_config.json') as f:
     firebase_config = json.load(f)
 
-class AuthController(Controller):
-    _instance = None
+class AuthController(Controller, metaclass=Singleton):
     priority = Priority.ENTRY_POINT
 
     GOOGLE_CLIENT_SECRET_FILE = 'src/assets/credentials.json'
@@ -28,13 +28,7 @@ class AuthController(Controller):
         'https://www.googleapis.com/auth/drive'
     ]
 
-    @classmethod
-    def get_instance(cls):
-        return cls._instance
-
     def __init__(self, page=Page, auth_dialog=None):
-        super().__init__(page)
-        AuthController._instance = self
         self.page = page
         self.auth_dialog = auth_dialog
 
@@ -52,12 +46,7 @@ class AuthController(Controller):
         self.state = AuthState()
         self.state.register_listener(self.on_auth_change)
 
-        if page:
-            page.after = self._restore_session
-        else:
-            self._restore_session()
-
-    def _restore_session(self):
+    def restore_session(self):
         print("Attempting to restore auth session...")
         self._is_restoring_session = True
 

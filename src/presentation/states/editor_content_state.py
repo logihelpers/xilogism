@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Tuple
 from flet import *
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class CodeState(Enum):
     BLANK = "blank"

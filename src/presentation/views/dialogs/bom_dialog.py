@@ -1,5 +1,5 @@
 from flet import *
-from services.singleton import Singleton
+from utils.singleton import Singleton
 from xilowidgets import XDialog
 from math import ceil
 

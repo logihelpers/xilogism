@@ -1,7 +1,7 @@
 from flet import *
 from enum import Enum
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class BOMState(metaclass=Singleton):
     def __init__(self):

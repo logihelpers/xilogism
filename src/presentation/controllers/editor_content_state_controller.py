@@ -5,8 +5,8 @@ from presentation.states.active_file_state import ActiveFileState, XiloFile
 from presentation.states.render_state import *
 from presentation.states.new_save_state import NewSaveState
 
-from services.process_pipeline import PseudocodeParser, PythonValidator, PythonGenerator, BooleanConverter
-from services.init_files import AppendFile
+from services.processing_pipeline import PseudocodeParser, PythonValidator, PythonGenerator, BooleanConverter
+from services.init.init_files import AppendFile
 
 from presentation.controllers.controller import Controller, Priority
 from presentation.views.editor_view import EditorView

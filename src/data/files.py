@@ -1,6 +1,6 @@
 from typing import Optional, List
 from models.xilofile_model import XiloFile, StorageType
-from services.singleton import Singleton
+from utils.singleton import Singleton
 from pathlib import Path
 from datetime import datetime
 from presentation.states.xilofile_state import XiloFileState

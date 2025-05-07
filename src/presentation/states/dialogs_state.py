@@ -1,7 +1,7 @@
 from enum import Enum
 from flet import *
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class Dialogs(Enum):
     CLOSE = 0

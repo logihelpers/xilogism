@@ -9,7 +9,7 @@ from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.settings_navigator_state import SettingsNavigatorState
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class SettingsDialog(XDialog, metaclass = Singleton):
     def __init__(self):

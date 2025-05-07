@@ -1,6 +1,6 @@
 from flet import *
 from xilowidgets import XDialog
-from services.singleton import Singleton
+from utils.singleton import Singleton
 from presentation.controllers.auth_controller import AuthController
 from presentation.views.dialogs.registration_dialog import RegistrationDialog
 
