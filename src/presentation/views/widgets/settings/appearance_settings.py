@@ -8,6 +8,7 @@ from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.custom_background_state import CustomBackgroundState
 from presentation.states.accent_color_state import AccentColorState, AccentColors
 from presentation.states.animation_disable_state import AnimationDisableState
+from presentation.states.language_state import LanguageState
 
 class AppearanceSettings(Column):
     THEME_BUTTON_SCALE: float = 1
@@ -20,6 +21,7 @@ class AppearanceSettings(Column):
         self.cb_state = CustomBackgroundState()
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
+        self.lang_state = LanguageState()
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -173,6 +175,7 @@ class AppearanceSettings(Column):
         ]
     
     def did_mount(self):
+        self.lang_state.on_lang_updated = self.update_lang
         self.page.overlay.append(self.pick_files_dialog)
         self.update_bg_preview()
     
@@ -260,6 +263,20 @@ class AppearanceSettings(Column):
             self.dark_mode_options.update()
         except:
             pass
+
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.controls[0].value = lang_values["dark_mode_title"]
+        self.controls[1].controls[1].content.label = lang_values["follow_system_label"]
+        self.controls[2].value = lang_values["accent_color_title"]
+        self.controls[4].value = lang_values["editor_theme_title"]
+        self.controls[6].value = lang_values["custom_background_title"]
+        self.controls[7].controls[1].content.controls[0].value = lang_values["source_path"]
+        self.controls[7].controls[1].content.controls[2].content.text = lang_values["choose_image_button"]
+        self.controls[7].controls[1].content.controls[3].content.text = lang_values["use_default_button"]
+        self.dark_mode_options.content.controls[0].label.value = lang_values["default_theme"]
+        self.dark_mode_options.content.controls[1].label.value = lang_values["dark_theme"]
+        self.update()
 
 class ThemeButton(ListTile):
     refs: list = []

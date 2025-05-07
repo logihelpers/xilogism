@@ -4,7 +4,8 @@ from lang.ceb import text_values as ceb_val
 from lang.ja import text_values as ja_val
 from lang.es import text_values as es_val
 from lang.fr import text_values as fr_val 
-from lang.zh import text_values as zh_val 
+from lang.zh import text_values as zh_val
+from lang.brn import text_values as brn_val
 
 def get_text_values(language):
     match language:
@@ -22,3 +23,5 @@ def get_text_values(language):
             return fr_val
         case "Mandarin":
             return zh_val 
+        case "Brainrot":
+            return brn_val

@@ -5,6 +5,7 @@ from presentation.views.widgets.settings.appearance_settings import AppearanceSe
 from presentation.views.widgets.settings.accessibility_settings import AccessibilitySettings
 from presentation.views.widgets.settings.language_settings import LanguageSettings
 
+from presentation.states.language_state import LanguageState
 from presentation.states.dialogs_state import DialogState, Dialogs
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.settings_navigator_state import SettingsNavigatorState
@@ -17,6 +18,8 @@ class SettingsDialog(XDialog, metaclass = Singleton):
 
         self.dia_state = DialogState()
         self.sn_state = SettingsNavigatorState()
+        self.lang_state = LanguageState()
+
         self.appearance_settings = AppearanceSettings()
         self.accessibility_settings = AccessibilitySettings()
         self.language_settings = LanguageSettings()
@@ -118,3 +121,16 @@ class SettingsDialog(XDialog, metaclass = Singleton):
     def revert_index(self, _):
         self.navigator.selected={"0"}
         self.navigator.update()
+    
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.navigator.segments[0].label.value = lang_values["appearance_label"]
+        self.navigator.segments[1].label.value = lang_values["accessibility_label"]
+        self.navigator.segments[2].label.value = lang_values["language_label"]
+        self.actions[0].text = lang_values["close_button"]
+        self.update()

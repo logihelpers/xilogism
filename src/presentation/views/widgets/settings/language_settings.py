@@ -49,6 +49,16 @@ class LanguageSettings(Column):
 
         button.leading.opacity = 1
         button.leading.update()
+    
+    def did_mount(self):
+        super().did_mount()
+
+        self.lang_state.on_lang_updated = self.update_lang
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.controls[0].value = lang_values["language_title"]
+        self.update()
 
 class LanguageButton(ListTile):
     refs: list = []

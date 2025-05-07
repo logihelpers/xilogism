@@ -1,11 +1,13 @@
 from flet import *
 from presentation.states.viewing_mode_state import ViewingMode, ViewingModeState
+from presentation.states.language_state import LanguageState
 
 class DiagramModeChooser(DropdownM2):
     def __init__(self):
         super().__init__()
 
         self.vm_state = ViewingModeState()
+        self.lang_state = LanguageState()
 
         self.value="Logic Diagram"
         self.border_radius=8

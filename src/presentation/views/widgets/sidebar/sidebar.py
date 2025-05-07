@@ -1,7 +1,7 @@
 from flet import *
 
 from presentation.states.accent_color_state import AccentColorState
-
+from presentation.states.language_state import LanguageState
 from presentation.views.widgets.sidebar.title import SideBarTitle
 from presentation.views.widgets.sidebar.button import SideBarButton
 
@@ -28,6 +28,8 @@ class SideBar(Container):
         self.dia_state = DialogState()
         self.ac_state = AccentColorState()
         self.ac_state.on_colors_updated = self.update_colors
+        self.lang_state = LanguageState()
+        self.lang_state.on_lang_updated = self.update_lang
 
         self.pinned_files = Column(
             expand=True,
@@ -112,4 +114,20 @@ class SideBar(Container):
             left=BorderSide(1, color=colors["divider_color"])
         )
 
+        self.update()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        # Update SideBarTitle instances
+        for title in SideBarTitle.refs:
+            if title == "Home":
+                SideBarTitle.refs[title].content.controls[0].value = lang_values["home_title"]
+            elif title == "Pinned":
+                SideBarTitle.refs[title].content.controls[0].value = lang_values["pinned_title"]
+            elif title == "Local Files":
+                SideBarTitle.refs[title].content.controls[0].value = lang_values["local_files_title"]
+            elif title == "Google Drive":
+                SideBarTitle.refs[title].content.controls[0].value = lang_values["gdrive_title"]
+        # Update Guest User text
+        self.content.controls[0].content.content.content.controls[1].value = lang_values["guest_user"]
         self.update()

@@ -1,10 +1,15 @@
 from flet import *
+from presentation.states.language_state import LanguageState
 
 class SideBarTitle(Container):
     refs: dict = dict()
     widget_scale: float = 1.0
     def __init__(self, title: str, is_home: bool = False, on_menu_clicked = None):
         super().__init__()
+
+        self.lang_state = LanguageState()
+        self.lang_state.on_lang_updated = self.update_lang
+
         self.title = title
         self.is_home = is_home
         self.content = Row(
@@ -51,3 +56,10 @@ class SideBarTitle(Container):
         control: SideBarTitle = event.control
         control.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
         control.update()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        popup_menu = self.content.controls[1].content
+        popup_menu.items[0].text = lang_values["hide_group"]
+        popup_menu.items[1].text = lang_values["reload"]
+        self.update()

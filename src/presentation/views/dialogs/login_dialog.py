@@ -4,6 +4,7 @@ from services.singleton import Singleton
 
 from presentation.states.dialogs_state import *
 from presentation.states.animation_disable_state import AnimationDisableState
+from presentation.states.language_state import LanguageState
 
 class LoginDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -13,6 +14,7 @@ class LoginDialog(XDialog, metaclass=Singleton):
         super().__init__()
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = lambda e: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
+        self.lang_state = LanguageState()
 
         self.bgcolor = "#ededed"
         self.open_duration = 300 if self.ad_state.state else 0
@@ -102,6 +104,11 @@ class LoginDialog(XDialog, metaclass=Singleton):
             height=500,
         )
         super().build()
+    
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
 
     def _create_text_field(self, label: str, icon, password: bool = False):
         return TextField(
@@ -135,3 +142,6 @@ class LoginDialog(XDialog, metaclass=Singleton):
                 padding=padding.all(15)
             )
         )
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
