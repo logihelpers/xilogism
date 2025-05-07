@@ -26,25 +26,31 @@ class DialogStateController(Controller):
         
         match active:
             case Dialogs.CLOSE:
-                try:
-                    [self.page.close(overlay) for overlay in self.page.overlay] # One liner close all dialogs
-                except:
-                    pass
+                self.active_dialog.open = False
             case Dialogs.SETTINGS:
-                self.page.open(self.settings_dialog)
+                self.active_dialog = self.settings_dialog
+                self.page.open(self.active_dialog)
             case Dialogs.LOGIN:
-                self.page.open(LoginDialog())
+                self.active_dialog = LoginDialog()
+                self.page.open(self.active_dialog)
             case Dialogs.REGISTER:
-                self.page.open(RegistrationDialog())
+                self.active_dialog = RegistrationDialog()
+                self.page.open(self.active_dialog)
             case Dialogs.EXPORT:
-                self.page.open(ExportPrintDialog())
+                self.active_dialog = ExportPrintDialog()
+                self.page.open(self.active_dialog)
             case Dialogs.CREATE_NEW:
-                self.page.open(CreateNewDialog())
+                self.active_dialog = CreateNewDialog()
+                self.page.open(self.active_dialog)
             case Dialogs.TUTORIAL:
-                self.page.open(TutorialDialog())
+                self.active_dialog = TutorialDialog()
+                self.page.open(self.active_dialog)
             case Dialogs.BOM:
-                self.page.open(BOMDialog())
+                self.active_dialog = BOMDialog()
+                self.page.open(self.active_dialog)
             case Dialogs.PROFILE:
-                self.page.open(ProfileDialog())
+                self.active_dialog = ProfileDialog()
+                self.page.open(self.active_dialog)
         
+        self.page.update()
         self.dia_state.done_build = active
