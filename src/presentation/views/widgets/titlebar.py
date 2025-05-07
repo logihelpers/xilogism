@@ -2,6 +2,7 @@ from flet import *
 from math import pi
 from presentation.states.title_button_state import *
 from presentation.states.sidebar_hide_state import *
+from presentation.states.language_state import LanguageState
 
 from xilowidgets import Revealer
 
@@ -15,6 +16,8 @@ class TitleBar(Container):
 
         self.title_button_state = TitleButtonState()
         self.sidebar_hide_state = SideBarHideState()
+        self.lang_state = LanguageState()
+        self.lang_state.on_lang_updated = self.update_lang
 
         self.sidebar_hide_button_content = Image(
             src="/icons_light/sidebar_hide.png",
@@ -237,3 +240,16 @@ class TitleBar(Container):
         button.rotate.angle = 0
         button.scale = 1
         button.update()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.sidebar_hide_button_content.tooltip = lang_values["hide_sidebar_tooltip"]
+        self.sidebar_show_button_content.tooltip = lang_values["show_sidebar_tooltip"]
+        self.tutorial_button.tooltip = lang_values["tutorial_tooltip"]
+        self.settings_button.tooltip = lang_values["settings_tooltip"]
+        self.hidden_profile_button_revealer.content.content.tooltip = lang_values["user_settings_tooltip"]
+        self.content.content.controls[1].controls[3].tooltip = lang_values["minimize_tooltip"]
+        self.content.content.controls[1].controls[4].tooltip = lang_values["maximize_tooltip"]
+        self.content.content.controls[1].controls[5].tooltip = lang_values["close_tooltip"]
+        self.filename_tf.value = lang_values["default_title"]
+        self.update()

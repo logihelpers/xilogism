@@ -4,6 +4,7 @@ from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.color_blind_state import ColorBlindState, ColorModes
 from presentation.states.dyslexia_friendly_state import DyslexiaFriendlyState
 from presentation.states.left_handed_state import LeftHandedState
+from presentation.states.language_state import LanguageState
 
 class AccessibilitySettings(Column):
     def __init__(self):
@@ -14,6 +15,7 @@ class AccessibilitySettings(Column):
         self.cb_state = ColorBlindState()
         self.df_state = DyslexiaFriendlyState()
         self.lh_state = LeftHandedState()
+        self.lang_state = LanguageState()
 
         self.scroll=ScrollMode.ALWAYS
         self.expand=True
@@ -36,20 +38,6 @@ class AccessibilitySettings(Column):
                     SettingsImageButton("/mode_dyslexic_friendly.png", "Readable", "dyslexia", 0.75, on_button_press=self.switch_readability)
                 ]
             ),
-            # Text("Vision Friendly Settings", weight=FontWeight.BOLD),
-            # Row(
-            #     spacing = 16,
-            #     # alignment=MainAxisAlignment.CENTER,
-            #     expand = True,
-            #     wrap=True,
-            #     controls = [
-            #         SettingsImageButton("/icons_light/color_settings_normal.png", "Default", "vision", 0.6, on_button_press=self.switch_vision),
-            #         SettingsImageButton("/icons_light/color_settings_high_contrast.png", "High-Contrast", "vision", 0.6, on_button_press=self.switch_vision),
-            #         SettingsImageButton("/icons_light/color_settings_deuteranopia.png", "Deuteranopia", "vision", 0.6, on_button_press=self.switch_vision),
-            #         SettingsImageButton("/icons_light/color_settings_protanopia.png", "Protanopia", "vision", 0.6, on_button_press=self.switch_vision),
-            #         SettingsImageButton("/icons_light/color_settings_tritanopia.png", "Tritanopia", "vision", 0.6, on_button_press=self.switch_vision),
-            #     ]
-            # ),
             Text("Left-Handed Mode", weight=FontWeight.BOLD),
             Row(
                 spacing = 24,
@@ -88,6 +76,10 @@ class AccessibilitySettings(Column):
             )
         ]
     
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+    
     def switch_vision(self, event: ControlEvent):
         button: SettingsImageButton = event.control
 
@@ -109,3 +101,20 @@ class AccessibilitySettings(Column):
             self.anim_disable_switch.update()
         except:
             pass
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.controls[0].value = lang_values["dyslexia_friendly_title"]
+        self.controls[2].value = lang_values["left_handed_title"]
+        self.controls[4].value = lang_values["animation_settings_title"]
+        self.controls[5].label = lang_values["animations_label"]
+        self.controls[6].value = lang_values["keyboard_shortcuts_title"]
+        self.controls[1].controls[0].label.value = lang_values["default_dyslexia"]
+        self.controls[1].controls[1].label.value = lang_values["readable_dyslexia"]
+        self.controls[3].controls[0].label.value = lang_values["default_sidebar"]
+        self.controls[3].controls[1].label.value = lang_values["left_handed_sidebar"]
+        self.controls[7].rows[0].cells[0].content.value = lang_values["hide_sidebar_action"]
+        self.controls[7].rows[0].cells[1].content.value = lang_values["hide_sidebar_shortcut"]
+        self.controls[7].rows[1].cells[0].content.value = lang_values["save_xilogism_action"]
+        self.controls[7].rows[1].cells[1].content.value = lang_values["save_xilogism_shortcut"]
+        self.update()

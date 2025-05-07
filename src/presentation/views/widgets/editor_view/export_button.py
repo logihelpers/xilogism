@@ -1,8 +1,11 @@
 from flet import *
+from presentation.states.language_state import LanguageState
 
 class ExportButton(Container):
     def __init__(self):
         super().__init__()
+
+        self.lang_state = LanguageState()
 
         self.border=border.all(1, "black")
         self.border_radius=8
@@ -29,3 +32,8 @@ class ExportButton(Container):
         button: Container = event.control
         button.bgcolor = "#73191f51" if event.data == "true" else "#4d191f51"
         button.update()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.content.controls[0].value = lang_values["export_label"]
+        self.update()

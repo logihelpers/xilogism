@@ -4,6 +4,7 @@ from xilowidgets import XDialog, Switcher
 
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
+from presentation.states.language_state import LanguageState
 import asyncio
 
 class TutorialDialog(XDialog, metaclass = Singleton):
@@ -13,6 +14,7 @@ class TutorialDialog(XDialog, metaclass = Singleton):
 
         self.dia_state = DialogState()
         self.ns_state = NewSaveState()
+        self.lang_state = LanguageState()
 
         self.elevation = 0
         self.content_padding = 8
@@ -126,31 +128,45 @@ class TutorialDialog(XDialog, metaclass = Singleton):
         )
     
     def go_previous(self, _):
+        lang_values = self.lang_state.lang_values
         if self.current_index == 0:
             self.dia_state.state = Dialogs.CLOSE
             self.current_index = 0
         else:
-            self.previous_button.text = "Close" if self.current_index == 1 else "Previous"
+            self.previous_button.text = lang_values["button_tutclose"] if self.current_index == 1 else lang_values["previous_button"]
             self.previous_button.update()
-            self.next_button.text = "Next" if self.current_index <= (len(self.switcher.controls) - 1) else "Finish"
+            self.next_button.text = lang_values["button_next"] if self.current_index <= (len(self.switcher.controls) - 1) else lang_values["finish_button"]
             self.next_button.update()
 
             self.current_index = self.current_index - 1
             self.switcher.switch(self.current_index)
 
     async def go_next(self, _):
+        lang_values = self.lang_state.lang_values
         if self.current_index == len(self.switcher.controls) - 1:
             self.dia_state.state = Dialogs.CLOSE
             await asyncio.sleep(0.1)
             self.current_index = 0
         else:
-            self.next_button.text = "Finish" if self.current_index == (len(self.switcher.controls) - 2) else "Next"
+            self.next_button.text = lang_values["finish_button"] if self.current_index == (len(self.switcher.controls) - 2) else lang_values["button_next"]
             self.next_button.update()
-            self.previous_button.text = "Previous" if self.current_index >= 0 else "Close"
+            self.previous_button.text = lang_values["previous_button"] if self.current_index >= 0 else lang_values["button_tutclose"]
             self.previous_button.update()
 
             self.current_index = self.current_index + 1
             self.switcher.switch(self.current_index)
+    
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.previous_button.text = lang_values["button_tutclose"]
+        self.next_button.text = lang_values["button_next"]
+        self.previous_button.update()
+        self.next_button.update()
 
 class TutorialPage(Column):
     def __init__(self, title_text: str, image_file: str, description: str):
