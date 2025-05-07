@@ -96,7 +96,7 @@ class EditorContentStateController(Controller):
             json_file['content'] = active
             with open(self.af_state.active.path, "w", encoding="utf-8") as f:
                 json.dump(json_file, f, indent=4)
-        elif self.af_state.active.storage_type == StorageType.GDRIVE:
+        elif not isinstance(self.af_state.active, str) and self.af_state.active.storage_type == StorageType.GDRIVE:
             if self.update_count == 0:
                 json_file: dict = {}
                 json_file['name'] = self.key_name
