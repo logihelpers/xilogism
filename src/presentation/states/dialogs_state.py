@@ -11,6 +11,7 @@ class Dialogs(Enum):
     EXPORT = 4
     CREATE_NEW = 5
     TUTORIAL = 6
+    BOM = 7
 
 class DialogState(metaclass=Singleton):
     def __init__(self):

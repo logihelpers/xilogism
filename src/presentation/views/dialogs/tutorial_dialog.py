@@ -4,6 +4,7 @@ from xilowidgets import XDialog, Switcher
 
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
+import asyncio
 
 class TutorialDialog(XDialog, metaclass = Singleton):
     current_index: int = 0
@@ -137,9 +138,10 @@ class TutorialDialog(XDialog, metaclass = Singleton):
             self.current_index = self.current_index - 1
             self.switcher.switch(self.current_index)
 
-    def go_next(self, _):
+    async def go_next(self, _):
         if self.current_index == len(self.switcher.controls) - 1:
             self.dia_state.state = Dialogs.CLOSE
+            await asyncio.sleep(0.1)
             self.current_index = 0
         else:
             self.next_button.text = "Finish" if self.current_index == (len(self.switcher.controls) - 2) else "Next"

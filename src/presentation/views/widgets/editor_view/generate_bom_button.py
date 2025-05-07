@@ -1,16 +1,16 @@
 from flet import *
-from presentation.states.expand_canvas_state import ExpandCanvasState
+from presentation.states.bom_state import BOMState
 
-class ExpandButton(Container):
+class GenerateBOMButton(Container):
     def __init__(self):
         super().__init__()
 
-        self.expand_state = ExpandCanvasState()
+        self.bom_state = BOMState()
 
         self.content = Image(
-            src="/icons_light/full-size.png",
-            width=16,
-            height=16
+            src="/icons_light/generate_bom.png",
+            width=24,
+            height=24
         )
 
         self.scale = 1
@@ -41,6 +41,4 @@ class ExpandButton(Container):
         button.update()
     
     def update_expand(self, _):
-        self.expand_state.expand = not self.expand_state.expand
-        self.content.src = "/icons_light/shrink.png" if self.expand_state.expand else "/icons_light/full-size.png"
-        self.content.update()
+        self.bom_state.show_bom = True

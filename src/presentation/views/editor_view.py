@@ -11,6 +11,7 @@ from presentation.views.widgets.editor_view.font_size_textfield import FontSizeT
 from presentation.views.widgets.editor_view.diagram_mode_chooser import DiagramModeChooser
 from presentation.views.widgets.editor_view.export_button import ExportButton
 from presentation.views.widgets.editor_view.expand_button import ExpandButton
+from presentation.views.widgets.editor_view.generate_bom_button import GenerateBOMButton
 
 from presentation.views.widgets.circuit_components.canvas import Canvas
 
@@ -113,10 +114,8 @@ class EditorView(Container):
 
         self.diagram_mode = DiagramModeChooser()
 
-        self.expand_button = ExpandButton(
-            top=8,
-            right=8
-        )
+        self.expand_button = ExpandButton()
+        self.generate_bom_button = GenerateBOMButton()
 
         self.canvas = Canvas(
             expand=True,
@@ -191,7 +190,14 @@ class EditorView(Container):
                 expand=True,
                 controls=[
                     Row(controls = [Zoomer(self.canvas, 0.1, 100.0, expand=True)], top=0, bottom=0, right=0, left=0, expand=True),
-                    self.expand_button
+                    Row(
+                        controls = [
+                            self.generate_bom_button,
+                            self.expand_button
+                        ],
+                        top=8,
+                        right=8
+                    )
                 ]
             ),
             border=border.all(1, "#6b6b6b"),
