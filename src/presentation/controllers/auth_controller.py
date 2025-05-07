@@ -1,24 +1,19 @@
 import json
-import base64
+import asyncio
 import traceback
 import requests
 from google_auth_oauthlib.flow import InstalledAppFlow
 from flet import SnackBar, Text, Page
 import pyrebase
-from PIL import Image
-import io
 from presentation.states.auth_state import AuthState
+from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.controllers.controller import Controller, Priority
 from presentation.controllers.google_drive_controller import GoogleDriveController
 from services.auth.auth_persistence import AuthPersistence
 from utils.singleton import Singleton
 
-# Load Firebase configuration from JSON file
-with open('src/assets/firebase_config.json') as f:
-    firebase_config = json.load(f)
-
 class AuthController(Controller, metaclass=Singleton):
-    priority = Priority.ENTRY_POINT
+    priority = Priority.NONE
 
     GOOGLE_CLIENT_SECRET_FILE = 'src/assets/credentials.json'
     GOOGLE_SCOPES = [
@@ -28,13 +23,14 @@ class AuthController(Controller, metaclass=Singleton):
         'https://www.googleapis.com/auth/drive'
     ]
 
-    def __init__(self, page=Page, auth_dialog=None):
+    def __init__(self, page: Page):
         self.page = page
-        self.auth_dialog = auth_dialog
-
         self._is_restoring_session = False
 
-        self.firebase = pyrebase.initialize_app(firebase_config)
+        with open('src/assets/firebase_config.json') as f:
+            self.firebase_config = json.load(f)
+
+        self.firebase = pyrebase.initialize_app(self.firebase_config)
         self.auth = self.firebase.auth()
         self.db = self.firebase.database()
         self.storage = self.firebase.storage()
@@ -44,23 +40,27 @@ class AuthController(Controller, metaclass=Singleton):
         self.refresh_token = None
 
         self.state = AuthState()
-        self.state.register_listener(self.on_auth_change)
+        self.state.on_request_google_login = self.login_google
+        self.dia_state = DialogState()
+        self.state.on_request_logout = lambda: asyncio.run(self.logout())
+    
+    async def logout(self):
+        self.dia_state.state = Dialogs.CLOSE
+        await asyncio.sleep(0.2)
+        self.dia_state.state = Dialogs.LOGIN
 
     def restore_session(self):
-        print("Attempting to restore auth session...")
         self._is_restoring_session = True
-
         try:
             auth_data = AuthPersistence.load_firebase_auth()
             if auth_data:
                 self.user_token = auth_data["token"]
                 self.user_uid = auth_data["uid"]
-                self.refresh_token = auth_data.get("refreshToken")
+                self.refresh_token = auth_data["refreshToken"]
                 user_data = auth_data["user"]
 
                 try:
                     self.auth.get_account_info(self.user_token)
-                    print(f"Token validated for user {user_data.get('displayName', 'Unknown')}")
                 except Exception as e:
                     print(f"Token validation failed: {e}")
                     if self.refresh_token:
@@ -69,7 +69,6 @@ class AuthController(Controller, metaclass=Singleton):
                             self.user_token = refreshed["idToken"]
                             self.refresh_token = refreshed["refreshToken"]
                             self.user_uid = refreshed["userId"]
-                            print("Token refreshed successfully.")
                             AuthPersistence.save_firebase_auth(
                                 self.user_token, self.user_uid, user_data, self.refresh_token
                             )
@@ -78,19 +77,13 @@ class AuthController(Controller, metaclass=Singleton):
                             self.user_token = None
                             self.user_uid = None
                             AuthPersistence.clear_firebase_auth()
-                            self.state.clear()
+                            del self.state.user
                             return False
                     else:
                         print("No refresh token available.")
                         return False
 
-                self.state.set_user(user_data)
-                print(f"Authentication session restored for {user_data.get('displayName', 'Unknown')}")
-
-                if self.page and hasattr(self.page, "sidebar"):
-                    self.page.sidebar.refresh_user_profile()
-                    self.page.update()
-
+                self.state.user = user_data
                 return True
         except Exception as e:
             print(f"Failed to restore auth session: {e}")
@@ -98,7 +91,6 @@ class AuthController(Controller, metaclass=Singleton):
             AuthPersistence.clear_firebase_auth()
         finally:
             self._is_restoring_session = False
-
         return False
 
     def login_google(self):
@@ -114,7 +106,7 @@ class AuthController(Controller, metaclass=Singleton):
             profile_info = session.get('https://www.googleapis.com/userinfo/v2/me').json()
 
             firebase_resp = requests.post(
-                f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={firebase_config['apiKey']}",
+                f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={self.firebase_config['apiKey']}",
                 headers={"Content-Type": "application/json"},
                 json={
                     "postBody": f"id_token={creds.id_token}&providerId=google.com",
@@ -146,27 +138,18 @@ class AuthController(Controller, metaclass=Singleton):
                 "photoUrl": profile_info["picture"]
             }
 
-            self.state.set_user(user_data)
+            self.state.user = user_data
             AuthPersistence.save_firebase_auth(self.user_token, self.user_uid, user_data, self.refresh_token)
-
-            self._close_dialog()
-            self._snack("Signed in with Google!")
-
-            # After Google login, pass the credentials to GoogleDriveController
-            if self.page:
-                # Assuming page has a GoogleDriveController instance.
-                drive_controller = GoogleDriveController(page=self.page)
-                drive_controller.login_with_creds(creds)  # Pass Google credentials to the drive controller
+            if creds:
+                self.page.open(SnackBar(Text("Drive credentials authenticated!")))
+            else:
+                self.page.open(SnackBar(Text("Drive credentials not authenticated!")))
+            
+            self.state.google_creds = creds
         except Exception as e:
             self._snack(f"Google login failed: {e}")
             print(f"[Google Login Error] {e}")
             traceback.print_exc()
-
-    def _close_dialog(self):
-        if self.auth_dialog:
-            self.page.open(self.auth_dialog)
-        if self.page:
-            self.page.update()
 
     def _snack(self, message: str):
         if self.page:
@@ -175,8 +158,3 @@ class AuthController(Controller, metaclass=Singleton):
             self.page.update()
         else:
             print(f"[SnackBar] {message}")
-
-    def on_auth_change(self, user):
-        if self.page and hasattr(self.page, "sidebar"):
-            self.page.sidebar.refresh_user_profile()
-            self.page.update()

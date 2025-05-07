@@ -13,3 +13,12 @@ class DriveState(metaclass=Singleton):
     def files(self, value):
         self._files = value
         self.on_change()
+    
+    def on_change(self):
+        pass
+
+    def request_files(self):
+        self.on_request_files()
+    
+    def on_request_files(self):
+        pass

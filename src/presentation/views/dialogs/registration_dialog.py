@@ -2,7 +2,8 @@ from flet import *
 
 from utils.singleton import Singleton
 from xilowidgets import XDialog
-from presentation.controllers.auth_controller import AuthController
+from presentation.states.auth_state import AuthState
+from presentation.states.dialogs_state import Dialogs, DialogState
 
 class RegistrationDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -10,26 +11,18 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
 
     def __init__(self):
         super().__init__()
-        # dialog styling
         self.bgcolor = "#ededed"
         self.width = 320
         self.height = 540
         self.open_duration = 300
-
-        # will be set in build()
-        self.auth_controller: AuthController | None = None
+        self.auth_state = AuthState()
+        self.dia_state = DialogState()
 
     def build(self):
-        # wire up controller
-        if not self.auth_controller:
-            self.auth_controller = AuthController(page=self.page, auth_dialog=self)
-
-        # form fields
         self.name_field = self._create_text_field("Name", Icons.PERSON)
         self.email_field = self._create_text_field("Email", Icons.EMAIL)
         self.password_field = self._create_text_field("Password", Icons.LOCK, password=True)
 
-        # buttons
         self.google_register_button = self._create_button(
             "SIGN UP WITH GOOGLE", self._on_google_signup_click
         )
@@ -37,7 +30,6 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
             "REGISTER", self._on_register_click
         )
 
-        # layout
         self.content = Container(
             padding=padding.only(0, 16),
             border_radius=16,
@@ -106,30 +98,17 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         password = self.password_field.value.strip()
 
         if not (name and email and password):
-            self.page.snack_bar = SnackBar(Text("Please fill all fields."))
-            self.page.snack_bar.open = True
+            self.page.open(SnackBar(Text("Please fill all fields.")))
             self.page.update()
             return
 
-        # call your controller
-        result = self.auth_controller.register_email(name, email, password)
-
-        # on success, close this dialog and show a snack
-        if result:
-            self.page.close(self)
-            self.page.snack_bar = SnackBar(Text("Registered successfully!"))
-            self.page.snack_bar.open = True
-            self.page.update()
+        self.auth_state.request_register_email(name, email, password)
+        self.dia_state.state = Dialogs.CLOSE
+        self.page.open(SnackBar(Text("Registered successfully!")))
+        self.page.update()
 
     def _on_google_signup_click(self, e):
-        self.auth_controller.login_google()
+        self.auth_state.request_google_login()
 
     def _on_back_to_login_click(self, e):
-        # close this registration dialog
-        self.page.close(self)
-        # late import to avoid circular
-        from presentation.views.dialogs.login_dialog import LoginDialog
-        login_dlg = LoginDialog()
-        login_dlg.page = self.page
-        self.page.open(login_dlg)
-        self.page.update()
+        self.dia_state.state = Dialogs.LOGIN

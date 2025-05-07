@@ -1,6 +1,7 @@
 from presentation.states.xilofile_state import XiloFileState
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
+from presentation.states.auth_state import AuthState
 from presentation.controllers.editor_view_fonts_controller import EditorViewFontsController
 from presentation.controllers.expand_canvas_controller import ExpandCanvasController
 from presentation.controllers.editor_content_state_controller import EditorContentStateController
@@ -10,8 +11,12 @@ from presentation.views.open_existing_view import OpenExistingView
 from presentation.views.widgets.existing_view.local_button import LocalButton
 from presentation.views.widgets.existing_view.pinned_button import PinnedButton
 from presentation.views.window_view import WindowView
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+import io
+from googleapiclient.http import MediaIoBaseDownload
 
-from models.xilofile_model import XiloFile
+from models.xilofile_model import XiloFile, StorageType
 
 from xilowidgets import Switcher
 from typing import List
@@ -33,6 +38,7 @@ class XiloFilesController(Controller):
         self.xf_state.on_file_appended = self.append_view
         self.asb_state = ActiveSideBarButtonState()
         self.ec_state = EditorContentState()
+        self.auth_state = AuthState()
 
         window: WindowView = self.page.session.get("window")
         self.switcher: Switcher = window.switcher
@@ -61,54 +67,77 @@ class XiloFilesController(Controller):
         XiloFilesController.already_loaded = True
     
     def append_view(self, xilofile: XiloFile):
-        with open(xilofile.path, "r", encoding="utf-8") as f:
-            json_file = json.load(f)
+        if xilofile.storage_type == StorageType.LOCAL:
+            with open(xilofile.path, "r", encoding="utf-8") as f:
+                json_file = json.load(f)
 
-            name = json_file['name']
-            content = json_file['content']
+                self.create_view(json_file, xilofile)
+        else:
+            service = build('drive', 'v3', credentials=self.auth_state.google_creds)
+            request = service.files().get_media(fileId = xilofile.path)
+            file_content = io.BytesIO()
+            downloader = MediaIoBaseDownload(file_content, request)
 
-            self.ec_state.content[name] = content
-            self.ec_state.code_state[name] = CodeState.BLANK
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+            
+            file_content.seek(0)
 
-            editor = EditorView(name)
-            self.switcher.controls.append(editor)
-            self.switcher.update()
+            json_file = json.loads(file_content.read().decode())
+            self.create_view(json_file, xilofile)
+    
+    def create_view(self, json_file, xilofile: XiloFile):
+        name = json_file['name']
+        content = json_file['content']
 
-            XiloFilesController.extra_controllers.append(EditorViewFontsController(self.page, editor))
-            XiloFilesController.extra_controllers.append(ExpandCanvasController(self.page, editor))
-            XiloFilesController.extra_controllers.append(EditorContentStateController(self.page, name, editor))
+        self.ec_state.content[name] = content
+        self.ec_state.code_state[name] = CodeState.BLANK
 
-            button = SideBarButton(
-                "icons_light/document.png",
-                name,
-                on_button_press=lambda e: setattr(self.asb_state, 'active', e.control.label),
-                on_pin=lambda label: setattr(self.asb_state, 'pin', label)
+        editor = EditorView(name)
+        self.switcher.controls.append(editor)
+        self.switcher.update()
+
+        XiloFilesController.extra_controllers.append(EditorViewFontsController(self.page, editor))
+        XiloFilesController.extra_controllers.append(ExpandCanvasController(self.page, editor))
+        XiloFilesController.extra_controllers.append(EditorContentStateController(self.page, name, editor))
+
+        button = SideBarButton(
+            "icons_light/document.png",
+            name,
+            on_button_press=lambda e: setattr(self.asb_state, 'active', e.control.label),
+            on_pin=lambda label: setattr(self.asb_state, 'pin', label)
+        )
+        button.tooltip = xilofile.path
+
+        if xilofile.path in self.pinned_list:
+            self.sidebar.pinned_files.controls.append(button)
+            self.sidebar.pinned_files.update()
+
+            pinned_button = PinnedButton(
+                title=xilofile.title,
+                thumbnail=xilofile.thumbnail,
+                date=xilofile.date,
+                on_press=lambda e: setattr(self.asb_state, 'active', e.control.title),
             )
-            button.tooltip = xilofile.path
-
-            if xilofile.path in self.pinned_list:
-                self.sidebar.pinned_files.controls.append(button)
-                self.sidebar.pinned_files.update()
-
-                pinned_button = PinnedButton(
-                    title=xilofile.title,
-                    thumbnail=xilofile.thumbnail,
-                    date=xilofile.date,
-                    on_press=lambda e: setattr(self.asb_state, 'active', e.control.title),
-                )
-                
-                self.existing_view.pinned_list.controls.append(pinned_button)
-                self.existing_view.pinned_list.update()
-            else:
+            
+            self.existing_view.pinned_list.controls.append(pinned_button)
+            self.existing_view.pinned_list.update()
+        else:
+            if xilofile.storage_type == StorageType.LOCAL:
                 self.sidebar.local_files.controls.append(button)
                 self.sidebar.local_files.update()
+            else:
+                self.sidebar.gdrive_files.controls.append(button)
+                self.sidebar.gdrive_files.update()
+                return
 
-                local_button = LocalButton(
-                    title=xilofile.title,
-                    path=xilofile.path,
-                    date=xilofile.date,
-                    on_press=lambda e: setattr(self.asb_state, 'active', e.control.title),
-                )
-                
-                self.existing_view.local_list.controls.append(local_button)
-                self.existing_view.local_list.update()
+            local_button = LocalButton(
+                title=xilofile.title,
+                path=xilofile.path,
+                date=xilofile.date,
+                on_press=lambda e: setattr(self.asb_state, 'active', e.control.title),
+            )
+            
+            self.existing_view.local_list.controls.append(local_button)
+            self.existing_view.local_list.update()

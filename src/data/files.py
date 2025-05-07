@@ -4,6 +4,12 @@ from utils.singleton import Singleton
 from pathlib import Path
 from datetime import datetime
 from presentation.states.xilofile_state import XiloFileState
+from presentation.states.auth_state import AuthState
+from presentation.states.drive_state import DriveState
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+import io
+from googleapiclient.http import MediaIoBaseDownload
 
 import os
 import json
@@ -13,6 +19,10 @@ class Files(metaclass=Singleton):
 
     def __init__(self):
         self.xf_state = XiloFileState()
+        self.auth_state = AuthState()
+        self.drive_state = DriveState()
+        self.auth_state.on_creds_set = self.retrieve_files_gdrive
+        self.drive_state.on_change = self.process_gdrive
 
     def retrieve_files_local(self):
         Files.all_files.clear()
@@ -54,7 +64,47 @@ class Files(metaclass=Singleton):
             return xilofile
 
     def retrieve_files_gdrive(self):
-        pass
+        page_size = 1000
+        try:
+            service = build('drive', 'v3', credentials=self.auth_state.google_creds)
+            res = service.files().list(
+                pageSize=page_size,
+                fields="files(id, name, mimeType)"
+            ).execute()
+
+            files = res.get('files', [])
+            xlg_files = [f for f in files if f["name"].endswith(".xlg")]
+            self.drive_state.files = xlg_files
+            return xlg_files
+        except Exception as e:
+            print(f"[Drive File List Error] {e}")
+            return []
+    
+    def process_gdrive(self):
+        for file in self.drive_state.files:
+            service = build('drive', 'v3', credentials=self.auth_state.google_creds)
+            request = service.files().get_media(fileId = file["id"])
+            file_content = io.BytesIO()
+            downloader = MediaIoBaseDownload(file_content, request)
+
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+            
+            file_content.seek(0)
+
+            json_file = json.loads(file_content.read().decode())
+
+            xilofile = XiloFile(
+                title=json_file["name"],
+                path=file["id"],
+                date="N/A",
+                size="N/A",
+                storage_type=StorageType.GDRIVE
+            )
+
+            self.append(xilofile)
+            self.xf_state.appended_file = xilofile
 
     def append(self, file: XiloFile):
         Files.all_files.append(file)

@@ -1,8 +1,8 @@
 from flet import *
 from xilowidgets import XDialog
 from utils.singleton import Singleton
-from presentation.controllers.auth_controller import AuthController
-from presentation.views.dialogs.registration_dialog import RegistrationDialog
+from presentation.states.dialogs_state import Dialogs, DialogState
+from presentation.states.auth_state import AuthState
 
 class LoginDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -14,12 +14,11 @@ class LoginDialog(XDialog, metaclass=Singleton):
         self.width = 320
         self.height = 500
         self.open_duration = 300
-        self.auth_controller: AuthController | None = None
+
+        self.auth_state = AuthState()
+        self.dia_state = DialogState()
 
     def build(self):
-        if not self.auth_controller:
-            self.auth_controller = AuthController(page=self.page, auth_dialog=self)
-
         self.email_field = self._create_text_field("Email", Icons.EMAIL)
         self.password_field = self._create_text_field("Password", Icons.LOCK, password=True)
 
@@ -103,46 +102,49 @@ class LoginDialog(XDialog, metaclass=Singleton):
         email = self.email_field.value.strip()
         pw = self.password_field.value.strip()
         if email and pw:
-            self.auth_controller.login_email(email, pw)
+            self.auth_state.request_login(email, pw)
         else:
-            self.page.snack_bar = SnackBar(
-                content=Row(controls=[
-                    Icon(icons.CLOSE, color="red"),
-                    Text("Please fill in both email and password.")
-                ])
+            self.page.open(
+                SnackBar(
+                    content=Row(
+                        controls=[
+                            Icon(icons.CLOSE, color="red"),
+                            Text("Please fill in both email and password.")
+                        ]
+                    )
+                )
             )
-            self.page.snack_bar.open = True
-            self.page.update()
 
     def _on_google_login_click(self, e):
-        self.auth_controller.login_google()
+        self.auth_state.request_google_login()
 
     def _on_forgot_password_click(self, e):
         email = self.email_field.value.strip()
         if not email:
-            self.page.snack_bar = SnackBar(
-                content=Row(controls=[
-                    Icon(icons.CLOSE, color="red"),
-                    Text("Please enter your email to reset password.")
-                ])
+            self.page.open(
+                SnackBar(
+                    content=Row(
+                        controls=[
+                            Icon(icons.CLOSE, color="red"),
+                            Text("Please enter your email to reset password.")
+                        ]
+                    )
+                )
             )
-            self.page.snack_bar.open = True
-            self.page.update()
         else:
-            self.auth_controller.forgot_password(email)
+            self.auth_state.request_pw_change(email)
             self._show_info_dialog(
                 "Password Reset",
                 "We've sent a reset link to your email. Please check your inbox."
             )
 
     def _show_info_dialog(self, title: str, message: str):
-        """Shows an info dialog with the provided title and message."""
         dialog = AlertDialog(
             modal=True,
             title=Text(title),
             content=Text(message),
             actions=[
-                TextButton("OK", on_click=lambda e: self._close_info_dialog(dialog))
+                TextButton("OK", on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE))
             ],
             actions_alignment=MainAxisAlignment.END
         )
@@ -150,15 +152,5 @@ class LoginDialog(XDialog, metaclass=Singleton):
         self.page.open(dialog)
         self.page.update()
 
-    def _close_info_dialog(self, dialog: AlertDialog):
-        """Closes the info dialog cleanly via page.close."""
-        self.page.close(dialog)
-        self.page.update()
-
     def _on_go_to_register_click(self, e):
-        self.open = False
-        self.update()
-        reg_dlg = RegistrationDialog()
-        reg_dlg.page = self.page
-        self.page.open(reg_dlg)
-        self.page.update()
+        self.dia_state.state = Dialogs.REGISTER

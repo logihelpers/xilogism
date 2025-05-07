@@ -1,47 +1,74 @@
-class AuthState:
-    _instance = None
+from utils.singleton import Singleton
+
+class AuthState(metaclass=Singleton):
+    def __init__(self):
+        self._user = ""
+        self._user_change_cb: list = []
+        self._google_creds = ""
     
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(AuthState, cls).__new__(cls)
-            cls._instance.user = None
-            cls._instance.listeners = []
-        return cls._instance
+    @property
+    def user(self):
+        return self._user
     
-    def set_user(self, user):
-        """
-        Set the current user and notify all listeners
-        """
-        self.user = user
-        self._notify_listeners()
+    @user.setter
+    def user(self, value):
+        self._user = value
+        for cb in self._user_change_cb:
+            cb()
     
-    def clear(self):
-        """
-        Clear the current user and notify all listeners
-        """
-        self.user = None
-        self._notify_listeners()
+    @user.deleter
+    def user(self):
+        self._user = None
+        for cb in self._user_change_cb:
+            cb()
     
-    def register_listener(self, listener):
-        """
-        Register a listener function to be called when the user changes
-        """
-        if listener not in self.listeners:
-            self.listeners.append(listener)
+    @property
+    def google_creds(self):
+        return self._google_creds
     
-    def unregister_listener(self, listener):
-        """
-        Unregister a previously registered listener
-        """
-        if listener in self.listeners:
-            self.listeners.remove(listener)
+    @google_creds.setter
+    def google_creds(self, value):
+        self._google_creds = value
+        self.on_creds_set()
     
-    def _notify_listeners(self):
-        """
-        Notify all registered listeners about the user change
-        """
-        for listener in self.listeners:
-            try:
-                listener(self.user)
-            except Exception as e:
-                print(f"Error notifying listener: {e}")
+    def on_creds_set(self):
+        pass
+    
+    @property
+    def on_user_change(self):
+        return self._user_change_cb
+    
+    @on_user_change.setter
+    def on_user_change(self, cb):
+        if cb not in self._user_change_cb:
+            self._user_change_cb.append(cb)
+    
+    def request_logout(self):
+        self.on_request_logout()
+    
+    def on_request_logout(self):
+        pass
+
+    def request_login(self, email: str, password: str):
+        self.on_request_login(email, password)
+    
+    def on_request_login(self, email: str, password: str):
+        pass
+
+    def request_google_login(self):
+        self.on_request_google_login()
+    
+    def on_request_google_login(self):
+        pass
+
+    def request_pw_change(self, email: str):
+        self.on_request_pw_change(email)
+    
+    def on_request_pw_change(self, email: str):
+        pass
+
+    def request_register_email(self, name: str, email: str, password: str):
+        self.on_request_register_email(name, email, password)
+    
+    def on_request_register_email(self, name, email: str, password: str):
+        pass
