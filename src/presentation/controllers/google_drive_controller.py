@@ -1,9 +1,9 @@
 from googleapiclient.discovery import build
-from flet import SnackBar, Text, ElevatedButton, icons
+from flet import SnackBar, Text, ElevatedButton, Icons, Page
 from presentation.states.drive_state import DriveState
 
 class GoogleDriveController:
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.creds = None  # Google OAuth credentials
         self.state = DriveState()
@@ -15,8 +15,7 @@ class GoogleDriveController:
         Receive and store the Google credentials passed from AuthController.
         """
         self.creds = creds
-        self.page.snack_bar = SnackBar(Text("Drive credentials authenticated!"))
-        self.page.snack_bar.open = True
+        self.page.open(SnackBar(Text("Drive credentials authenticated!")))
         self.page.update()
 
         self.list_files()  # List files on Google Drive after authentication
@@ -46,7 +45,7 @@ class GoogleDriveController:
         for file in self.state.files:
             btn = ElevatedButton(
                 text=file["name"],
-                icon=icons.DESCRIPTION,
+                icon=Icons.DESCRIPTION,
                 on_click=lambda e, file_id=file["id"]: self._open_file(file_id)
             )
             self.file_buttons.append(btn)
@@ -60,6 +59,5 @@ class GoogleDriveController:
     def _open_file(self, file_id):
         # Placeholder: Add logic to open or download the file from Drive
         print(f"Open file from Drive: {file_id}")
-        self.page.snack_bar = SnackBar(Text(f"Opening file {file_id}..."))
-        self.page.snack_bar.open = True
+        self.page.open(SnackBar(Text(f"Opening file {file_id}...")))
         self.page.update()

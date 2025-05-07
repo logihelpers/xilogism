@@ -29,7 +29,9 @@ class WindowView(Row):
         self.ad_state.on_change = self.update_animations
 
         self.media_query = MediaQuery(on_size_change=lambda e: setattr(self.mq_state, 'size', (e.window_width, e.window_height)))
-        self.sidebar = SideBar()
+        self.sidebar = SideBar(self.page)
+        if hasattr(self, "page"):
+            self.page.sidebar = self.sidebar
         self.titlebar = TitleBar()
 
         self.start_view = StartView()

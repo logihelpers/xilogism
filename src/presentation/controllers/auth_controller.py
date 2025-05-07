@@ -175,15 +175,14 @@ class AuthController(Controller):
 
     def _close_dialog(self):
         if self.auth_dialog:
-            self.auth_dialog.open = False
-            self.auth_dialog.update()
+            self.page.open(self.auth_dialog)
         if self.page:
             self.page.update()
 
     def _snack(self, message: str):
         if self.page:
-            self.page.snack_bar = SnackBar(Text(message))
-            self.page.snack_bar.open = True
+            snackbar = SnackBar(Text(message))
+            self.page.open(snackbar)
             self.page.update()
         else:
             print(f"[SnackBar] {message}")
