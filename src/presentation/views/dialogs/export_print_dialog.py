@@ -197,6 +197,13 @@ class ExportPrintDialog(XDialog):
         self.margin_switch = Switch("", value=True, on_change = self.update_margin)
         self.titleblock_switch = Switch("", value=True, on_change = self.update_titleblock)
 
+        self.cancel_button = FilledButton(
+            "Cancel", 
+            expand=True,
+            bgcolor="#73ff0000",
+            on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
+        )
+
         self.main_options = Container(
             expand=True,
             padding=padding.symmetric(8, 0),
@@ -235,12 +242,7 @@ class ExportPrintDialog(XDialog):
                             controls = [
                                 self.export_button,
                                 self.print_button,
-                                FilledButton(
-                                    "Cancel", 
-                                    expand=True,
-                                    bgcolor="#73ff0000",
-                                    on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
-                                )
+                                self.cancel_button
                             ],
                             alignment=MainAxisAlignment.START
                         )

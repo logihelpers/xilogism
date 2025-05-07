@@ -237,5 +237,24 @@ text_values = {
     "folio_option": "Folio 8.5 x 13 in, Rizzler",
     "legal_option": "Legal 8.5 x 14 in, Ohio",
     "a4_option": "A4 8.3 x 11.7 in, Bussin'",
-    "b4_option": "B4 9.8 x 13.9 in, Lit"
+    "b4_option": "B4 9.8 x 13.9 in, Lit",
+
+    "save_prompt": "Wanna lock in your new Xilogism, fam?",
+    "project_name_label": "Project Tag:",
+    "filename_label": "File Drip:",
+    "save_button": "Save It, No Cap",
+    "close_button": "Yeet Out",
+    "project_name_hint": "like Xilogism 1, bet",
+    "filename_hint": "like xilogism_1, fr",
+    "file_extension": ".xlg",
+
+    "title": "Vibe Check Materials",
+    "close_button": "Yeet Out",
+    "amount_column": "How Many, Fam",
+    "part_number_column": "Part Code, No Cap",
+    "description_column": "What's Good",
+    "and_gate_description": "AND Gate Drip IC",
+    "or_gate_description": "OR Gate Drip IC",
+    "xor_gate_description": "XOR Gate Drip IC",
+    "not_gate_description": "HEX NOT Gate Drip IC"
 }

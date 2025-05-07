@@ -4,6 +4,7 @@ from xilowidgets import XDialog
 
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
+from presentation.states.language_state import LanguageState
 
 class CreateNewDialog(XDialog, metaclass = Singleton):
     def __init__(self):
@@ -11,6 +12,7 @@ class CreateNewDialog(XDialog, metaclass = Singleton):
 
         self.dia_state = DialogState()
         self.ns_state = NewSaveState()
+        self.lang_state = LanguageState()
 
         self.elevation = 0
         self.content_padding = 8
@@ -117,3 +119,20 @@ class CreateNewDialog(XDialog, metaclass = Singleton):
             self.save_button.disabled = True
         
         self.save_button.update()
+    
+    def did_mount(self):
+        super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.content.content.controls[0].content.value = lang_values["save_prompt"]
+        self.content.content.controls[1].content.controls[0].controls[0].value = lang_values["project_name_label"]
+        self.content.content.controls[1].content.controls[1].controls[0].value = lang_values["filename_label"]
+        self.save_button.text = lang_values["save_button"]
+        self.actions[1].text = lang_values["close_button"]
+        self.proj_name_tf.hint_text = lang_values["project_name_hint"]
+        self.file_path_tf.hint_text = lang_values["filename_hint"]
+        self.file_path_tf.suffix_text = lang_values["file_extension"]
+        self.update()

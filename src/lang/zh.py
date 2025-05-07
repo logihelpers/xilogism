@@ -235,5 +235,23 @@ text_values = {
     "folio_option": "对开纸 8.5 x 13英寸",
     "legal_option": "法律纸 8.5 x 14英寸",
     "a4_option": "A4 8.3 x 11.7英寸",
-    "b4_option": "B4 9.8 x 13.9英寸"
+    "b4_option": "B4 9.8 x 13.9英寸",
+    "save_prompt": "您想保存您的新Xilogism吗？",
+    "project_name_label": "项目名称：",
+    "filename_label": "文件名：",
+    "save_button": "保存",
+    "close_button": "关闭",
+    "project_name_hint": "例如：Xilogism 1",
+    "filename_hint": "例如：xilogism_1",
+    "file_extension": ".xlg",
+
+    "title": "材料清单",
+    "close_button": "关闭",
+    "amount_column": "数量",
+    "part_number_column": "零件编号",
+    "description_column": "描述",
+    "and_gate_description": "与门集成电路",
+    "or_gate_description": "或门集成电路",
+    "xor_gate_description": "异或门集成电路",
+    "not_gate_description": "六非门集成电路"
 }

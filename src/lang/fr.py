@@ -235,5 +235,24 @@ text_values = {
     "folio_option": "Folio 8.5 x 13 pouces",
     "legal_option": "Légal 8.5 x 14 pouces",
     "a4_option": "A4 8.3 x 11.7 pouces",
-    "b4_option": "B4 9.8 x 13.9 pouces"
+    "b4_option": "B4 9.8 x 13.9 pouces",
+
+    "save_prompt": "Voulez-vous enregistrer votre nouveau Xilogism ?",
+    "project_name_label": "Nom du Projet :",
+    "filename_label": "Nom du Fichier :",
+    "save_button": "Enregistrer",
+    "close_button": "Fermer",
+    "project_name_hint": "ex. Xilogism 1",
+    "filename_hint": "ex. xilogism_1",
+    "file_extension": ".xlg",
+
+    "title": "Nomenclature des Matériaux",
+    "close_button": "Fermer",
+    "amount_column": "Quantité",
+    "part_number_column": "Numéro de Pièce",
+    "description_column": "Description",
+    "and_gate_description": "Circuit Intégré AND",
+    "or_gate_description": "Circuit Intégré OR",
+    "xor_gate_description": "Circuit Intégré XOR",
+    "not_gate_description": "Circuit Intégré HEX NOT"
 }

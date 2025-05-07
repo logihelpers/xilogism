@@ -237,5 +237,24 @@ text_values = {
     "folio_option": "Folio 8.5 x 13 in",
     "legal_option": "Legal 8.5 x 14 in",
     "a4_option": "A4 8.3 x 11.7 in",
-    "b4_option": "B4 9.8 x 13.9 in"
+    "b4_option": "B4 9.8 x 13.9 in",
+
+    "save_prompt": "Do you want to save your new Xilogism?",
+    "project_name_label": "Project Name:",
+    "filename_label": "Filename:",
+    "save_button": "Save",
+    "close_button": "Close",
+    "project_name_hint": "e.g. Xilogism 1",
+    "filename_hint": "e.g. xilogism_1",
+    "file_extension": ".xlg",
+
+    "title": "Bill of Materials",
+    "close_button": "Close",
+    "amount_column": "Amount",
+    "part_number_column": "Part Number",
+    "description_column": "Description",
+    "and_gate_description": "AND Gate IC",
+    "or_gate_description": "OR Gate IC",
+    "xor_gate_description": "XOR Gate IC",
+    "not_gate_description": "HEX NOT Gate IC"
 }

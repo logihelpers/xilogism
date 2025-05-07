@@ -237,5 +237,24 @@ text_values = {
     "folio_option": "Folio 8.5 x 13 pulgada",
     "legal_option": "Legal 8.5 x 14 pulgada",
     "a4_option": "A4 8.3 x 11.7 pulgada",
-    "b4_option": "B4 9.8 x 13.9 pulgada"
+    "b4_option": "B4 9.8 x 13.9 pulgada",
+
+    "save_prompt": "Gusto mo bang i-save ang iyong bagong Xilogism?",
+    "project_name_label": "Pangalan ng Proyekto:",
+    "filename_label": "Pangalan ng File:",
+    "save_button": "I-save",
+    "close_button": "Isara",
+    "project_name_hint": "hal. Xilogism 1",
+    "filename_hint": "hal. xilogism_1",
+    "file_extension": ".xlg",
+
+    "title": "Bill ng mga Materyales",
+    "close_button": "Isara",
+    "amount_column": "Dami",
+    "part_number_column": "Numero ng Bahagi",
+    "description_column": "Paglalarawan",
+    "and_gate_description": "AND Gate IC",
+    "or_gate_description": "OR Gate IC",
+    "xor_gate_description": "XOR Gate IC",
+    "not_gate_description": "HEX NOT Gate IC"
 }

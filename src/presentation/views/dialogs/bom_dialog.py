@@ -5,6 +5,7 @@ from math import ceil
 
 from presentation.states.bom_state import BOMState
 from presentation.states.dialogs_state import Dialogs, DialogState
+from presentation.states.language_state import LanguageState
 
 class BOMDialog(XDialog, metaclass = Singleton):
     current_index: int = 0
@@ -14,6 +15,7 @@ class BOMDialog(XDialog, metaclass = Singleton):
         self.bom_state = BOMState()
         self.bom_state.on_count_change = self.update_contents
         self.dia_state = DialogState()
+        self.lang_state = LanguageState()
 
         self.elevation = 0
         self.title = "Bill of Materials"
@@ -76,6 +78,8 @@ class BOMDialog(XDialog, metaclass = Singleton):
     
     def did_mount(self):
         super().did_mount()
+        self.lang_state.on_lang_updated = self.update_lang
+        self.update_lang()
         self.update_contents()
 
     def update_contents(self):
@@ -145,4 +149,27 @@ class BOMDialog(XDialog, metaclass = Singleton):
                         ]
                     )
                 )
+        self.datatable.update()
+    
+    def update_lang(self):
+        lang_values = self.lang_state.lang_values
+        self.title = lang_values["title"]
+        self.close_button.text = lang_values["close_button"]
+        self.datatable.columns[0].label.value = lang_values["amount_column"]
+        self.datatable.columns[1].label.value = lang_values["part_number_column"]
+        self.datatable.columns[2].label.value = lang_values["description_column"]
+        
+        # Update descriptions in datatable rows
+        for row in self.datatable.rows:
+            part_number = row.cells[1].content.value
+            if part_number == "7408":
+                row.cells[2].content.value = lang_values["and_gate_description"]
+            elif part_number == "7432":
+                row.cells[2].content.value = lang_values["or_gate_description"]
+            elif part_number == "7486":
+                row.cells[2].content.value = lang_values["xor_gate_description"]
+            elif part_number == "7404":
+                row.cells[2].content.value = lang_values["not_gate_description"]
+        
+        self.update()
         self.datatable.update()

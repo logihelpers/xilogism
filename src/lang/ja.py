@@ -235,5 +235,24 @@ text_values = {
     "folio_option": "フォリオ 8.5 x 13インチ",
     "legal_option": "リーガル 8.5 x 14インチ",
     "a4_option": "A4 8.3 x 11.7インチ",
-    "b4_option": "B4 9.8 x 13.9インチ"
+    "b4_option": "B4 9.8 x 13.9インチ",
+
+    "save_prompt": "新しいXilogismを保存しますか？",
+    "project_name_label": "プロジェクト名：",
+    "filename_label": "ファイル名：",
+    "save_button": "保存",
+    "close_button": "閉じる",
+    "project_name_hint": "例：Xilogism 1",
+    "filename_hint": "例：xilogism_1",
+    "file_extension": ".xlg",
+
+    "title": "部品表",
+    "close_button": "閉じる",
+    "amount_column": "数量",
+    "part_number_column": "部品番号",
+    "description_column": "説明",
+    "and_gate_description": "ANDゲートIC",
+    "or_gate_description": "ORゲートIC",
+    "xor_gate_description": "XORゲートIC",
+    "not_gate_description": "HEX NOTゲートIC"
 }
