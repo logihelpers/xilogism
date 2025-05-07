@@ -199,6 +199,7 @@ text_values = {
 
     "profile": "Sarili",
     "signed_in_as": "Nakasulod isip",
+    "upload_picture_button": "MAG-UPLOAD OG LITRATO",
     "logout": "Pag-log out",
 
     "login_title": "Mag-login",

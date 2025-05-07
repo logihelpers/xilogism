@@ -197,6 +197,7 @@ text_values = {
 
     "profile": "Perfil",
     "signed_in_as": "Conectado como",
+    "upload_picture_button": "SUBIR FOTO",
     "logout": "Cerrar sesión",
 
     "login_title": "Iniciar Sesión",

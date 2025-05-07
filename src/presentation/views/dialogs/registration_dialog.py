@@ -17,6 +17,8 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         self.dia_state = DialogState()
         self.ad_state = AnimationDisableState()
         self.lang_state = LanguageState()
+        self.auth_state = AuthState()
+        self.dia_state = DialogState()
 
         self.ad_state.on_change = lambda: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
 
@@ -24,8 +26,6 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         self.width = 320
         self.height = 540
         self.open_duration = 300
-        self.auth_state = AuthState()
-        self.dia_state = DialogState()
 
     def build(self):
         self.name_field = self._create_text_field("Name", Icons.PERSON)
@@ -102,13 +102,14 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
             style=ButtonStyle(
                 shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
                 padding=padding.all(15)
-            )
+            ),
+            on_click=on_click
         )
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values
         self.content.content.controls[1].value = lang_values["register_title"]
-        self.content.content.controls[2].content.value = lang_values["create_account"]
+        self.content.content.controls[2].value = lang_values["create_account"]
         self.content.content.controls[3].content.value = lang_values["sign_up_google"]
         self.content.content.controls[4].label = lang_values["name_field"]
         self.content.content.controls[5].label = lang_values["email_field"]
@@ -118,22 +119,27 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         self.update()
 
     def _on_register_click(self, e):
-        name = self.name_field.value.strip()
+        display_name = self.name_field.value.strip()
         email = self.email_field.value.strip()
         password = self.password_field.value.strip()
 
-        if not (name and email and password):
-            self.page.open(SnackBar(Text("Please fill all fields.")))
+        if not (display_name and email and password):
+            self.page.open(SnackBar(Text(self.lang_state.lang_values["fill_fields_error"])))
             self.page.update()
             return
 
-        self.auth_state.request_register_email(name, email, password)
-        self.dia_state.state = Dialogs.CLOSE
-        self.page.open(SnackBar(Text("Registered successfully!")))
-        self.page.update()
+        result = self.auth_state.request_register_email(display_name, email, password)
+        if result:
+            self.dia_state.state = Dialogs.CLOSE
+            # Success message handled by AuthController
+        else:
+            # Keep dialog open for user to correct input
+            # Error message handled by AuthController
+            pass
 
     def _on_google_signup_click(self, e):
         self.auth_state.request_google_login()
+        # Dialog closure and messages handled by AuthController
 
     def _on_back_to_login_click(self, e):
         self.dia_state.state = Dialogs.LOGIN

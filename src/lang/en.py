@@ -199,6 +199,7 @@ text_values = {
 
     "profile": "Profile",
     "signed_in_as": "Signed in as",
+    "upload_picture_button": "UPLOAD PICTURE",
     "logout": "Logout",
 
     "login_title": "Login",

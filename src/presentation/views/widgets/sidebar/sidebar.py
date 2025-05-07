@@ -158,7 +158,11 @@ class SideBar(Container):
         user = self.auth_state.user
         if user:
             self.user_text.value = user["displayName"]
-            self.user_image.src = user.get("photoUrl", "icons_light/guest_user.png")
+            picture = user.get("photoUrl", "icons_light/guest_user.png")
+            if picture == "":
+                self.user_image.src = "icons_light/guest_user.png"
+            else:
+                self.user_image.src = user.get("photoUrl", "icons_light/guest_user.png")
         else:
             self.user_text.value = "Guest User"
             self.user_image.src = "icons_light/guest_user.png"

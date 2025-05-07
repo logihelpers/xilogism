@@ -197,6 +197,7 @@ text_values = {
 
     "profile": "プロフィール",
     "signed_in_as": "としてサインイン中",
+    "upload_picture_button": "写真をアップロード",
     "logout": "ログアウト",
 
     "login_title": "ログイン",

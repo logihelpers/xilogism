@@ -197,6 +197,7 @@ text_values = {
 
     "profile": "Profil",
     "signed_in_as": "Connecté en tant que",
+    "upload_picture_button": "TÉLÉCHARGER UNE PHOTO",
     "logout": "Se déconnecter",
 
     "login_title": "Connexion",

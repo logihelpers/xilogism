@@ -199,6 +199,7 @@ text_values = {
 
     "profile": "Sarili",
     "signed_in_as": "Naka-sign in bilang",
+    "upload_picture_button": "MAG-UPLOAD NG LARAWAN",
     "logout": "Mag-logout",
 
     "login_title": "Mag-login",

@@ -197,6 +197,7 @@ text_values = {
 
     "profile": "个人资料",
     "signed_in_as": "已登录为",
+    "upload_picture_button": "上传照片",
     "logout": "退出登录",
 
     "login_title": "登录",

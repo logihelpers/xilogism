@@ -199,6 +199,7 @@ text_values = {
 
     "profile": "Drip",
     "signed_in_as": "Logged in as da GOAT:",
+    "upload_picture_button": "DROP YOUR DRIP PIC",
     "logout": "Dip out",
 
     "login_title": "Slide In",
