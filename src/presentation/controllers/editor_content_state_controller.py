@@ -130,7 +130,7 @@ class EditorContentStateController(Controller):
                 if not hasattr(self, '_update_scheduled') or not self._update_scheduled:
                     self._update_scheduled = True
                     remaining_time = self.gdrive_update_interval - time_since_last_update
-                    self.page.run_async(self._schedule_gdrive_update(active, remaining_time))
+                    self.page.run_task(self._schedule_gdrive_update(active, remaining_time))
 
         try:
             self.editor_view.code_editor.value = self.ec_state.content[self.key_name]
