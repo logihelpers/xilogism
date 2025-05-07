@@ -1,4 +1,4 @@
-from services.singleton import Singleton
+from utils.singleton import Singleton
 from enum import Enum
 
 class Languages(Enum):

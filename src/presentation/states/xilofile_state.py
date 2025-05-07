@@ -3,7 +3,7 @@ from flet import *
 
 from typing import List
 from models.xilofile_model import XiloFile, StorageType
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class XiloFileState(metaclass=Singleton):
     def __init__(self):

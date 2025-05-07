@@ -1,5 +1,7 @@
 from presentation.states.render_state import RenderState
 from presentation.states.viewing_mode_state import ViewingModeState, ViewingMode
+from presentation.states.bom_state import BOMState
+from presentation.states.dialogs_state import Dialogs, DialogState
 from typing import List, Tuple, Dict, Any, Optional
 
 from flet import *
@@ -42,9 +44,35 @@ class RenderController(Controller):
         self.render_state.on_input_change = self.process_input
         self.vm_state = ViewingModeState()
         self.vm_state.on_change = lambda: self.process_input(self.current_input)
+        self.bom_state = BOMState()
+        self.bom_state.on_bom_request = self.request_bom
+        self.dia_state = DialogState()
+
         self.node_map = {}  # Maps node names to rendered components
         self.node_positions = {}  # Track the position of each node
         self.gates_by_hierarchy = {}  # Group gates by hierarchy level
+    
+    def request_bom(self):
+        if not self.bom_state.show_bom:
+            return
+        
+        self.bom_state.counts = self.count_gates(self.current_input)
+        self.dia_state.state = Dialogs.BOM
+        self.bom_state.show_bom = False
+    
+    def count_gates(self, process_output):
+        gate_counts = {}
+        
+        # Assuming the process_output is a dict with a single key like 'OWEN'
+        for system_key in process_output:
+            nodes = process_output[system_key]
+            for node in nodes.values():
+                if node.get('type') == 'BLOCK':
+                    block_type = node.get('block_type')
+                    if block_type:
+                        gate_counts[block_type] = gate_counts.get(block_type, 0) + 1
+        
+        return gate_counts
 
     def process_input(self, input: dict):
         """Main entry point to process the input dictionary and create visual elements"""
@@ -67,7 +95,7 @@ class RenderController(Controller):
         # Second pass: create nodes by hierarchy
         if self.vm_state.state == ViewingMode.LOGIC:
             self._create_all_nodes(nodes, input_dict, max_hierarchy, use_ic=False)
-        else:  # IC mode
+        elif self.vm_state.state == ViewingMode.CIRCUIT:  # IC mode
             self._create_all_nodes(nodes, input_dict, max_hierarchy, use_ic=True)
         
         # Third pass: create connections

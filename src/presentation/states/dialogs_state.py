@@ -1,7 +1,7 @@
 from enum import Enum
 from flet import *
 
-from services.singleton import Singleton
+from utils.singleton import Singleton
 
 class Dialogs(Enum):
     CLOSE = 0
@@ -11,6 +11,8 @@ class Dialogs(Enum):
     EXPORT = 4
     CREATE_NEW = 5
     TUTORIAL = 6
+    BOM = 7
+    PROFILE = 8
 
 class DialogState(metaclass=Singleton):
     def __init__(self):

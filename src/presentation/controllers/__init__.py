@@ -22,3 +22,5 @@ from presentation.controllers.export_controller import ExportController
 from presentation.controllers.xilofiles_controller import XiloFilesController
 from presentation.controllers.title_change_controller import TitleChangeController
 from presentation.controllers.custom_background_controller import CustomBackgroundController
+from presentation.controllers.auth_controller import AuthController
+from presentation.controllers.google_drive_controller import GoogleDriveController

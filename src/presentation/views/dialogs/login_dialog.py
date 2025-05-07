@@ -1,15 +1,17 @@
 from flet import *
 from xilowidgets import XDialog
-from services.singleton import Singleton
 
 from presentation.states.dialogs_state import *
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.language_state import LanguageState
+from utils.singleton import Singleton
+from presentation.states.dialogs_state import Dialogs, DialogState
+from presentation.states.auth_state import AuthState
 
 class LoginDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
     FIELD_RADIUS: float = 100
-    
+
     def __init__(self):
         super().__init__()
         self.ad_state = AnimationDisableState()
@@ -17,91 +19,66 @@ class LoginDialog(XDialog, metaclass=Singleton):
         self.lang_state = LanguageState()
 
         self.bgcolor = "#ededed"
-        self.open_duration = 300 if self.ad_state.state else 0
         self.width = 320
         self.height = 500
+        self.open_duration = 300
 
+        self.auth_state = AuthState()
         self.dia_state = DialogState()
-        self.on_dismiss = lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE)
-        
+
     def build(self):
+        self.email_field = self._create_text_field("Email", Icons.EMAIL)
+        self.password_field = self._create_text_field("Password", Icons.LOCK, password=True)
+
         self.content = Container(
+            padding=padding.all(16),
+            border_radius=16,
+            width=self.width,
+            height=self.height,
             content=Column(
-                alignment=MainAxisAlignment.START,
-                horizontal_alignment=CrossAxisAlignment.START,
                 spacing=10,
                 controls=[
-                    Row(
-                        alignment=MainAxisAlignment.START,
-                        controls=[
-                            Image(
-                                src="/user_icon.png",
-                                width=90,
-                                height=90
-                            )
-                        ]
-                    ),
-                    Text(
-                        value="Login",
-                        size=40,
-                        weight=FontWeight.BOLD,
-                        color="#1D2357",
-                        text_align=TextAlign.LEFT,
-                        style=TextStyle(font_family="Inter")
-                    ),
-                    Container(
-                        margin=margin.only(top=5),
-                        content=Text(
-                            value="Please log in to continue",
-                            weight=FontWeight.BOLD,
-                            size=14,
-                            color="black",
-                            text_align=TextAlign.LEFT,
-                            style=TextStyle(font_family="Inter")
-                        )
-                    ),
-                    self._create_text_field("Email", Icons.EMAIL),
-                    self._create_text_field("Password", Icons.LOCK, password=True),
+                    Row(controls=[Image(src="/user_icon.png", width=90, height=90)]),
+                    Text("Login", size=40, weight=FontWeight.BOLD, color="#1D2357"),
+                    Text("Please log in to continue", size=14, weight=FontWeight.BOLD),
+                    self.email_field,
+                    self.password_field,
                     Row(
                         alignment=MainAxisAlignment.END,
                         controls=[
                             TextButton(
                                 content=Text(
-                                    value="Forgot your password?",
-                                    color="#1D2357",
+                                    "Forgot your password?",
                                     style=TextStyle(
                                         decoration=TextDecoration.UNDERLINE,
                                         weight=FontWeight.BOLD,
-                                        font_family="Inter"
+                                        color="#1D2357"
                                     )
-                                )
+                                ),
+                                on_click=self._on_forgot_password_click
                             )
                         ]
                     ),
-                    self._create_button("LOGIN"),
-                    self._create_button("LOGIN WITH GOOGLE"),
+                    self._create_button("LOGIN", self._on_login_click),
+                    self._create_button("LOGIN WITH GOOGLE", self._on_google_login_click),
                     Row(
                         alignment=MainAxisAlignment.CENTER,
                         controls=[
                             TextButton(
                                 content=Text(
-                                    value="Don't have an account? Sign Up",
-                                    color="#1D2357",
+                                    "Don't have an account? Sign Up",
                                     style=TextStyle(
                                         decoration=TextDecoration.UNDERLINE,
                                         weight=FontWeight.BOLD,
-                                        font_family="Inter"
+                                        color="#1D2357"
                                     )
-                                )
+                                ),
+                                on_click=self._on_go_to_register_click
                             )
                         ]
-                    )
+                    ),
                 ]
-            ),
-            padding=padding.all(16),
-            border_radius=16,
-            width=320,
-            height=500,
+            )
         )
         super().build()
     
@@ -110,38 +87,86 @@ class LoginDialog(XDialog, metaclass=Singleton):
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
 
-    def _create_text_field(self, label: str, icon, password: bool = False):
+    def _create_text_field(self, label, icon, password=False):
         return TextField(
             label=label,
             prefix_icon=icon,
+            password=password,
             bgcolor="white",
-            color="black",
             border_radius=self.FIELD_RADIUS,
             border_color="#B2B2B2",
-            content_padding=padding.only(left=15, top=10, right=10, bottom=10),
-            password=password,
+            content_padding=padding.all(12),
             width=self.FIELD_WIDTH,
-            label_style=TextStyle(
-                color="black",
-                font_family="Inter"
-            )
         )
 
-    def _create_button(self, text: str, icon=None, bgcolor: str = "#1D2357", text_color: str = "white"):
+    def _create_button(self, text, on_click):
         return ElevatedButton(
-            content=Text(
-                value=text,
-                color=text_color,
-                style=TextStyle(font_family="Inter")
-            ),
-            icon=icon,
-            bgcolor=bgcolor,
+            content=Text(text, color="white"),
+            bgcolor="#1D2357",
             width=self.FIELD_WIDTH,
             style=ButtonStyle(
                 shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
-                padding=padding.all(15)
-            )
+                padding=padding.all(15),
+            ),
+            on_click=on_click
         )
-    
+
+    def _on_login_click(self, e):
+        email = self.email_field.value.strip()
+        pw = self.password_field.value.strip()
+        if email and pw:
+            self.auth_state.request_login(email, pw)
+        else:
+            self.page.open(
+                SnackBar(
+                    content=Row(
+                        controls=[
+                            Icon(icons.CLOSE, color="red"),
+                            Text("Please fill in both email and password.")
+                        ]
+                    )
+                )
+            )
+
     def update_lang(self):
         lang_values = self.lang_state.lang_values
+
+    def _on_google_login_click(self, e):
+        self.auth_state.request_google_login()
+
+    def _on_forgot_password_click(self, e):
+        email = self.email_field.value.strip()
+        if not email:
+            self.page.open(
+                SnackBar(
+                    content=Row(
+                        controls=[
+                            Icon(icons.CLOSE, color="red"),
+                            Text("Please enter your email to reset password.")
+                        ]
+                    )
+                )
+            )
+        else:
+            self.auth_state.request_pw_change(email)
+            self._show_info_dialog(
+                "Password Reset",
+                "We've sent a reset link to your email. Please check your inbox."
+            )
+
+    def _show_info_dialog(self, title: str, message: str):
+        dialog = AlertDialog(
+            modal=True,
+            title=Text(title),
+            content=Text(message),
+            actions=[
+                TextButton("OK", on_click=lambda e: setattr(self.dia_state, 'state', Dialogs.CLOSE))
+            ],
+            actions_alignment=MainAxisAlignment.END
+        )
+        # Use page.open / page.close instead of overlay list manipulation
+        self.page.open(dialog)
+        self.page.update()
+
+    def _on_go_to_register_click(self, e):
+        self.dia_state.state = Dialogs.REGISTER

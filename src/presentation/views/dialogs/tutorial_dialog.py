@@ -1,10 +1,11 @@
 from flet import *
-from services.singleton import Singleton
+from utils.singleton import Singleton
 from xilowidgets import XDialog, Switcher
 
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.states.language_state import LanguageState
+import asyncio
 
 class TutorialDialog(XDialog, metaclass = Singleton):
     current_index: int = 0
@@ -140,10 +141,11 @@ class TutorialDialog(XDialog, metaclass = Singleton):
             self.current_index = self.current_index - 1
             self.switcher.switch(self.current_index)
 
-    def go_next(self, _):
+    async def go_next(self, _):
         lang_values = self.lang_state.lang_values
         if self.current_index == len(self.switcher.controls) - 1:
             self.dia_state.state = Dialogs.CLOSE
+            await asyncio.sleep(0.1)
             self.current_index = 0
         else:
             self.next_button.text = lang_values["finish_button"] if self.current_index == (len(self.switcher.controls) - 2) else lang_values["button_next"]

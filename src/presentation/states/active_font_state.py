@@ -1,4 +1,4 @@
-from services.singleton import Singleton
+from utils.singleton import Singleton
 from models.font_model import Font, FontType
 from data.fonts import Fonts
 

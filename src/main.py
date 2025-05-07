@@ -2,35 +2,38 @@ from flet import *
 import splash
 
 from presentation.controllers import Controller
-from services.init_fonts import InitFonts
-from services.init_files import InitFiles
+from services.init.init_fonts import InitFonts
+from services.init.init_files import InitFiles
+from services.init.init_login import InitLogin
 
-class Xilogism(Page):
+class Xilogism:
     def __init__(self, page: Page):
-        self = page
+        this = page
 
-        self.theme_mode = ThemeMode.LIGHT
-        self.theme = Theme(
+        this.theme_mode = ThemeMode.LIGHT
+        this.theme = Theme(
             color_scheme_seed = "#4169e1",
             dialog_theme= DialogTheme(
                 shape=RoundedRectangleBorder(radius=8)
             ),
         )
 
-        InitFonts(self)
-        InitFiles(self)
+        InitFonts(this)
+        InitFiles(this)
 
-        Controller.initialize_controllers(target=self)
+        Controller.initialize_controllers(target=this)
 
-        self.theme = Theme(font_family="Inter")
-        self.window.title_bar_hidden = True
-        self.padding = padding.all(0)
-        self.window.min_height = 640
-        self.window.min_width = 1024
-        self.window.width = 1024
-        self.window.height = 640
-        self.spacing = 0
-        self.window.center()
+        this.theme = Theme(font_family="Inter")
+        this.window.title_bar_hidden = True
+        this.padding = padding.all(0)
+        this.window.min_height = 640
+        this.window.min_width = 1024
+        this.window.width = 1024
+        this.window.height = 640
+        this.spacing = 0
+        this.window.center()
+
+        InitLogin(this)
 
 # app(splash.app)
 app(Xilogism)
