@@ -6,6 +6,7 @@ class SideBarButton(FilledButton):
     refs: list = list()
     active: bool = False
     widget_scale: float = 1.0
+    always_update_bg: bool = False
     def __init__(self, path: str, label: str, on_button_press = None, on_pin = None):
         super().__init__()
         self.label = label
@@ -123,7 +124,6 @@ class SideBarButton(FilledButton):
         colors = self.ac_state.color_values
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         self.button_label.color = colors["text_color"]
-        self.bgcolor = colors["sidebar_color"]
         self.pin_button.bgcolor = colors["button_bgcolor"]
         self.pin_button.content.src = "icons_light/pin.png" if not dark_mode else "icons_dark/pin.png"
-        self.update()
+        #self.bgcolor = colors["sidebar_color"]

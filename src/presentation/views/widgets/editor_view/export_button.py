@@ -56,7 +56,7 @@ class ExportButton(Container):
         self.content.controls[0].color = colors["text_color"]  # Text # Image
         def _hover__(event: ControlEvent):
             button: Container = event.control
-            button.bgcolor = colors["hover_bgcolor"] if event.data == "true" else colors["button_bgcolor"]
+            button.bgcolor = colors["sidebar_color_deeper"] if event.data == "true" else colors["button_bgcolor"]
             button.update()
         self.on_hover = _hover__
 
