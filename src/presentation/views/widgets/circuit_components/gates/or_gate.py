@@ -4,6 +4,7 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 from presentation.views.widgets.circuit_components.abstract_element import LogicElement
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 
 class ORGate(LogicElement):
     FULL_SIDE_LENGTH = 50
@@ -16,6 +17,9 @@ class ORGate(LogicElement):
 
     def __init__(self, start_x: int, start_y: int, input_count: int = 2, nor: bool = False):
         super().__init__()
+
+        self.dm_state = DarkModeState()
+        self.dm_state.on_change = self.update_color
 
         self.input_coord = []
         scale = 1
@@ -99,3 +103,11 @@ class ORGate(LogicElement):
     def get_spaced_points(self, total: float, divisions: int):
         step = total / (divisions + 1)
         return [round(step * i, 5) for i in range(1, divisions + 1)]
+    
+    def update_color(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        for shape in self.shapes:
+            if type(shape) == cv.Text:
+                shape.style.color = "white" if dark_mode else "dark"
+            else:
+                shape.paint.color = "white" if dark_mode else "dark"

@@ -5,6 +5,7 @@ from xilowidgets import XDialog
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
 
 class CreateNewDialog(XDialog, metaclass = Singleton):
     def __init__(self):
@@ -13,6 +14,7 @@ class CreateNewDialog(XDialog, metaclass = Singleton):
         self.dia_state = DialogState()
         self.ns_state = NewSaveState()
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
 
         self.elevation = 0
         self.content_padding = 8
@@ -124,6 +126,34 @@ class CreateNewDialog(XDialog, metaclass = Singleton):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.content.content.controls[0].content.color = colors["text_color"]  # Save prompt
+        self.content.content.controls[1].content.controls[0].controls[0].color = colors["text_color"]  # Project Name
+        self.content.content.controls[1].content.controls[1].controls[0].color = colors["text_color"]  # Filename
+        self.proj_name_tf.bgcolor = colors["field_bgcolor"]
+        self.proj_name_tf.border_color = colors["field_border_color"]
+        self.file_path_tf.bgcolor = colors["field_bgcolor"]
+        self.file_path_tf.border_color = colors["field_border_color"]
+        self.save_button.style = ButtonStyle(
+            bgcolor=colors["save_button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"]),
+            shape=RoundedRectangleBorder(8),
+            padding=8
+        )
+        self.save_button.color = colors["text_color"]
+        self.actions[1].style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"]),
+            shape=RoundedRectangleBorder(8),
+            padding=8
+        )
+        self.actions[1].color = colors["text_color"]
+        self.update()
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values

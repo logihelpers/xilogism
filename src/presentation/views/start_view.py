@@ -3,6 +3,7 @@ from presentation.states.active_sidebar_button_state import ActiveSideBarButtonS
 from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
 from presentation.states.animation_disable_state import AnimationDisableState
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 
 class StartView(Container):
     widget_scale: float = 1.0
@@ -18,6 +19,7 @@ class StartView(Container):
         self.ac_state.on_colors_updated = self.update_colors
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
+        self.dm_state = DarkModeState()
 
         self.padding = padding.all(16)
         self.expand = True
@@ -40,6 +42,12 @@ class StartView(Container):
             )
         )
 
+        self.new_icon = Image(
+            src="/icons_light/new.png",
+            width=56,
+            height=56
+        )
+
         self.new_button = FilledButton(
             on_click = lambda _: setattr(self.active_sidebar_button_state, 'active', "New Xilogism"),
             scale=transform.Scale(scale=1),
@@ -48,11 +56,7 @@ class StartView(Container):
                 padding = padding.all(16),
                 content = Row(
                     controls=[
-                        Image(
-                            src="/icons_light/new.png",
-                            width=56,
-                            height=56
-                        ),
+                        self.new_icon,
                         Text(
                             spans=[
                                 self.create_xilogism_span,
@@ -80,6 +84,12 @@ class StartView(Container):
             expand=True
         )
 
+        self.open_icon = Image(
+            src="/icons_light/open.png",
+            width=16,
+            height=16
+        )
+
         self.open_button = FilledButton(
             scale=transform.Scale(scale=1),
             animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
@@ -87,11 +97,7 @@ class StartView(Container):
                 padding = padding.symmetric(8 * self.widget_scale, 16),
                 content = Row(
                     controls = [
-                        Image(
-                            src="/icons_light/open.png",
-                            width=16,
-                            height=16
-                        ),
+                        self.open_icon,
                         self.open_existing_text
                     ],
                 )
@@ -194,9 +200,47 @@ class StartView(Container):
     
     def update_colors(self):
         colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
         self.create_xilogism_span.style.color = colors["text_color"]
+        self.format_span.style.color = colors["text_color"]
+        self.open_existing_text.color = colors["text_color"]
+        self.get_dirty_span.style.color = colors["text_color"]
+        self.code_to_circuits_text.color = colors["text_color"]
+        # Update XILOGISM span (inside Text with spans)
+        for span in self.content.controls[1].content.controls[0].spans:
+            if span.text == "XILOGISM":
+                span.style.color = colors["text_color"]
+        self.new_button.style.bgcolor = colors["button_bgcolor"]
+        self.new_button.style.side = BorderSide(1, colors["button_border_color"])
+        self.open_button.style.bgcolor = colors["button_bgcolor"]
+        self.open_button.style.side = BorderSide(1, colors["button_border_color"])
+        self.new_icon.src = "/icons_dark/new.png" if dark_mode else "/icons_light/new.png"
+        self.open_icon.src = "/icons_dark/open.png" if dark_mode else "/icons_light/open.png"
+        
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        animate = self.ad_state.state
+
+        if animate and dark_mode:
+            self.logo_icon.src = "dark_mode.gif"
+        elif animate and not dark_mode:
+            self.logo_icon.src="light_mode.gif"
+        elif not animate and dark_mode:
+            self.logo_icon.src="/icons_dark/logo.png"
+        else:
+            self.logo_icon.src="icons_light/logo.png"
+
         self.update()
     
     def update_animations(self):
-        self.logo_icon.src="light_mode.gif"  if self.ad_state.state else "icons_light/logo.png"
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        animate = self.ad_state.state
+
+        if animate and dark_mode:
+            self.logo_icon.src = "dark_mode.gif"
+        elif animate and not dark_mode:
+            self.logo_icon.src="light_mode.gif"
+        elif not animate and dark_mode:
+            "/icons_dark/logo.png"
+        else:
+            "icons_light/logo.png"
         self.update()

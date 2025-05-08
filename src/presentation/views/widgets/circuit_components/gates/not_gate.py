@@ -1,6 +1,7 @@
 from flet import *
 import flet.canvas as cv
 from presentation.views.widgets.circuit_components.abstract_element import LogicElement
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 
 class NOTGate(LogicElement):
     FULL_HEIGHT: int = 50
@@ -13,6 +14,9 @@ class NOTGate(LogicElement):
 
     def __init__(self, start_x: int, start_y: int):
         super().__init__()
+
+        self.dm_state = DarkModeState()
+        self.dm_state.on_change = self.update_color
 
         self.shapes = [
             cv.Path(
@@ -47,3 +51,11 @@ class NOTGate(LogicElement):
 
         self.rect = (start_x, start_y, NOTGate.FULL_WIDTH, NOTGate.FULL_HEIGHT)
         self.output_node_position = LogicElement.Position.RIGHT
+    
+    def update_color(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        for shape in self.shapes:
+            if type(shape) == cv.Text:
+                shape.style.color = "white" if dark_mode else "dark"
+            else:
+                shape.paint.color = "white" if dark_mode else "dark"

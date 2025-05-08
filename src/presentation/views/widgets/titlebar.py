@@ -3,6 +3,8 @@ from math import pi
 from presentation.states.title_button_state import *
 from presentation.states.sidebar_hide_state import *
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 
 from xilowidgets import Revealer
 
@@ -18,6 +20,9 @@ class TitleBar(Container):
         self.sidebar_hide_state = SideBarHideState()
         self.lang_state = LanguageState()
         self.lang_state.on_lang_updated = self.update_lang
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.sidebar_hide_button_content = Image(
             src="/icons_light/sidebar_hide.png",
@@ -252,4 +257,30 @@ class TitleBar(Container):
         self.content.content.controls[1].controls[4].tooltip = lang_values["maximize_tooltip"]
         self.content.content.controls[1].controls[5].tooltip = lang_values["close_tooltip"]
         self.filename_tf.value = lang_values["default_title"]
+        self.update()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.filename_tf.color = colors["text_color"]
+        buttons = [
+            self.sidebar_hide_button,
+            self.tutorial_button,
+            self.settings_button,
+            self.hidden_profile_button_revealer.content.content,  # Profile button inside Revealer
+            self.content.content.controls[1].controls[3],  # Minimize
+            self.content.content.controls[1].controls[4],  # Maximize
+            self.content.content.controls[1].controls[5]   # Close
+        ]
+        for button in buttons:
+            button.style = ButtonStyle(
+                bgcolor=colors["button_bgcolor"],
+            )
+        self.sidebar_hide_button_content.src = "/icons_light/sidebar_hide.png" if not dark_mode else "/icons_dark/sidebar_hide.png"
+        self.sidebar_show_button_content.src = "/icons_light/sidebar_show.png" if not dark_mode else "/icons_dark/sidebar_show.png"
+        self.tutorial_button.content.src = "/icons_light/tutorial.png" if not dark_mode else "/icons_dark/tutorial.png"
+        self.settings_button.content.src = "/icons_light/setting.png" if not dark_mode else "/icons_dark/setting.png"
+        self.content.content.controls[1].controls[3].content.src = "/icons_light/minimize_new.png" if not dark_mode else "/icons_dark/minimize_new.png"
+        self.content.content.controls[1].controls[4].content.src = "/icons_light/maximize_new.png" if not dark_mode else "/icons_dark/maximize_new.png"
+        self.content.content.controls[1].controls[5].content.src = "/icons_light/close_new.png" if not dark_mode else "/icons_dark/close_new.png"
         self.update()

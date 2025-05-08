@@ -1,6 +1,8 @@
 from flet import *
 from presentation.states.viewing_mode_state import ViewingMode, ViewingModeState
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 
 class DiagramModeChooser(DropdownM2):
     def __init__(self):
@@ -8,6 +10,8 @@ class DiagramModeChooser(DropdownM2):
 
         self.vm_state = ViewingModeState()
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
 
         self.value="Logic Diagram"
         self.border_radius=8
@@ -17,13 +21,15 @@ class DiagramModeChooser(DropdownM2):
 
         self.text_size = 14
 
+        self.arrow_icon = Image(
+            src="/icons_light/arrow_down.png",
+            width=16,
+            height=16
+        )
+
         self.content_padding=padding.only(left=8,right=4)
         self.select_icon=Container(
-            content = Image(
-                src="/icons_light/arrow_down.png",
-                width=16,
-                height=16
-            ),
+            content = self.arrow_icon,
             padding = 4,
             bgcolor="#00191f51",
             on_hover=self._hover__
@@ -70,3 +76,14 @@ class DiagramModeChooser(DropdownM2):
     
     def change_state(self, event: ControlEvent):
         self.vm_state.state = ViewingMode(event.data)
+    
+    def did_mount(self):
+        super().did_mount()
+        self.ac_state.on_colors_updated = self.update_colors
+        
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.border_color = colors["text_color"]
+        self.arrow_icon.src = "/icons_light/arrow_down.png" if not dark_mode else "/icons_dark/arrow_down.png"
+        self.update()

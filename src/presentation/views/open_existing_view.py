@@ -2,6 +2,7 @@ from flet import *
 from presentation.views.widgets.existing_view import *
 from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 
 class OpenExistingView(Container):
     widget_scale: float = 1.0
@@ -13,6 +14,7 @@ class OpenExistingView(Container):
         self.lang_state.on_lang_updated = self.update_lang
         self.ac_state = AccentColorState()
         self.ac_state.on_colors_updated = self.update_colors
+        self.dm_state = DarkModeState()
 
         self.widget_scale = 1.0
         self.padding = padding.all(16 * self.widget_scale)
@@ -102,4 +104,16 @@ class OpenExistingView(Container):
         self.update()
     
     def update_colors(self):
-        color_values = self.ac_state.color_values
+        colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.greetings_text.color = colors["text_color"]
+        self.pinned_text.color = colors["text_color"]
+        self.local_text.color = colors["text_color"]
+        self.search_tf.hint_style.color = colors["text_color"]
+        self.search_tf.bgcolor = colors["button_bgcolor"]
+        self.search_tf.border = border.all(1, colors["button_border_color"])
+        self.content.controls[4].color = colors["divider_color"]  # Divider
+
+        self.search_tf.icon.src = "/icons_dark/search.png" if dark_mode else "/icons_light/search.png"
+
+        self.update()

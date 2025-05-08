@@ -7,7 +7,7 @@ from presentation.views.widgets.sidebar.button import SideBarButton
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.states.dialogs_state import *
 from presentation.states.auth_state import AuthState
-from presentation.controllers.google_drive_controller import GoogleDriveController
+from presentation.states.dark_mode_state import DarkModeScheme, DarkModeState
 
 class SideBar(Container):
     def __init__(self, page: Page):
@@ -32,6 +32,7 @@ class SideBar(Container):
         self.ac_state.on_colors_updated = self.update_colors
         self.lang_state = LanguageState()
         self.lang_state.on_lang_updated = self.update_lang
+        self.dm_state = DarkModeState()
 
         self.pinned_files = Column(
             expand=True,
@@ -81,6 +82,7 @@ class SideBar(Container):
                     self.user_text
                 ]
             ),
+            height=32,
             on_click=self.on_profile_button_clicked
         )
 
@@ -89,8 +91,9 @@ class SideBar(Container):
                 WindowDragArea(
                     content=Container(
                         border=border.only(bottom=BorderSide(1, "#6b6b6b")),
-                        padding=padding.all(16),
-                        content=self.profile_button
+                        padding=padding.all(8),
+                        content=self.profile_button,
+                        height=64
                     )
                 ),
                 Column(
@@ -123,12 +126,21 @@ class SideBar(Container):
 
     def update_colors(self):
         colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
         self.bgcolor = colors["sidebar_color"]
         self.border = border.only(
-            right=BorderSide(1, color=colors["divider_color"]), 
-            left=BorderSide(1, color=colors["divider_color"])
+            right=BorderSide(1, colors["divider_color"]),
+            left=BorderSide(1, colors["divider_color"])
         )
+        self.user_text.color = colors["text_color"]
 
+        for title in SideBarTitle.refs.values():
+            title.content.controls[0].color = colors["text_color"]
+
+        self.user_image.src = "icons_dark/guest_user.png" if dark_mode else "icons_light/guest_user.png"
+        self.content.controls[1].controls[1]._button_image.src = "icons_dark/start.png" if dark_mode else "icons_light/start.png"
+        self.content.controls[1].controls[2]._button_image.src = "icons_dark/new.png" if dark_mode else "icons_light/new.png"
+        self.content.controls[1].controls[3]._button_image.src = "icons_dark/open.png" if dark_mode else "icons_light/open.png"
         self.update()
 
     def update_lang(self):

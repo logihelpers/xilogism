@@ -1,14 +1,21 @@
 from flet import *
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 
 class SideBarButton(FilledButton):
     refs: list = list()
     active: bool = False
     widget_scale: float = 1.0
+    always_update_bg: bool = False
     def __init__(self, path: str, label: str, on_button_press = None, on_pin = None):
         super().__init__()
         self.label = label
         self.path = path
         self.tooltip = path
+
+        self.dm_state = DarkModeState()
+        self.ac_state = AccentColorState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.on_hover = self.__hover
         self.on_click = lambda event: self.on_button_press(event)
@@ -77,6 +84,7 @@ class SideBarButton(FilledButton):
             self.bgcolor = "#4d191f51"
     
     def __hover(self, event: ControlEvent):
+        colors = self.ac_state.color_values
         try:
             button: SideBarButton = event.control
             button.pin_button.visible = True if event.data == "true" else False
@@ -87,7 +95,7 @@ class SideBarButton(FilledButton):
             if button.active:
                 return
 
-            button.bgcolor = "#4d191f51" if event.data == "true" else "#d9d9d9"
+            button.bgcolor = colors["button_bgcolor"] if event.data == "true" else colors["sidebar_color"]
             button.update()
         except:
             pass
@@ -104,9 +112,18 @@ class SideBarButton(FilledButton):
         pass
 
     def _pin_hover(self, event: ControlEvent):
+        colors = self.ac_state.color_values
         try:
             button: Container = event.control
-            button.bgcolor = "#26191f51" if event.data == "true" else "#00000000"
+            button.bgcolor = colors["sidebar_color_deeper"] if event.data == "true" else "#00000000"
             button.update()
         except:
             pass
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.button_label.color = colors["text_color"]
+        self.pin_button.bgcolor = colors["button_bgcolor"]
+        self.pin_button.content.src = "icons_light/pin.png" if not dark_mode else "icons_dark/pin.png"
+        #self.bgcolor = colors["sidebar_color"]

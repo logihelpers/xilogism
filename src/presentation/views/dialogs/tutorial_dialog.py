@@ -5,6 +5,8 @@ from xilowidgets import XDialog, Switcher
 from presentation.states.new_save_state import NewSaveState
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 import asyncio
 
 class TutorialDialog(XDialog, metaclass = Singleton):
@@ -15,6 +17,7 @@ class TutorialDialog(XDialog, metaclass = Singleton):
         self.dia_state = DialogState()
         self.ns_state = NewSaveState()
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
 
         self.elevation = 0
         self.content_padding = 8
@@ -160,6 +163,32 @@ class TutorialDialog(XDialog, metaclass = Singleton):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.previous_button.style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"]),
+            shape=RoundedRectangleBorder(8),
+            padding=8
+        )
+        self.previous_button.color = colors["text_color"]
+        self.next_button.style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"]),
+            shape=RoundedRectangleBorder(8),
+            padding=8
+        )
+        self.next_button.color = colors["text_color"]
+
+        for child in self.switcher.controls:
+            child.controls[0].content.color = colors["text_color"]
+            child.description.color = colors["text_color"]
+
+        self.update()
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values
@@ -174,6 +203,15 @@ class TutorialPage(Column):
 
         self.expand = True
         self.scroll = ScrollMode.AUTO
+
+        self.description = Text(
+            description,
+            size=16,
+            text_align=TextAlign.JUSTIFY,
+            color="black",
+            expand=True
+        )
+
         self.controls = [
             Container(
                 expand = True,
@@ -205,13 +243,7 @@ class TutorialPage(Column):
                                 expand=True,
                                 scroll=ScrollMode.AUTO,
                                 controls=[
-                                    Text(
-                                        description,
-                                        size=16,
-                                        text_align=TextAlign.JUSTIFY,
-                                        color="black",
-                                        expand=True
-                                    )
+                                    self.description
                                 ]
                             )
                         )

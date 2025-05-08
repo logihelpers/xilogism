@@ -7,6 +7,7 @@ from presentation.states.language_state import LanguageState
 from utils.singleton import Singleton
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.states.auth_state import AuthState
+from presentation.states.accent_color_state import AccentColorState
 
 class LoginDialog(XDialog, metaclass=Singleton):
     FIELD_WIDTH: float = 300
@@ -17,6 +18,7 @@ class LoginDialog(XDialog, metaclass=Singleton):
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = lambda: setattr(self, 'open_duration', 300 if self.ad_state.state else 0)
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
 
         self.bgcolor = "#ededed"
         self.width = 320
@@ -93,6 +95,33 @@ class LoginDialog(XDialog, metaclass=Singleton):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.content.content.controls[1].color = colors["primary_color"]  # Login title
+        self.content.content.controls[2].color = colors["text_color"]  # Please log in
+        self.email_field.bgcolor = colors["field_bgcolor"]
+        self.email_field.border_color = colors["field_border_color"]
+        self.password_field.bgcolor = colors["field_bgcolor"]
+        self.password_field.border_color = colors["field_border_color"]
+        self.content.content.controls[6].bgcolor = colors["primary_color"]  # LOGIN button
+        self.content.content.controls[6].content.color = colors["text_color"]
+        self.content.content.controls[6].style = ButtonStyle(
+            shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
+            padding=padding.all(15),
+        )
+        self.content.content.controls[7].bgcolor = colors["primary_color"]  # LOGIN WITH GOOGLE button
+        self.content.content.controls[7].content.color = colors["text_color"]
+        self.content.content.controls[7].style = ButtonStyle(
+            shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
+            padding=padding.all(15),
+        )
+        self.content.content.controls[5].controls[0].content.style.color = colors["primary_color"]  # Forgot password
+        self.content.content.controls[8].controls[0].content.style.color = colors["primary_color"]  # Sign Up link
+        self.update()
 
     def _create_text_field(self, label, icon, password=False):
         return TextField(

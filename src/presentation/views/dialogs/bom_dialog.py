@@ -6,6 +6,7 @@ from math import ceil
 from presentation.states.bom_state import BOMState
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.states.language_state import LanguageState
+from presentation.states.accent_color_state import AccentColorState
 
 class BOMDialog(XDialog, metaclass = Singleton):
     current_index: int = 0
@@ -16,6 +17,7 @@ class BOMDialog(XDialog, metaclass = Singleton):
         self.bom_state.on_count_change = self.update_contents
         self.dia_state = DialogState()
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
 
         self.elevation = 0
         self.title = "Bill of Materials"
@@ -80,7 +82,28 @@ class BOMDialog(XDialog, metaclass = Singleton):
         super().did_mount()
         self.lang_state.on_lang_updated = self.update_lang
         self.update_lang()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
         self.update_contents()
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+        self.bgcolor = colors["bg_color"]
+        self.close_button.style = ButtonStyle(
+            bgcolor=colors["button_bgcolor"],
+            side=BorderSide(1, colors["button_border_color"]),
+            shape=RoundedRectangleBorder(8),
+            padding=8
+        )
+        self.close_button.color = colors["text_color"]
+        self.datatable.horizontal_lines = BorderSide(1, colors["border_color"])
+        self.datatable.vertical_lines = BorderSide(1, colors["border_color"])
+        for column in self.datatable.columns:
+            column.label.color = colors["text_color"]
+        for row in self.datatable.rows:
+            for cell in row.cells:
+                cell.content.color = colors["text_color"]
+        self.update()
 
     def update_contents(self):
         self.datatable.rows.clear()
