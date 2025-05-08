@@ -10,5 +10,8 @@ color_values = {
     "field_bgcolor": "#3C3C3C",
     "field_border_color": "#666666",
     "border_color": "#80333333",
-    "save_button_bgcolor": "#4B5EAA"
+    "save_button_bgcolor": "#4B5EAA",
+    "container_border_color": "#555555",
+    "options_bgcolor": "#80191f51",
+    "cursor_color": "#E0E0E0"
 }

@@ -2,6 +2,7 @@ from flet import *
 import flet.canvas as cv
 
 from presentation.views.widgets.circuit_components.abstract_element import LogicElement
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 
 class OutputNode(LogicElement):
     FULL_LENGTH: int = 50
@@ -13,6 +14,9 @@ class OutputNode(LogicElement):
 
     def __init__(self, start_x: int, start_y: int):
         super().__init__()
+
+        self.dm_state = DarkModeState()
+        self.dm_state.on_change = self.update_color
 
         input_line = cv.Path.LineTo(start_x - OutputNode.OUTPUT_ARM_WIDTH, start_y + (OutputNode.__CIRCLE_DIAMETER / 2))
 
@@ -49,3 +53,8 @@ class OutputNode(LogicElement):
 
         self.input_coord = [(input_line.x, input_line.y)]
         self.output_node_position = LogicElement.Position.LEFT
+    
+    def update_color(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        for shape in self.shapes:
+            shape.paint.color = "white" if dark_mode else "black"

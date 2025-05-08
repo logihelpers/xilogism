@@ -19,6 +19,7 @@ from presentation.views.widgets.circuit_components.canvas import Canvas
 from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoButtons
 from presentation.states.render_state import RenderState
 from presentation.states.animation_disable_state import AnimationDisableState
+from presentation.states.accent_color_state import AccentColorState
 
 from xilowidgets import Editor, Revealer, Zoomer
 from flet_layoutbuilder import LayoutBuilder
@@ -46,6 +47,7 @@ class EditorView(Container):
         self.lang_state.on_lang_updated = self.update_lang
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
+        self.ac_state = AccentColorState()
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -154,7 +156,7 @@ class EditorView(Container):
             ]
         )
 
-        code_editor_container = Container(
+        self.code_editor_container = Container(
             theme_mode=ThemeMode.LIGHT,
             expand=True,
             content=Container(
@@ -175,7 +177,7 @@ class EditorView(Container):
 
         self.viewing_mode_text = Text("Viewing Mode:", color="black")
 
-        preview_bar = Row(
+        self.preview_bar = Row(
             height=32,
             alignment=MainAxisAlignment.SPACE_BETWEEN,
             controls= [
@@ -189,7 +191,7 @@ class EditorView(Container):
             ]
         )
 
-        preview_view = Container(
+        self.preview_view = Container(
             expand=True,
             content=Stack(
                 expand=True,
@@ -220,7 +222,7 @@ class EditorView(Container):
                     expand=True,
                     controls=[
                         toolbar,
-                        code_editor_container
+                        self.code_editor_container
                     ]
                 ),
                 animate_opacity=animation.Animation(300, AnimationCurve.EASE_IN_OUT_CIRC)
@@ -238,8 +240,8 @@ class EditorView(Container):
                         expand=True,
                         content=Column(
                             controls=[
-                                preview_bar,
-                                preview_view
+                                self.preview_bar,
+                                self.preview_view
                             ]
                         ),
                     )
@@ -259,6 +261,7 @@ class EditorView(Container):
         self.ec_state.on_code_state_change = self.update_status_icon
         self.et_state.on_theme_change = self.update_theme
         self.render_state.on_output_change = self.update_canvas
+        self.ac_state.on_colors_updated = self.update_colors
     
     def update_codepane_length(self, event: ControlEvent):
         if not self.code_pane.content_hidden:
@@ -330,6 +333,21 @@ class EditorView(Container):
     
     def capture_image(self, event: ControlEvent):
         self.render_state.image[self.key_name] = event.data
+    
+    def update_colors(self):
+        colors = self.ac_state.color_values
+
+        instance: EditorView = None
+        for instance in EditorView.instances:
+            instance.bgcolor = colors["bg_color"]
+            instance.hidden_options.border = border.all(1, colors["border_color"])
+            instance.hidden_options.content.bgcolor = colors["border_color"]  # VerticalDivider
+            instance.edit_status_icon.border = border.all(1, colors["border_color"])
+            instance.code_editor_container.border = border.all(1, colors["container_border_color"])
+            instance.preview_view.bgcolor = colors["sidebar_color"]
+            instance.preview_view.border = border.all(1, colors["container_border_color"])
+            instance.viewing_mode_text.color = colors["text_color"]
+            instance.update()
     
     def update_animations(self):
         animate = self.ad_state.state

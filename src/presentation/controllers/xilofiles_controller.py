@@ -2,6 +2,8 @@ from presentation.states.xilofile_state import XiloFileState
 from presentation.states.editor_content_state import EditorContentState, CodeState
 from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 from presentation.states.auth_state import AuthState
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 from presentation.controllers.editor_view_fonts_controller import EditorViewFontsController
 from presentation.controllers.expand_canvas_controller import ExpandCanvasController
 from presentation.controllers.editor_content_state_controller import EditorContentStateController
@@ -39,6 +41,9 @@ class XiloFilesController(Controller):
         self.asb_state = ActiveSideBarButtonState()
         self.ec_state = EditorContentState()
         self.auth_state = AuthState()
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
+        self.dm_state.on_change = self.update_icons_color
 
         window: WindowView = self.page.session.get("window")
         self.switcher: Switcher = window.switcher
@@ -141,3 +146,15 @@ class XiloFilesController(Controller):
             
             self.existing_view.local_list.controls.append(local_button)
             self.existing_view.local_list.update()
+    
+        editor.update_colors()
+
+        self.update_icons_color()
+    
+    def update_icons_color(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        button: SideBarButton = None
+        for name, button in SideBarButton.refs:
+            button._button_image.src = button.path if not dark_mode else button.path.replace("light", "dark")
+            button._button_image.update()
+            button.update_colors()
