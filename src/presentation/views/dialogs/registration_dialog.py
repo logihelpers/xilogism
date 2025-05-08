@@ -94,13 +94,13 @@ class RegistrationDialog(XDialog, metaclass=Singleton):
         self.content.content.controls[1].color = colors["primary_color"]  # Title
         self.content.content.controls[2].color = colors["text_color"]  # Subtitle
         self.google_register_button.bgcolor = colors["primary_color"]
-        self.google_register_button.content.color = colors["text_color"]
+        self.google_register_button.content.color = colors["text_color_alt"]
         self.google_register_button.style = ButtonStyle(
             shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
             padding=padding.all(15),
         )
         self.register_button.bgcolor = colors["primary_color"]
-        self.register_button.content.color = colors["text_color"]
+        self.register_button.content.color = colors["text_color_alt"]
         self.register_button.style = ButtonStyle(
             shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
             padding=padding.all(15),

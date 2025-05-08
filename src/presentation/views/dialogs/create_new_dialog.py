@@ -145,7 +145,7 @@ class CreateNewDialog(XDialog, metaclass = Singleton):
             shape=RoundedRectangleBorder(8),
             padding=8
         )
-        self.save_button.color = colors["text_color"]
+        self.save_button.color = colors["text_color_alt"]
         self.actions[1].style = ButtonStyle(
             bgcolor=colors["button_bgcolor"],
             side=BorderSide(1, colors["button_border_color"]),

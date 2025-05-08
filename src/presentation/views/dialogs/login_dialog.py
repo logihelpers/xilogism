@@ -108,13 +108,13 @@ class LoginDialog(XDialog, metaclass=Singleton):
         self.password_field.bgcolor = colors["field_bgcolor"]
         self.password_field.border_color = colors["field_border_color"]
         self.content.content.controls[6].bgcolor = colors["primary_color"]  # LOGIN button
-        self.content.content.controls[6].content.color = colors["text_color"]
+        self.content.content.controls[6].content.color = colors["text_color_alt"]
         self.content.content.controls[6].style = ButtonStyle(
             shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
             padding=padding.all(15),
         )
         self.content.content.controls[7].bgcolor = colors["primary_color"]  # LOGIN WITH GOOGLE button
-        self.content.content.controls[7].content.color = colors["text_color"]
+        self.content.content.controls[7].content.color = colors["text_color_alt"]
         self.content.content.controls[7].style = ButtonStyle(
             shape=RoundedRectangleBorder(radius=self.FIELD_RADIUS),
             padding=padding.all(15),
@@ -128,6 +128,7 @@ class LoginDialog(XDialog, metaclass=Singleton):
             label=label,
             prefix_icon=icon,
             password=password,
+            can_reveal_password=True,
             bgcolor="white",
             border_radius=self.FIELD_RADIUS,
             border_color="#B2B2B2",

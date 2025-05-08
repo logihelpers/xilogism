@@ -44,7 +44,8 @@ class OpenExistingView(Container):
                 color="black",
                 weight=FontWeight.W_500,
                 size=14,
-            )
+            ),
+            visible=False
         )
 
         self.pinned_text = Text(

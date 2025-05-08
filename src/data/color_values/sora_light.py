@@ -1,6 +1,7 @@
 color_values = {
     "bg_color": "#ededed",
     "text_color": "#000000",
+    "text_color_alt": "#ffffff",
     "button_bgcolor": "#4d191f51",
     "button_border_color": "#4d191f51",
     "sidebar_color": "#d9d9d9",

@@ -102,11 +102,11 @@ class SideBar(Container):
                         SideBarButton("icons_light/start.png", "Start", on_button_press=self.active_changed),
                         SideBarButton("icons_light/new.png", "New Xilogism", on_button_press=self.active_changed),
                         SideBarButton("icons_light/open.png", "Open Xilogism", on_button_press=self.active_changed),
-                        SideBarTitle("Pinned"),
+                        SideBarTitle("Pinned", request_hide=lambda: self.hide_column(self.pinned_files)),
                         self.pinned_files,
-                        SideBarTitle("Local Files"),
+                        SideBarTitle("Local Files", request_hide=lambda: self.hide_column(self.local_files)),
                         self.local_files,
-                        SideBarTitle("Google Drive"),
+                        SideBarTitle("Google Drive", request_hide=lambda: self.hide_column(self.gdrive_files)),
                         self.gdrive_files
                     ],
                     expand=True,
@@ -179,3 +179,7 @@ class SideBar(Container):
             self.user_text.value = "Guest User"
             self.user_image.src = "icons_light/guest_user.png"
         self.page.update()
+    
+    def hide_column(self, column: Column):
+        column.visible = not column.visible
+        column.update()
