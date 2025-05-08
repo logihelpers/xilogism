@@ -126,4 +126,5 @@ class SideBarButton(FilledButton):
         self.button_label.color = colors["text_color"]
         self.pin_button.bgcolor = colors["button_bgcolor"]
         self.pin_button.content.src = "icons_light/pin.png" if not dark_mode else "icons_dark/pin.png"
-        #self.bgcolor = colors["sidebar_color"]
+        self.bgcolor = colors["sidebar_color"] if not self.active else colors["button_bgcolor"]
+        self.update()

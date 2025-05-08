@@ -1,9 +1,15 @@
 from flet import *
+from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
+from presentation.states.accent_color_state import AccentColorState
 
 class PinnedButton(Container):
     def __init__(self, thumbnail: str, title: str, date: str, on_press):
         super().__init__()
         self.title = title
+
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
+        self.ac_state.on_colors_updated = self.update_colors
 
         self.bgcolor = "#00191f51"
         self.width = 144
@@ -35,6 +41,12 @@ class PinnedButton(Container):
             )
         )
 
+        self.docu_icon = Image(
+            "/icons_light/Document.png",
+            width=24,
+            height=24
+        )
+
         self.content = Column(
             spacing=0,
             controls=[
@@ -59,11 +71,7 @@ class PinnedButton(Container):
                 Row(
                     spacing=0,
                     controls = [
-                        Image(
-                            "/icons_light/Document.png",
-                            width=24,
-                            height=24
-                        ),
+                        self.docu_icon,
                         Text(
                             spans=[
                                 self.project_name,
@@ -81,3 +89,8 @@ class PinnedButton(Container):
     def __hover(self, event: ControlEvent):
         event.control.scale = 1.05 if event.data == "true" else 1
         event.control.update()
+    
+    def update_colors(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.docu_icon.src = "/icons_light/Document.png" if not dark_mode else "/icons_dark/Document.png"
+        self.update()
