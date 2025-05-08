@@ -58,6 +58,9 @@ class XiloFilesController(Controller):
             self.page.client_storage.set("pinned_files", [])
     
     def clear_gdrive(self):
+        gdrive_count = len(self.sidebar.gdrive_files.controls)
+        self.switcher.controls = self.switcher.controls[:-gdrive_count or None]
+        EditorView.instances = EditorView.instances[:-gdrive_count or None]
         self.sidebar.gdrive_files.controls.clear()
         self.sidebar.gdrive_files.update()
 
