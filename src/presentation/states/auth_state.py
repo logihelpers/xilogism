@@ -5,6 +5,7 @@ class AuthState(metaclass=Singleton):
         self._user = ""
         self._user_change_cb: list = []
         self._google_creds = ""
+        self._logout_cb: list = []
     
     @property
     def user(self):
@@ -44,10 +45,17 @@ class AuthState(metaclass=Singleton):
             self._user_change_cb.append(cb)
     
     def request_logout(self):
-        self.on_request_logout()
+        for callback in self._logout_cb:
+            callback()
     
+    @property
     def on_request_logout(self):
-        pass
+        return self._logout_cb
+    
+    @on_request_logout.setter
+    def on_request_logout(self, callback):
+        if callback not in self._logout_cb:
+            self._logout_cb.append(callback)
 
     def request_login(self, email: str, password: str):
         self.on_request_login(email, password)

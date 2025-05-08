@@ -44,6 +44,7 @@ class XiloFilesController(Controller):
         self.ac_state = AccentColorState()
         self.dm_state = DarkModeState()
         self.dm_state.on_change = self.update_icons_color
+        self.auth_state.on_request_logout = self.clear_gdrive
 
         window: WindowView = self.page.session.get("window")
         self.switcher: Switcher = window.switcher
@@ -55,6 +56,10 @@ class XiloFilesController(Controller):
         except:
             self.pinned_list = []
             self.page.client_storage.set("pinned_files", [])
+    
+    def clear_gdrive(self):
+        self.sidebar.gdrive_files.controls.clear()
+        self.sidebar.gdrive_files.update()
 
     def load_views(self):
         if XiloFilesController.already_loaded:
