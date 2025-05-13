@@ -1,7 +1,6 @@
 from flet import *
 from presentation.states.language_state import LanguageState, Languages
 from presentation.states.dialogs_state import DialogState, Dialogs
-from presentation.views.widgets.settings.language_settings import LanguageButton
 from presentation.views.dialogs.settings_dialog import SettingsDialog
 from lang import get_text_values
 
@@ -41,21 +40,4 @@ class LanguageController(Controller):
         self.old_active = active
 
         self.lang_state.lang_values = get_text_values(active.value)
-        
-        try:
-            button: LanguageButton = None
-            for button in LanguageButton.refs:
-                if button.language == active:
-                    button.active = True
-                    self.settings_dialog.language_settings.preview_image.src = f"/icons_light/language_{button.language.name.lower()}.png"
-                    self.settings_dialog.language_settings.preview_image.update()
-                    button.leading.opacity = 1
-                else:
-                    button.active = False
-
-                    button.leading.opacity = 0
-                button.update()
-        except:
-            pass
-
         self.page.client_storage.set("language", active.value)

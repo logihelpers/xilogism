@@ -4,7 +4,9 @@ from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
 from presentation.states.dark_mode_state import *
 
-class DiagramModeChooser(DropdownM2):
+from xilowidgets import XDropdown
+
+class DiagramModeChooser(XDropdown):
     def __init__(self):
         super().__init__()
 
@@ -15,9 +17,12 @@ class DiagramModeChooser(DropdownM2):
 
         self.value="Logic Diagram"
         self.border_radius=8
-        self.width=148
+        self.width=160
         self.border_width=1
         self.border_color="black"
+        self.dense = True
+        self.collapsed = True
+        self.height = 32
 
         self.text_size = 14
 
@@ -28,7 +33,7 @@ class DiagramModeChooser(DropdownM2):
         )
 
         self.content_padding=padding.only(left=8,right=4)
-        self.select_icon=Container(
+        self.trailing_icon=Container(
             content = self.arrow_icon,
             padding = 4,
             bgcolor="#00191f51",
@@ -36,27 +41,6 @@ class DiagramModeChooser(DropdownM2):
         )
 
         self.filled=True
-        self.bgcolor={
-            ControlState.DEFAULT: "#1a191f51",
-            ControlState.DISABLED: "#1a191f51",
-            ControlState.DRAGGED: "#1a191f51",
-            ControlState.ERROR: "#1a191f51",
-            ControlState.FOCUSED: "#1a191f51",
-            ControlState.HOVERED: "#1a191f51",
-            ControlState.PRESSED: "#1a191f51",
-            ControlState.SELECTED: "#1a191f51"
-        }
-
-        self.fill_color={
-            ControlState.DEFAULT: "#1a191f51",
-            ControlState.DISABLED: "#1a191f51",
-            ControlState.DRAGGED: "#1a191f51",
-            ControlState.ERROR: "#1a191f51",
-            ControlState.FOCUSED: "#1a191f51",
-            ControlState.HOVERED: "#1a191f51",
-            ControlState.PRESSED: "#1a191f51",
-            ControlState.SELECTED: "#1a191f51"
-        }
 
         self.options=[
             DropdownOption(

@@ -35,8 +35,12 @@ class ExportButton(Container):
         self.on_hover = self._hover__
     
     def _hover__(self, event: ControlEvent):
+        colors = self.ac_state.color_values
         button: Container = event.control
-        button.bgcolor = "#73191f51" if event.data == "true" else "#4d191f51"
+        if "4d" in colors["button_bgcolor"]:
+            button.bgcolor = colors["button_bgcolor"].replace("4d", "73") if event.data == "true" else colors["button_bgcolor"]
+        else:
+            button.bgcolor = colors["button_bgcolor"].replace("#", "#73") if event.data == "true" else colors["button_bgcolor"]
         button.update()
     
     def update_lang(self):
@@ -51,14 +55,14 @@ class ExportButton(Container):
     def update_colors(self):
         colors = self.ac_state.color_values
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.border = border.all(1, colors["border_color"])
+        self.border = border.all(1, colors["text_color"])
         self.bgcolor = colors["button_bgcolor"]
         self.content.controls[0].color = colors["text_color"]  # Text # Image
-        def _hover__(event: ControlEvent):
-            button: Container = event.control
-            button.bgcolor = colors["sidebar_color_deeper"] if event.data == "true" else colors["button_bgcolor"]
-            button.update()
-        self.on_hover = _hover__
+        # def _hover__(event: ControlEvent):
+        #     button: Container = event.control
+        #     button.bgcolor = colors["sidebar_color_deeper"] if event.data == "true" else colors["button_bgcolor"]
+        #     button.update()
+        # self.on_hover = _hover__
 
         self.export_icon.src = "/icons_light/export.png" if not dark_mode else "/icons_dark/export.png"
         self.update()

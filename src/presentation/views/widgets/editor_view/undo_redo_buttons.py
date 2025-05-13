@@ -53,16 +53,17 @@ class UndoRedoButtons(Container):
     def update_colors(self):
         colors = self.ac_state.color_values
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.bgcolor = colors["options_bgcolor"]
-        self.content.controls[0].bgcolor = colors["options_bgcolor"]  # Undo Container
+        self.border = border.all(1, colors["text_color"])
+        self.bgcolor = colors["button_bgcolor"].replace("4d", "0f") if "4d" in colors["button_bgcolor"] else colors["button_bgcolor"].replace("#", "#73")
+        # self.content.controls[0].bgcolor = colors["options_bgcolor"]  # Undo Container
         self.content.controls[0].content.src = "/icons_light/undo.png" if not dark_mode else "/icons_dark/undo.png"  # Undo Image
-        self.content.controls[1].color = colors["border_color"]  # VerticalDivider
-        self.content.controls[2].bgcolor = colors["options_bgcolor"]  # Redo Container
+        self.content.controls[1].color = colors["text_color"]  # VerticalDivider
+        # self.content.controls[2].bgcolor = colors["options_bgcolor"]  # Redo Container
         self.content.controls[2].content.src = "/icons_light/redo.png" if not dark_mode else "/icons_dark/redo.png"
-        def _hover__(event: ControlEvent):
-            button: Container = event.control
-            button.bgcolor = colors["sidebar_color_deeper"] if event.data == "true" else colors["options_bgcolor"]
-            button.update()
-        self.content.controls[0].on_hover = _hover__  # Undo Container
-        self.content.controls[2].on_hover = _hover__  # Redo Container
+        # def _hover__(event: ControlEvent):
+        #     button: Container = event.control
+        #     button.bgcolor = colors["sidebar_color_deeper"] if event.data == "true" else colors["options_bgcolor"]
+        #     button.update()
+        # self.content.controls[0].on_hover = _hover__  # Undo Container
+        # self.content.controls[2].on_hover = _hover__  # Redo Container
         self.update()

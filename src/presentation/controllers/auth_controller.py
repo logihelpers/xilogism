@@ -49,37 +49,25 @@ class AuthController(Controller, metaclass=Singleton):
         self.state.on_request_logout = lambda: asyncio.run(self.logout())
     
     async def logout(self):
-        """
-        Logs the user out by clearing all authentication tokens,
-        credentials from persistence, and resetting the application state.
-        """
         try:
-            # Clear Firebase authentication data from persistence
             firebase_cleared = AuthPersistence.clear_firebase_auth()
-            
-            # Clear Google credentials from persistence
             google_cleared = AuthPersistence.clear_google_credentials()
             
-            # Reset controller state
             self.user_token = None
             self.user_uid = None
             self.refresh_token = None
             
-            # Clear user data from state
             if hasattr(self.state, 'user'):
                 del self.state.user
             
-            # Clear Google credentials from state
             if hasattr(self.state, 'google_creds'):
                 self.state.google_creds = None
             
-            # Show success message
             if firebase_cleared and google_cleared:
                 self._snack("Logged out successfully")
             else:
                 self._snack("Logout completed with some issues")
-            
-            # Close current dialog and show login dialog
+
             self.dia_state.state = Dialogs.CLOSE
             
             return True

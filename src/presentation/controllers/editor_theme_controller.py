@@ -1,6 +1,5 @@
 from flet import *
 from presentation.states.editor_theme_state import EditorThemeState
-from presentation.views.widgets.settings.appearance_settings import ThemeButton
 
 from presentation.controllers.controller import Controller, Priority
 from xilowidgets import EditorTheme
@@ -29,18 +28,6 @@ class EditorThemeStateController(Controller):
 
         self.et_state.editor_theme = active
         self.page.client_storage.set("editor_theme", self.active_value)
-        
-        button: ThemeButton = None
-        for button in ThemeButton.refs:
-            if button.key == active:
-                button.active = True
-
-                button.leading.opacity = 1
-            else:
-                button.active = False
-
-                button.leading.opacity = 0
-            button.update()
     
     def update_button_states(self):
         self.et_state.theme = EditorTheme(self.active_value)

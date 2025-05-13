@@ -24,3 +24,4 @@ from presentation.controllers.title_change_controller import TitleChangeControll
 from presentation.controllers.custom_background_controller import CustomBackgroundController
 from presentation.controllers.auth_controller import AuthController
 from presentation.controllers.google_drive_controller import GoogleDriveController
+from presentation.controllers.thumbnail_controller import ThumbnailController

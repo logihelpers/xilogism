@@ -6,7 +6,7 @@ from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
 
-from xilowidgets import Revealer, XDialog, Switcher
+from xilowidgets import Revealer, XDialog, Switcher, XDropdown
 
 class ExportPrintDialog(XDialog):
     def __init__(self):
@@ -42,30 +42,40 @@ class ExportPrintDialog(XDialog):
                         expand = True,
                         controls = [
                             Text("File Format:", expand=True),
-                            DropdownM2(
+                            XDropdown(
                                 "pdf",
-                                expand = True,
+                                # expand = True,
+                                filled = True,
+                                width = 256,
+                                height = 48,
+                                dense = True,
+                                collapsed = True,
+                                content_padding=padding.only(left=8),
                                 options=[
                                     DropdownOption(
-                                        "pdf",
-                                        "PDF",
-                                        text_style=TextStyle(size=16)
-                                    ),
-                                    DropdownOption(
-                                        "png",
-                                        "PNG",
-                                        text_style=TextStyle(size=16)
-                                    ),
-                                    DropdownOption(
-                                        "docx",
-                                        "DOCX",
-                                        text_style=TextStyle(size=16)
-                                    ),
-                                    DropdownOption(
-                                        "raw_png",
-                                        "RAW_PNG",
-                                        text_style=TextStyle(size=16)
-                                    ),
+                                        _format,
+                                        _format.upper(),
+                                        style=ButtonStyle(
+                                            text_style=TextStyle(size=16),
+                                            bgcolor="#00000000"
+                                        )
+                                    ) for _format in ["pdf", "png", "docx", "raw_png"]
+                                    # ),
+                                    # DropdownOption(
+                                    #     "png",
+                                    #     "PNG",
+                                    #     text_style=TextStyle(size=16)
+                                    # ),
+                                    # DropdownOption(
+                                    #     "docx",
+                                    #     "DOCX",
+                                    #     text_style=TextStyle(size=16)
+                                    # ),
+                                    # DropdownOption(
+                                    #     "raw_png",
+                                    #     "RAW_PNG",
+                                    #     text_style=TextStyle(size=16)
+                                    # ),
                                 ],
                                 on_change = self.update_format
                             )
@@ -78,36 +88,36 @@ class ExportPrintDialog(XDialog):
                         expand = True,
                         controls = [
                             Text("Page Size:", expand=True),
-                            DropdownM2(
+                            XDropdown(
                                 "letter",
                                 expand = True,
                                 text_style=TextStyle(size=14, color="black"),
                                 options=[
-                                    DropdownOption(
-                                        "letter",
-                                        "Letter 8.5 x 14 in",
-                                        text_style=TextStyle(size=12, color="black")
-                                    ),
-                                    DropdownOption(
-                                        "folio",
-                                        "Folio 8.5 x 13 in",
-                                        text_style=TextStyle(size=12, color="black")
-                                    ),
-                                    DropdownOption(
-                                        "legal",
-                                        "Legal 8.5 x 14 in",
-                                        text_style=TextStyle(size=12, color="black")
-                                    ),
-                                    DropdownOption(
-                                        "a4",
-                                        "A4 8.3 x 11.7 in",
-                                        text_style=TextStyle(size=12, color="black")
-                                    ),
-                                    DropdownOption(
-                                        "b4",
-                                        "B4 9.8 x 13.9 in",
-                                        text_style=TextStyle(size=12, color="black")
-                                    ),
+                                    # DropdownOption(
+                                    #     "letter",
+                                    #     "Letter 8.5 x 14 in",
+                                    #     text_style=TextStyle(size=12, color="black")
+                                    # ),
+                                    # DropdownOption(
+                                    #     "folio",
+                                    #     "Folio 8.5 x 13 in",
+                                    #     text_style=TextStyle(size=12, color="black")
+                                    # ),
+                                    # DropdownOption(
+                                    #     "legal",
+                                    #     "Legal 8.5 x 14 in",
+                                    #     text_style=TextStyle(size=12, color="black")
+                                    # ),
+                                    # DropdownOption(
+                                    #     "a4",
+                                    #     "A4 8.3 x 11.7 in",
+                                    #     text_style=TextStyle(size=12, color="black")
+                                    # ),
+                                    # DropdownOption(
+                                    #     "b4",
+                                    #     "B4 9.8 x 13.9 in",
+                                    #     text_style=TextStyle(size=12, color="black")
+                                    # ),
                                 ]
                             )
                         ]
@@ -337,8 +347,11 @@ class ExportPrintDialog(XDialog):
         self.extra_options.update()
     
     def update_preview(self, image_dict: dict):
-        self.preview_image.src_base64 = list(image_dict.values())[0]
-        self.preview_image.update()
+        try:
+            self.preview_image.src_base64 = list(image_dict.values())[0]
+            self.preview_image.update()
+        except:
+            pass
     
     def update_format(self, event: ControlEvent):
         match event.data:
@@ -462,13 +475,13 @@ class ExportPrintDialog(XDialog):
         self.project_name_tf.hint_text = lang_values["project_name_hint"]
         self.creator_tf.hint_text = lang_values["creator_hint"]
         self.date_tf.hint_text = lang_values["date_hint"]
-        self.print_export_setting.controls[0].content.controls[1].options[0].text = lang_values["pdf_option"]
-        self.print_export_setting.controls[0].content.controls[1].options[1].text = lang_values["png_option"]
-        self.print_export_setting.controls[0].content.controls[1].options[2].text = lang_values["docx_option"]
-        self.print_export_setting.controls[0].content.controls[1].options[3].text = lang_values["raw_png_option"]
-        self.print_export_setting.controls[1].content.controls[1].options[0].text = lang_values["letter_option"]
-        self.print_export_setting.controls[1].content.controls[1].options[1].text = lang_values["folio_option"]
-        self.print_export_setting.controls[1].content.controls[1].options[2].text = lang_values["legal_option"]
-        self.print_export_setting.controls[1].content.controls[1].options[3].text = lang_values["a4_option"]
-        self.print_export_setting.controls[1].content.controls[1].options[4].text = lang_values["b4_option"]
+        # self.print_export_setting.controls[0].content.controls[1].options[0].text = lang_values["pdf_option"]
+        # self.print_export_setting.controls[0].content.controls[1].options[1].text = lang_values["png_option"]
+        # self.print_export_setting.controls[0].content.controls[1].options[2].text = lang_values["docx_option"]
+        # self.print_export_setting.controls[0].content.controls[1].options[3].text = lang_values["raw_png_option"]
+        # self.print_export_setting.controls[1].content.controls[1].options[0].text = lang_values["letter_option"]
+        # self.print_export_setting.controls[1].content.controls[1].options[1].text = lang_values["folio_option"]
+        # self.print_export_setting.controls[1].content.controls[1].options[2].text = lang_values["legal_option"]
+        # self.print_export_setting.controls[1].content.controls[1].options[3].text = lang_values["a4_option"]
+        # self.print_export_setting.controls[1].content.controls[1].options[4].text = lang_values["b4_option"]
         self.update()

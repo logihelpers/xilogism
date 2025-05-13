@@ -18,7 +18,7 @@ class SideBar(Container):
         self.active = "Start"        
         self.bgcolor = "#d9d9d9"
         self.width = 180
-        self.offset = transform.Offset(0, 0)
+        self.offset = Offset(0, 0)
         self.padding = padding.all(0)
         self.margin = margin.all(0)
         self.border = border.only(
@@ -187,17 +187,18 @@ class SideBar(Container):
         self.dia_state.state = Dialogs.PROFILE
 
     def refresh_user_profile(self):
+        image = "icons_light/guest_user.png" if self.dm_state.active == DarkModeScheme.LIGHT else "icons_dark/guest_user.png"
         user = self.auth_state.user
         if user:
             self.user_text.value = user["displayName"]
-            picture = user.get("photoUrl", "icons_light/guest_user.png")
+            picture = user.get("photoUrl", image)
             if picture == "":
-                self.user_image.src = "icons_light/guest_user.png"
+                self.user_image.src = image
             else:
-                self.user_image.src = user.get("photoUrl", "icons_light/guest_user.png")
+                self.user_image.src = user.get("photoUrl", image)
         else:
             self.user_text.value = "Guest User"
-            self.user_image.src = "icons_light/guest_user.png"
+            self.user_image.src = image
         self.page.update()
     
     def hide_column(self, column: Column):

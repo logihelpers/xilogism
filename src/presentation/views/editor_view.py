@@ -20,6 +20,7 @@ from presentation.views.widgets.editor_view.undo_redo_buttons import UndoRedoBut
 from presentation.states.render_state import RenderState
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 
 from xilowidgets import Editor, Revealer, Zoomer
 from flet_layoutbuilder import LayoutBuilder
@@ -48,6 +49,7 @@ class EditorView(Container):
         self.ad_state = AnimationDisableState()
         self.ad_state.on_change = self.update_animations
         self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
 
         self.hidden_options = Revealer(
             content_hidden=True,
@@ -225,7 +227,7 @@ class EditorView(Container):
                         self.code_editor_container
                     ]
                 ),
-                animate_opacity=animation.Animation(300, AnimationCurve.EASE_IN_OUT_CIRC)
+                animate_opacity=Animation(300, AnimationCurve.EASE_IN_OUT_CIRC)
             ),
             animation_duration=500,
             animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
@@ -330,23 +332,32 @@ class EditorView(Container):
     
     def update_content(self, event: ControlEvent):
         self.ec_state.content[self.key_name] = event.data
+        self.canvas.capture(1000, 772)
     
     def capture_image(self, event: ControlEvent):
         self.render_state.image[self.key_name] = event.data
     
     def update_colors(self):
         colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
 
         instance: EditorView = None
         for instance in EditorView.instances:
             instance.bgcolor = colors["bg_color"]
-            instance.hidden_options.border = border.all(1, colors["border_color"])
-            instance.hidden_options.content.bgcolor = colors["border_color"]  # VerticalDivider
-            instance.edit_status_icon.border = border.all(1, colors["border_color"])
+            instance.hidden_options.content.border = border.all(1, colors["text_color"])
+            instance.hidden_options.content.bgcolor = colors["button_bgcolor"].replace("4d", "0f") if "4d" in colors["button_bgcolor"] else colors["button_bgcolor"].replace("#", "#73")
+            instance.hidden_options.content.content.controls[1].color = colors["text_color"]
+            instance.font_family_chooser.fill_color = colors["button_bgcolor"].replace("4d", "0f") if "4d" in colors["button_bgcolor"] else colors["button_bgcolor"].replace("#", "#73")
+            instance.font_family_chooser.border_color = colors["text_color"]
+            instance.edit_status_icon.border = border.all(1, colors["text_color"])
+            instance.diagram_mode.fill_color = colors["button_bgcolor"].replace("4d", "0f") if "4d" in colors["button_bgcolor"] else colors["button_bgcolor"].replace("#", "#73")
+            instance.diagram_mode.border_color = colors["text_color"]
             instance.code_editor_container.border = border.all(1, colors["container_border_color"])
             instance.preview_view.bgcolor = colors["sidebar_color"]
             instance.preview_view.border = border.all(1, colors["container_border_color"])
             instance.viewing_mode_text.color = colors["text_color"]
+            instance.hidden_options.content.content.controls[0].content.src = "icons_light/new.png" if not dark_mode else "icons_dark/new.png"
+            instance.hidden_options.content.content.controls[2].content.src = "icons_light/open.png" if not dark_mode else "icons_dark/open.png"
 
             instance.diagram_mode.update_colors()
             instance.expand_button.update_colors()

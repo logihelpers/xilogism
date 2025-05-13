@@ -11,7 +11,7 @@ class AccentColorButton(Container):
         self.color = color
 
         self.main_content = Container(
-            content=Text("", size=24, text_align=TextAlign.CENTER, offset=transform.Offset(x=0, y=0.10)),
+            content=Text("", size=24, text_align=TextAlign.CENTER, offset=Offset(x=0, y=0.10)),
             width=48,
             height=48,
             bgcolor=color.value,

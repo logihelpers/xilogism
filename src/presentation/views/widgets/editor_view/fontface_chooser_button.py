@@ -3,7 +3,9 @@ from presentation.states.active_font_state import ActiveFontState
 from presentation.states.accent_color_state import AccentColorState
 from presentation.states.dark_mode_state import *
 
-class FontFaceChooserButton(DropdownM2):
+from xilowidgets import XDropdown
+
+class FontFaceChooserButton(XDropdown):
     def __init__(self):
         super().__init__()
 
@@ -16,11 +18,13 @@ class FontFaceChooserButton(DropdownM2):
         self.border_width=1
         self.border_color="black"
         self.content_padding=padding.only(left=8,right=4)
+        self.dense = True
+        self.collapsed = True
+        self.height = 32
 
-        self.max_menu_height = 256
         self.text_size = 14
 
-        self.select_icon=Container(
+        self.trailing_icon=Container(
             content = Image(
                 src="/icons_light/arrow_down.png",
                 width=16,
@@ -31,36 +35,15 @@ class FontFaceChooserButton(DropdownM2):
             on_hover=self._hover__
         )
 
-        self.bgcolor={
-            ControlState.DEFAULT: "#1a191f51",
-            ControlState.DISABLED: "#1a191f51",
-            ControlState.DRAGGED: "#1a191f51",
-            ControlState.ERROR: "#1a191f51",
-            ControlState.FOCUSED: "#1a191f51",
-            ControlState.HOVERED: "#1a191f51",
-            ControlState.PRESSED: "#1a191f51",
-            ControlState.SELECTED: "#1a191f51"
-        }
-
-        self.fill_color={
-            ControlState.DEFAULT: "#1a191f51",
-            ControlState.DISABLED: "#1a191f51",
-            ControlState.DRAGGED: "#1a191f51",
-            ControlState.ERROR: "#1a191f51",
-            ControlState.FOCUSED: "#1a191f51",
-            ControlState.HOVERED: "#1a191f51",
-            ControlState.PRESSED: "#1a191f51",
-            ControlState.SELECTED: "#1a191f51"
-        }
-
         self.af_state = ActiveFontState()
         self.on_change = lambda event: setattr(self.af_state, 'active_font', event.data)
     
     def _hover__(self, event: ControlEvent):
+        colors = self.ac_state.color_values
         button: Container = event.control
-        button.bgcolor = "#4d191f51" if event.data == "true" else "#00191f51"
-        button.shape = BoxShape.CIRCLE
+        button.bgcolor = colors["button_bgcolor"] if event.data == "true" else "#00191f51"
         button.padding = 4
+        button.shape = BoxShape.CIRCLE
         button.update()
     
     def did_mount(self):
@@ -70,34 +53,6 @@ class FontFaceChooserButton(DropdownM2):
     def update_colors(self):
         colors = self.ac_state.color_values
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.bgcolor = {
-            ControlState.DEFAULT: colors["options_bgcolor"],
-            ControlState.DISABLED: colors["options_bgcolor"],
-            ControlState.DRAGGED: colors["options_bgcolor"],
-            ControlState.ERROR: colors["options_bgcolor"],
-            ControlState.FOCUSED: colors["options_bgcolor"],
-            ControlState.HOVERED: colors["options_bgcolor"],
-            ControlState.PRESSED: colors["options_bgcolor"],
-            ControlState.SELECTED: colors["options_bgcolor"]
-        }
-        self.fill_color = {
-            ControlState.DEFAULT: colors["options_bgcolor"],
-            ControlState.DISABLED: colors["options_bgcolor"],
-            ControlState.DRAGGED: colors["options_bgcolor"],
-            ControlState.ERROR: colors["options_bgcolor"],
-            ControlState.FOCUSED: colors["options_bgcolor"],
-            ControlState.HOVERED: colors["options_bgcolor"],
-            ControlState.PRESSED: colors["options_bgcolor"],
-            ControlState.SELECTED: colors["options_bgcolor"]
-        }
         self.text_style = TextStyle(color=colors["text_color"])  # For dropdown options
-        self.select_icon.bgcolor = colors["options_bgcolor"]
-        self.select_icon.content.src = "/icons_light/arrow_down.png" if not dark_mode else "/icons_dark/arrow_down.png"
-        def _hover__(event: ControlEvent):
-            button: Container = event.control
-            button.bgcolor = colors["hover_bgcolor"] if event.data == "true" else colors["options_bgcolor"]
-            button.shape = BoxShape.CIRCLE
-            button.padding = 4
-            button.update()
-        self.select_icon.on_hover = _hover__
+        self.trailing_icon.content.src = "/icons_light/arrow_down.png" if not dark_mode else "/icons_dark/arrow_down.png"
         self.update()

@@ -32,7 +32,7 @@ class SideBarTitle(Container):
                 Text(self.title, weight=FontWeight.W_700, color="black", size=14 * self.widget_scale, no_wrap=False, expand=True),
                 Container(
                     content=self.hide_image,
-                    offset=transform.Offset(-0.5, 0),
+                    offset=Offset(-0.5, 0),
                     bgcolor="#00191f51",
                     visible = not self.is_home,
                     shape=BoxShape.CIRCLE,

@@ -158,7 +158,7 @@ class LoginDialog(XDialog, metaclass=Singleton):
                 SnackBar(
                     content=Row(
                         controls=[
-                            Icon(icons.CLOSE, color="red"),
+                            Icon(Icons.CLOSE, color="red"),
                             Text("Please fill in both email and password.")
                         ]
                     )
@@ -187,7 +187,7 @@ class LoginDialog(XDialog, metaclass=Singleton):
                 SnackBar(
                     content=Row(
                         controls=[
-                            Icon(icons.CLOSE, color="red"),
+                            Icon(Icons.CLOSE, color="red"),
                             Text("Please enter your email to reset password.")
                         ]
                     )

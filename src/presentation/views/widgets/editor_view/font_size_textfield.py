@@ -86,18 +86,17 @@ class FontSizeTextField(Container):
     def update_colors(self):
         colors = self.ac_state.color_values
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.bgcolor = colors["options_bgcolor"]
+        self.border = border.all(1, colors["text_color"])
+        self.bgcolor = colors["button_bgcolor"].replace("4d", "0f") if "4d" in colors["button_bgcolor"] else colors["button_bgcolor"].replace("#", "#73")
         self.size_tf.cursor_color = colors["cursor_color"]
-        self.content.controls[1].color = colors["border_color"]  # VerticalDivider
-        self.content.controls[2].controls[0].bgcolor = colors["options_bgcolor"]  # SIZE_INCREASE # SIZE_INCREASE Image
-        self.content.controls[2].controls[1].bgcolor = colors["options_bgcolor"]  # SIZE_DECREASE
-        self.content.controls[2].controls[1].border = border.only(top=BorderSide(1, colors["border_color"]))  # SIZE_DECREASE
-        def _hover__(event: ControlEvent):
-            button: Container = event.control
-            button.bgcolor = colors["hover_bgcolor"] if event.data == "true" else colors["options_bgcolor"]
-            button.update()
-        self.content.controls[2].controls[0].on_hover = _hover__  # SIZE_INCREASE
-        self.content.controls[2].controls[1].on_hover = _hover__  # SIZE_DECREASE
+        self.content.controls[1].color = colors["text_color"]  # VerticalDivider
+        self.content.controls[2].controls[1].border = border.only(top=BorderSide(1, colors["text_color"]))  # SIZE_DECREASE
+        # def _hover__(event: ControlEvent):
+        #     button: Container = event.control
+        #     button.bgcolor = colors["hover_bgcolor"] if event.data == "true" else colors["options_bgcolor"]
+        #     button.update()
+        # self.content.controls[2].controls[0].on_hover = _hover__  # SIZE_INCREASE
+        # self.content.controls[2].controls[1].on_hover = _hover__  # SIZE_DECREASE
 
         self.arrow_icon.src = "/icons_light/arrow_down.png" if not dark_mode else "/icons_dark/arrow_down.png"
         self.arrow_up_icon.src = "/icons_light/arrow_down.png" if not dark_mode else "/icons_dark/arrow_down.png"

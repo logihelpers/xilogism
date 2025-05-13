@@ -31,8 +31,8 @@ class SideBarButton(FilledButton):
             src=self.path,
             width=24 * self.widget_scale,
             height=24 * self.widget_scale,
-            rotate=transform.Rotate(0, alignment.center),
-            animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT),
+            rotate=Rotate(0, alignment.center),
+            animate_rotation=Animation(250, AnimationCurve.EASE_IN_OUT),
             on_animation_end=self._revert_state
         )
 

@@ -66,10 +66,9 @@ class OpenExistingView(Container):
             spacing=16
         )
 
-        self.local_list = Column( # Local Column
+        self.local_list = ListView( # Local Column
             controls=[],
             expand=True,
-            scroll=True
         )
 
         self.content = Column(
@@ -114,7 +113,6 @@ class OpenExistingView(Container):
         self.search_tf.bgcolor = colors["button_bgcolor"]
         self.search_tf.border = border.all(1, colors["button_border_color"])
         self.content.controls[4].color = colors["divider_color"]  # Divider
-
         self.search_tf.icon.src = "/icons_dark/search.png" if dark_mode else "/icons_light/search.png"
 
         self.update()

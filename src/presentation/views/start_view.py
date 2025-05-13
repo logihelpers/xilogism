@@ -50,8 +50,8 @@ class StartView(Container):
 
         self.new_button = FilledButton(
             on_click = lambda _: setattr(self.active_sidebar_button_state, 'active', "New Xilogism"),
-            scale=transform.Scale(scale=1),
-            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            scale=Scale(scale=1),
+            animate_scale=Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
                 padding = padding.all(16),
                 content = Row(
@@ -91,8 +91,8 @@ class StartView(Container):
         )
 
         self.open_button = FilledButton(
-            scale=transform.Scale(scale=1),
-            animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT),
+            scale=Scale(scale=1),
+            animate_scale=Animation(250, AnimationCurve.BOUNCE_OUT),
             content=Container(
                 padding = padding.symmetric(8 * self.widget_scale, 16),
                 content = Row(

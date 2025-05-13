@@ -7,10 +7,9 @@ from presentation.states.xilofile_state import XiloFileState
 from presentation.states.auth_state import AuthState
 from presentation.states.drive_state import DriveState
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 import io
 from googleapiclient.http import MediaIoBaseDownload
-
+import base64
 import os
 import json
 
@@ -52,12 +51,19 @@ class Files(metaclass=Singleton):
             file = json.load(file)
             stats = os.stat(file_path)
 
+            filename = file['name']
+            base64_string = None
+            if os.path.exists(f"thumbnails/thumbnail_{filename}.png"):
+                with open(f"thumbnails/thumbnail_{filename}.png", "rb") as image_file:
+                    base64_string = base64.b64encode(image_file.read()).decode("utf-8")
+
             xilofile = XiloFile(
-                title=file['name'],
+                title=filename,
                 path=file_path,
                 date=datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
                 size=stats.st_size,
-                storage_type=StorageType.LOCAL
+                storage_type=StorageType.LOCAL,
+                thumbnail=base64_string
             )
 
             self.append(xilofile)

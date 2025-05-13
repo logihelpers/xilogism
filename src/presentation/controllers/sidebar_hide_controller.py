@@ -1,5 +1,5 @@
 from presentation.states.sidebar_hide_state import *
-from presentation.views.window_view import WindowView
+from presentation.views.window_view import WindowView, EditorView
 
 from flet import Page
 
@@ -24,11 +24,15 @@ class SideBarHideController(Controller):
         state: SideBarState = self.sbh_state.state
 
         self.window.slidable_panel.content_hidden = state.value
-        self.window.editor_view.hidden_options.content_hidden = not state.value
 
         self.window.titlebar.sidebar_hide_button.content.content = self.window.titlebar.sidebar_show_button_content if state.value else self.window.titlebar.sidebar_hide_button_content
         
         self.window.titlebar.hidden_profile_button_revealer.content.content_hidden = not state.value
         self.window.titlebar.hidden_profile_button_revealer.content.update()
+
+        editor: EditorView = None
+        for editor in EditorView.instances:
+            editor.hidden_options.content_hidden = not state.value
+            editor.update()
 
         self.page.update()

@@ -90,6 +90,20 @@ class AppearanceSettings(Column):
             icon_color="black"
         )
 
+        self.theme_chooser = RadioGroup(
+            on_change = self.switch_theme,
+            content = Column(
+                expand=True,
+                scroll = ScrollMode.ALWAYS,
+                height=180,
+                width=360,
+                controls=[
+                    Radio(value=theme.value, label=theme.name)
+                        for theme in EditorTheme
+                ]
+            )
+        )
+
         self.controls=[
             Text("Dark Mode", weight=FontWeight.BOLD),
             Column(
@@ -133,16 +147,11 @@ class AppearanceSettings(Column):
                         )
                     ),
                     Container(
-                        expand = True,
-                        margin = margin.only(right=16),
-                        border_radius = 8,
-                        content = ListView(
-                            expand = True,
-                            controls = [ThemeButton(theme, theme.name, self.switch_theme) for theme in EditorTheme],
-                            height=180,
-                            divider_thickness=1
-                        ),
-                        border=border.all(1, Colors.BLACK)
+                        self.theme_chooser,
+                        margin=margin.only(right=16),
+                        expand=True,
+                        border_radius=8,
+                        padding=8
                     )
                 ]
             ),
@@ -183,6 +192,12 @@ class AppearanceSettings(Column):
         self.update_accent_buttons()
         self.ac_state.on_colors_updated = self.update_colors
         self.update_colors()
+        self.et_state.on_theme_change = self.update_theme
+        self.update_theme()
+    
+    def update_theme(self):
+        self.theme_chooser.value = self.et_state.editor_theme.value
+        self.theme_chooser.update()
     
     def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
@@ -253,13 +268,9 @@ class AppearanceSettings(Column):
                 button.update()
     
     def switch_theme(self, event: ControlEvent):
-        button: ThemeButton = event.control
-        self.et_state.theme = button.key
+        self.et_state.theme = EditorTheme(event.data)
 
-        button.leading.opacity = 1
-        button.leading.update()
-
-        self.editor_sample.editor_theme = button.key
+        self.editor_sample.editor_theme = EditorTheme(event.data)
         self.editor_sample.update()
     
     def switch_accent(self, event: ControlEvent):
@@ -325,49 +336,4 @@ class AppearanceSettings(Column):
         self.controls[7].controls[1].content.controls[3].content.text = lang_values["use_default_button"]
         self.dark_mode_options.content.controls[0].label.value = lang_values["default_theme"]
         self.dark_mode_options.content.controls[1].label.value = lang_values["dark_theme"]
-        self.update()
-
-class ThemeButton(ListTile):
-    refs: list = []
-    active: bool = False
-    def __init__(self, key: EditorTheme = None, name: str = None, on_button_press = None):
-        super().__init__()
-
-        self.key = key
-        self.name = name
-
-        self.dm_state = DarkModeState()
-
-        self.leading = Icon(
-            Icons.CHECK,
-            color=Colors.BLACK,
-            size=32,
-            opacity=0
-        )
-
-        self.title = Text(name)
-
-        self.on_click = lambda event: self.on_button_press(event)
-        self.on_button_press = on_button_press
-
-        if len(ThemeButton.refs) > 0:
-            ThemeButton.refs.append(self)
-        else:
-            self.active = True
-            
-            self.leading.opacity = 1
-
-            ThemeButton.refs.append(self)
-    
-    def on_button_press(self, event: ControlEvent):
-        pass
-
-    def did_mount(self):
-        super().did_mount()
-        self.dm_state.on_change = self.update_colors
-        self.update_colors()
-    
-    def update_colors(self):
-        dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.leading.color = "white" if dark_mode else "black"
         self.update()

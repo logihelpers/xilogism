@@ -56,7 +56,7 @@ class LocalButton(Container):
         )
 
         self.content = Row(
-            spacing=0,
+            spacing=8,
             controls=[
                 self.docu_icon,
                 Text(
@@ -75,7 +75,11 @@ class LocalButton(Container):
         self.on_click = on_press
     
     def __hover(self, event: ControlEvent):
-        event.control.bgcolor = "#4d191f51" if event.data == "true" else None
+        colors = self.ac_state.color_values
+        if "4d" in colors["button_bgcolor"]:
+            event.control.bgcolor = colors["button_bgcolor"].replace("4d", "73") if event.data == "true" else None
+        else:
+            event.control.bgcolor = colors["button_bgcolor"].replace("#", "#73") if event.data == "true" else None
         event.control.update()
     
     def update_colors(self):
@@ -87,3 +91,7 @@ class LocalButton(Container):
         self.docu_icon.src = "/icons_light/Document.png" if not dark_mode else "/icons_dark/Document.png"
         self.more_icon.src = "/icons_light/settings_more.png" if not dark_mode else "/icons_dark/settings_more.png"
         self.update()
+    
+    def did_mount(self):
+        super().did_mount()
+        self.update_colors()

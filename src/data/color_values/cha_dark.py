@@ -10,7 +10,7 @@ color_values = {
     "primary_color": "#A8B5E8",
     "field_bgcolor": "#3C3C3C",
     "field_border_color": "#666666",
-    "border_color": "#80333333",
+    "border_color": "#73785442",
     "save_button_bgcolor": "#4B5EAA",
     "container_border_color": "#555555",
     "options_bgcolor": "#785442",

@@ -18,9 +18,9 @@ class GenerateBOMButton(Container):
         )
 
         self.scale = 1
-        self.animate_scale=animation.Animation(250, AnimationCurve.BOUNCE_OUT)
-        self.rotate=transform.Rotate(0, alignment.center)
-        self.animate_rotation=animation.Animation(250, AnimationCurve.EASE_IN_OUT)
+        self.animate_scale=Animation(250, AnimationCurve.BOUNCE_OUT)
+        self.rotate=Rotate(0, alignment.center)
+        self.animate_rotation=Animation(250, AnimationCurve.EASE_IN_OUT)
         self.padding = 8
         self.border_radius = 16
         self.on_animation_end=self._rerotate

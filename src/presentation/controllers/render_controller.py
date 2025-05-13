@@ -28,17 +28,15 @@ class RenderController(Controller):
     current_input: dict = None
     priority = Priority.NONE
     
-    # Constants for layout with more emphasis on horizontal layout
-    HORIZONTAL_SPACING = 180  # Increased space between hierarchy levels
-    VERTICAL_SPACING = 60     # Reduced vertical spacing between nodes
-    MARGIN_LEFT = 50          # Left margin
-    INPUT_MARGIN_TOP = 50     # INPUT Top margin
-    BLOCK_MARGIN_TOP = 130    # BLOCK Top margin
-    OUTPUT_MARGIN_TOP = 100   # OUTPUT Top Margin
+    HORIZONTAL_SPACING = 180
+    VERTICAL_SPACING = 60
+    MARGIN_LEFT = 50
+    INPUT_MARGIN_TOP = 50
+    BLOCK_MARGIN_TOP = 130
+    OUTPUT_MARGIN_TOP = 100
     
-    # Constants for IC Layout
-    IC_HORIZONTAL_SPACING = 180  # Wider spacing for ICs
-    IC_VERTICAL_SPACING = 160    # More vertical space for ICs
+    IC_HORIZONTAL_SPACING = 180
+    IC_VERTICAL_SPACING = 160
     
     def __init__(self, page: Page):
         self.page = page
@@ -50,9 +48,9 @@ class RenderController(Controller):
         self.bom_state.on_bom_request = self.request_bom
         self.dia_state = DialogState()
 
-        self.node_map = {}  # Maps node names to rendered components
-        self.node_positions = {}  # Track the position of each node
-        self.gates_by_hierarchy = {}  # Group gates by hierarchy level
+        self.node_map = {}
+        self.node_positions = {}
+        self.gates_by_hierarchy = {}
     
     def request_bom(self):
         if not self.bom_state.show_bom:
@@ -64,8 +62,7 @@ class RenderController(Controller):
     
     def count_gates(self, process_output):
         gate_counts = {}
-        
-        # Assuming the process_output is a dict with a single key like 'OWEN'
+
         for system_key in process_output:
             nodes = process_output[system_key]
             for node in nodes.values():
@@ -77,7 +74,6 @@ class RenderController(Controller):
         return gate_counts
 
     def process_input(self, input: dict):
-        """Main entry point to process the input dictionary and create visual elements"""
         if not input:
             return
             
@@ -86,24 +82,19 @@ class RenderController(Controller):
 
         self.current_input = {key_name: input_dict}
 
-        # Reset tracking dictionaries
         self.node_map = {}
         self.node_positions = {}
         self.gates_by_hierarchy = {}
         
-        # First pass: analyze the hierarchy structure
         max_hierarchy = self._analyze_hierarchy(input_dict)
         
-        # Second pass: create nodes by hierarchy
         if self.vm_state.state == ViewingMode.LOGIC:
             self._create_all_nodes(nodes, input_dict, max_hierarchy, use_ic=False)
         elif self.vm_state.state == ViewingMode.CIRCUIT:  # IC mode
             self._create_all_nodes(nodes, input_dict, max_hierarchy, use_ic=True)
         
-        # Third pass: create connections
         wires = self._create_connections(input_dict)
         
-        # Combine all elements
         all_elements = nodes + wires
         self.render_state.output[key_name] = all_elements
     

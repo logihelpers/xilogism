@@ -2,18 +2,18 @@ from utils.singleton import Singleton
 from enum import Enum
 
 class Languages(Enum):
-    ENGLISH = "English"
-    TAGALOG = "Tagalog"
-    CEBUANO = "Cebuano"
-    SPANISH = "Spanish"
-    FRENCH = "French"
-    JAPANESE = "Japanese"
-    MANDARIN = "Mandarin"
+    English = "English"
+    Tagalog = "Tagalog"
+    Cebuano = "Cebuano"
+    Español = "Spanish"
+    Français = "French"
+    日本語 = "Japanese"
+    官话 = "Mandarin"
     BRAINROT = "Brainrot"
 
 class LanguageState(metaclass = Singleton):
     def __init__(self):
-        self._active: Languages = Languages.ENGLISH
+        self._active: Languages = Languages.English
         self._on_change_callbacks: list = []
         self._lang_values: dict = {}
         self._lang_updated_callbacks: list = []

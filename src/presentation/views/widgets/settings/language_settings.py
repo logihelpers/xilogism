@@ -18,41 +18,47 @@ class LanguageSettings(Column):
 
         self.preview_image = Image(
             "/icons_light/language_english.png",
-            width=200,
-            height=180,
+            width=600,
+            # height=250,
+            scale=0.9,
             expand = True,
-            fit=ImageFit.FILL
+            fit=ImageFit.FIT_WIDTH
+        )
+
+        self.lang_chooser = RadioGroup(
+            on_change = self.switch_lang,
+            content = Column(
+                spacing=16,
+                expand=True,
+                scroll = ScrollMode.ALWAYS,
+                controls=[
+                    Radio(value=lang.value, label=lang.name)
+                        for lang in Languages
+                ]
+            )
         )
 
         self.controls=[
             Text("Language", weight=FontWeight.BOLD),
-            Row(
-                vertical_alignment=CrossAxisAlignment.START,
+            Column(
+                horizontal_alignment=CrossAxisAlignment.CENTER,
                 alignment=MainAxisAlignment.CENTER,
+                expand = True,
                 controls = [
                     self.preview_image,
                     Container(
                         expand = True,
                         margin = margin.only(right=16),
                         border_radius = 8,
-                        content = ListView(
-                            expand = True,
-                            controls = [LanguageButton(language, self.switch_lang) for language in Languages],
-                            height=180,
-                            divider_thickness=1
-                        ),
-                        border=border.all(1, Colors.BLACK)
+                        content = self.lang_chooser,
+                        padding=8
                     )
                 ]
             ),
         ]
     
     def switch_lang(self, event: ControlEvent):
-        button: LanguageButton = event.control
-        self.lang_state.active = button.language
-
-        button.leading.opacity = 1
-        button.leading.update()
+        self.lang_state.active = Languages(event.data)
     
     def did_mount(self):
         super().did_mount()
@@ -62,54 +68,11 @@ class LanguageSettings(Column):
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values
+        self.lang_chooser.value = self.lang_state.active.value
         self.controls[0].value = lang_values["language_title"]
         self.update()
     
     def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         self.controls[1].controls[1].border = border.all(1, "white" if dark_mode else "black")
-        self.update()
-
-class LanguageButton(ListTile):
-    refs: list = []
-    active: bool = False
-    def __init__(self, language: Languages = None, on_button_press = None):
-        super().__init__()
-
-        self.dm_state = DarkModeState()
-
-        self.language = language
-
-        self.leading = Icon(
-            Icons.CHECK,
-            color=Colors.BLACK,
-            size=32,
-            opacity=0
-        )
-
-        self.title = Text(language.name)
-
-        self.on_click = lambda event: self.on_button_press(event)
-        self.on_button_press = on_button_press
-
-        if len(LanguageButton.refs) > 0:
-            LanguageButton.refs.append(self)
-        else:
-            self.active = True
-            
-            self.leading.opacity = 1
-
-            LanguageButton.refs.append(self)
-    
-    def on_button_press(self, event: ControlEvent):
-        pass
-
-    def did_mount(self):
-        super().did_mount()
-        self.dm_state.on_change = self.update_colors
-        self.update_colors()
-    
-    def update_colors(self):
-        dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.leading.color = "white" if dark_mode else "black"
         self.update()

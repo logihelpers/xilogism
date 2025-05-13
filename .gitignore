@@ -5,7 +5,7 @@ __pycache__/
 
 src/assets/*.json
 src/assets/*.pickle
-
+thumbnails/*
 
 # C extensions
 *.so
