@@ -6,7 +6,7 @@ from presentation.views.widgets.settings.accent_color_button import AccentColorB
 from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
 from presentation.states.editor_theme_state import EditorThemeState
 from presentation.states.custom_background_state import CustomBackgroundState
-from presentation.states.accent_color_state import AccentColorState, AccentColors
+from presentation.states.accent_color_state import AccentColorState, AccentColors, DarkAccentColors
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.language_state import LanguageState
 
@@ -74,6 +74,20 @@ class AppearanceSettings(Column):
             expand=True,
             disabled=True,
             on_click=self.default_bg
+        )
+
+        self.choose_image_button = FilledButton(
+            style=ButtonStyle(
+                bgcolor="#36191f51",
+                shape=RoundedRectangleBorder(16),
+                side=BorderSide(1, "#1a191f51"),
+                color="black"
+            ),
+            text="Choose Image",
+            icon=Icons.UPLOAD_FILE,
+            expand=True,
+            on_click=self.pick_file,
+            icon_color="black"
         )
 
         self.controls=[
@@ -148,19 +162,7 @@ class AppearanceSettings(Column):
                                 self._source_path,
                                 self.current_path_text,
                                 Container(
-                                    content = FilledButton(
-                                        style=ButtonStyle(
-                                            bgcolor="#36191f51",
-                                            shape=RoundedRectangleBorder(16),
-                                            side=BorderSide(1, "#1a191f51"),
-                                            color="black"
-                                        ),
-                                        text="Choose Image",
-                                        icon=Icons.UPLOAD_FILE,
-                                        expand=True,
-                                        on_click=self.pick_file,
-                                        icon_color="black"
-                                    ),
+                                    content = self.choose_image_button,
                                     padding=padding.symmetric(0, 16)
                                 ),
                                 Container(
@@ -178,6 +180,38 @@ class AppearanceSettings(Column):
         self.lang_state.on_lang_updated = self.update_lang
         self.page.overlay.append(self.pick_files_dialog)
         self.update_bg_preview()
+        self.update_accent_buttons()
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        colors = self.ac_state.color_values
+        self.use_default_button.style.color = "white" if dark_mode else "black"
+        self.choose_image_button.style.color = "white" if dark_mode else "black"
+        self.choose_image_button.icon_color = "white" if dark_mode else "black"
+        self.use_default_button.style.bgcolor = colors["button_bgcolor"].replace("4d", "1a") if dark_mode else colors["button_bgcolor"]
+        self.use_default_button.style.side = BorderSide(1, colors["button_bgcolor"].replace("4d", "1a"))
+        self.choose_image_button.style.bgcolor = colors["button_bgcolor"].replace("4d", "1a") if dark_mode else colors["button_bgcolor"].replace("4d", "36")
+        self.choose_image_button.style.side = BorderSide(1, colors["button_bgcolor"].replace("4d", "1a"))
+        self.controls[5].controls[0].border = border.all(1, "white" if dark_mode else "black")
+        self.controls[5].controls[1].border = border.all(1, "white" if dark_mode else "black")
+        
+        button: AccentColorButton = None
+        for button in AccentColorButton.refs:
+            if button.color == self.ac_state.active:
+                button.active = True
+                button.main_content.border=border.all(2, colors["text_color"])
+                button.main_content.content.value = "✓"
+                button.main_content.content.color = colors["text_color"]
+                button.name_text.weight = FontWeight.W_600
+            else:
+                button.active = False
+                button.main_content.content.value = ""
+            
+            button.update()
+        
+        self.update()
     
     def pick_file(self, event: ControlEvent):
         self.pick_files_dialog.pick_files(
@@ -200,8 +234,23 @@ class AppearanceSettings(Column):
                 
     def switch_dark_mode(self, event: ControlEvent):
         button: SettingsImageButton = event.control
+        dark_mode = DarkModeScheme(button.text == "Dark")
 
-        self.dm_state.active = DarkModeScheme(button.text == "Dark")
+        self.dm_state.active = dark_mode
+        self.update_accent_buttons()
+
+    def update_accent_buttons(self):
+        dark_mode = self.dm_state.active
+        if dark_mode == DarkModeScheme.LIGHT:
+            button: AccentColorButton = None
+            for index, button in enumerate(self.controls[3].controls):
+                button.main_content.bgcolor = list(AccentColors)[index].value
+                button.update()
+        else:
+            button: AccentColorButton = None
+            for index, button in enumerate(self.controls[3].controls):
+                button.main_content.bgcolor = list(DarkAccentColors)[index].value
+                button.update()
     
     def switch_theme(self, event: ControlEvent):
         button: ThemeButton = event.control
@@ -287,6 +336,8 @@ class ThemeButton(ListTile):
         self.key = key
         self.name = name
 
+        self.dm_state = DarkModeState()
+
         self.leading = Icon(
             Icons.CHECK,
             color=Colors.BLACK,
@@ -310,3 +361,13 @@ class ThemeButton(ListTile):
     
     def on_button_press(self, event: ControlEvent):
         pass
+
+    def did_mount(self):
+        super().did_mount()
+        self.dm_state.on_change = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.leading.color = "white" if dark_mode else "black"
+        self.update()

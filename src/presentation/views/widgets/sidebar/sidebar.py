@@ -9,6 +9,8 @@ from presentation.states.dialogs_state import *
 from presentation.states.auth_state import AuthState
 from presentation.states.dark_mode_state import DarkModeScheme, DarkModeState
 
+from xilowidgets import Revealer
+
 class SideBar(Container):
     def __init__(self, page: Page):
         super().__init__()
@@ -103,11 +105,29 @@ class SideBar(Container):
                         SideBarButton("icons_light/new.png", "New Xilogism", on_button_press=self.active_changed),
                         SideBarButton("icons_light/open.png", "Open Xilogism", on_button_press=self.active_changed),
                         SideBarTitle("Pinned", request_hide=lambda: self.hide_column(self.pinned_files)),
-                        self.pinned_files,
+                        Revealer(
+                            content=self.pinned_files,
+                            content_fill=True,
+                            orientation=Revealer.Orientation.VERTICAL,
+                            animation_duration=500,
+                            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
+                        ),
                         SideBarTitle("Local Files", request_hide=lambda: self.hide_column(self.local_files)),
-                        self.local_files,
+                        Revealer(
+                            content=self.local_files,
+                            content_fill=True,
+                            orientation=Revealer.Orientation.VERTICAL,
+                            animation_duration=500,
+                            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
+                        ),
                         SideBarTitle("Google Drive", request_hide=lambda: self.hide_column(self.gdrive_files)),
-                        self.gdrive_files
+                        Revealer(
+                            content=self.gdrive_files,
+                            content_fill=True,
+                            orientation=Revealer.Orientation.VERTICAL,
+                            animation_duration=500,
+                            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC
+                        )
                     ],
                     expand=True,
                     spacing=0,
@@ -181,5 +201,6 @@ class SideBar(Container):
         self.page.update()
     
     def hide_column(self, column: Column):
-        column.visible = not column.visible
-        column.update()
+        revealer: Revealer = column.parent
+        revealer.content_hidden = not revealer.content_hidden
+        revealer.update()

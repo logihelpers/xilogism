@@ -54,6 +54,10 @@ class ExpandButton(Container):
         button.update()
     
     def update_expand(self, _):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
         self.expand_state.expand = not self.expand_state.expand
-        self.content.src = "/icons_light/shrink.png" if self.expand_state.expand else "/icons_light/full-size.png"
+        if not dark_mode:
+            self.content.src = "/icons_light/shrink.png" if self.expand_state.expand else "/icons_light/full-size.png"
+        else:
+            self.content.src = "/icons_dark/shrink.png" if self.expand_state.expand else "/icons_dark/full-size.png"
         self.content.update()

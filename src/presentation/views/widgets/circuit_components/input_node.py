@@ -16,7 +16,7 @@ class InputNode(LogicElement):
         super().__init__()
 
         self.dm_state = DarkModeState()
-        self.dm_state.on_change = self.update_color
+        self.dm_state.on_change = self.update_colors
 
         output_line = cv.Path.LineTo(start_x + (InputNode.__CIRCLE_DIAMETER / 2), start_y + InputNode.__CIRCLE_DIAMETER + InputNode.OUTPUT_ARM_WIDTH)
 
@@ -55,7 +55,7 @@ class InputNode(LogicElement):
         
         self.output_node_position = LogicElement.Position.BOTTOM
     
-    def update_color(self):
+    def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         for shape in self.shapes:
             shape.paint.color = "white" if dark_mode else "dark"

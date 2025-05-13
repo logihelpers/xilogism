@@ -9,6 +9,14 @@ class AccentColors(Enum):
     NORI = "#4d1c512e"
     KAKI = "#4d51431c"
 
+class DarkAccentColors(Enum):
+    SORA = "#60609f"
+    SAKURA = "#6b3f62"
+    SUNA = "#7d4348"
+    CHA = "#785442"
+    NORI = "#3d694c"
+    KAKI = "#6e613c"
+
 class AccentColorState(metaclass = Singleton):
     def __init__(self):
         self._active: AccentColors = AccentColors.SORA

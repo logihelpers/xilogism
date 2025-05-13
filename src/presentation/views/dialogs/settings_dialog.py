@@ -135,6 +135,7 @@ class SettingsDialog(XDialog, metaclass = Singleton):
         if self.ac_state.active == DarkModeScheme.DARK:
             self.bgcolor = "#333333"
             self.update()
+        self.update()
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values

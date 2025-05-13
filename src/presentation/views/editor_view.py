@@ -347,7 +347,17 @@ class EditorView(Container):
             instance.preview_view.bgcolor = colors["sidebar_color"]
             instance.preview_view.border = border.all(1, colors["container_border_color"])
             instance.viewing_mode_text.color = colors["text_color"]
+
+            instance.diagram_mode.update_colors()
+            instance.expand_button.update_colors()
+            instance.export_button.update_colors()
+            instance.font_size_tf.update_colors()
+            instance.font_family_chooser.update_colors()
+            instance.generate_bom_button.update_colors()
+            instance.undo_redo_button_group.update_colors()
+            instance.canvas.update_color()
             instance.update()
+        self.page.update()
     
     def update_animations(self):
         animate = self.ad_state.state

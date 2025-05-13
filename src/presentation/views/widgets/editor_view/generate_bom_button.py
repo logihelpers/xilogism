@@ -54,14 +54,14 @@ class GenerateBOMButton(Container):
     def update_colors(self):
         colors = self.ac_state.color_values
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
-        self.bgcolor = colors["options_bgcolor"]
+        self.bgcolor = "#00000000"
         self.content.src = "/icons_light/generate_bom.png" if not dark_mode else "/icons_dark/generate_bom.png"
         def _hover(event: ControlEvent):
             button: Container = event.control
             hovered = event.data == "true"
             button.rotate.angle = 3.14159 / 6 if hovered else 0
             button.scale = 1.25 if hovered else 1
-            button.bgcolor = colors["hover_bgcolor"] if hovered else colors["options_bgcolor"]
+            button.bgcolor = colors["options_bgcolor"] if hovered else "#00000000"
             button.update()
         self.on_hover = _hover
         self.update()

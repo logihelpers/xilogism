@@ -16,6 +16,8 @@ from presentation.views.widgets.circuit_components.gates.or_gate import ORGate
 from presentation.views.widgets.circuit_components.gates.xor_gate import XORGate
 from presentation.views.widgets.circuit_components.gates.not_gate import NOTGate
 from presentation.views.widgets.circuit_components.abstract_element import LogicElement
+from presentation.views.widgets.circuit_components.gates.block import Block
+from presentation.views.widgets.circuit_components.gates.comparator import Comparator
 
 from presentation.views.widgets.circuit_components.ic.and_740x import AND740XIC
 from presentation.views.widgets.circuit_components.ic.or_74x2 import OR74x2
@@ -262,13 +264,13 @@ class RenderController(Controller):
             return ORGate(x, y, input_count=input_count)
         elif block_type in ["ADDER", "SUBTRACTOR", "MULTIPLIER", "DIVIDER", "MODULO"]:
             # Arithmetic operations - could use custom block representation
-            return ANDGate(x, y, input_count=input_count)  # Placeholder
+            return Block(x, y, block_type=str(block_type))  # Placeholder
         elif block_type in ["COMPARATOR"]:
             # For comparison operations
-            return ANDGate(x, y, input_count=2)  # Placeholder
+            return Comparator(x, y, block_type=str(block_type))  # Placeholder
         
         # Default to AND gate for unknown types
-        return ANDGate(x, y, input_count=input_count)
+        return Block(x, y, input_count=input_count)
     
     def _create_ic_by_type(self, name: str, info: Dict[str, Any], x: int, y: int) -> Optional[LogicElement]:
         """Create the appropriate IC based on the block type"""

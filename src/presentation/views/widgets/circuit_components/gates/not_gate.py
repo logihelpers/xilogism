@@ -16,7 +16,7 @@ class NOTGate(LogicElement):
         super().__init__()
 
         self.dm_state = DarkModeState()
-        self.dm_state.on_change = self.update_color
+        self.dm_state.on_change = self.update_colors
 
         self.shapes = [
             cv.Path(
@@ -52,10 +52,10 @@ class NOTGate(LogicElement):
         self.rect = (start_x, start_y, NOTGate.FULL_WIDTH, NOTGate.FULL_HEIGHT)
         self.output_node_position = LogicElement.Position.RIGHT
     
-    def update_color(self):
+    def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         for shape in self.shapes:
             if type(shape) == cv.Text:
-                shape.style.color = "white" if dark_mode else "dark"
+                shape.style = TextStyle(color = "white" if dark_mode else "black")
             else:
                 shape.paint.color = "white" if dark_mode else "dark"

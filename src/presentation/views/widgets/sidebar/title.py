@@ -65,13 +65,20 @@ class SideBarTitle(Container):
         self.content.controls[0].color = colors["text_color"]  # Text
         self.content.controls[1].bgcolor = colors["sidebar_color"]  # Container
         self.content.controls[1].content.icon_color = colors["text_color"]  # PopupMenuButton icon
-        
         self.settings_more.src = "/icons_light/settings_more.png" if not dark_mode else "/icons_dark/settings_more.png"
-
+        if not dark_mode:
+            self.hide_image.src = "/icons_light/hide.png" if self._hidden else "/icons_light/view.png"
+        else:
+            self.hide_image.src = "/icons_dark/hide.png" if self._hidden else "/icons_dark/view.png"
+        
         self.update()
     
     def hide_content(self, event: ControlEvent):
-        self.hide_image.src = "/icons_light/hide.png" if self._hidden else "/icons_light/view.png"
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        if not dark_mode:
+            self.hide_image.src = "/icons_light/hide.png" if self._hidden else "/icons_light/view.png"
+        else:
+            self.hide_image.src = "/icons_dark/hide.png" if self._hidden else "/icons_dark/view.png"
         self.hide_image.update()
         self._hidden = not self._hidden
         self.request_hide()

@@ -2,8 +2,8 @@ color_values = {
     "bg_color": "#333333",
     "text_color": "#E0E0E0",
     "text_color_alt": "#000000",
-    "button_bgcolor": "#801c512e",
-    "button_border_color": "#801c512e",
+    "button_bgcolor": "#3d694c",
+    "button_border_color": "#3d694c",
     "sidebar_color": "#262626",
     "divider_color": "#666666",
     "sidebar_color_deeper": "#70512e1c",
@@ -13,6 +13,6 @@ color_values = {
     "border_color": "#80333333",
     "save_button_bgcolor": "#4B5EAA",
     "container_border_color": "#555555",
-    "options_bgcolor": "#80191f51",
+    "options_bgcolor": "#3d694c",
     "cursor_color": "#E0E0E0"
 }

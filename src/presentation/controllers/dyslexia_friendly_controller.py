@@ -2,6 +2,8 @@ from presentation.states.dyslexia_friendly_state import DyslexiaFriendlyState
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.states.dialogs_state import Dialogs, DialogState
 from presentation.views.dialogs.settings_dialog import SettingsDialog
+from presentation.states.accent_color_state import AccentColorState
+from presentation.states.dark_mode_state import *
 
 from flet import *
 
@@ -18,6 +20,10 @@ class DyslexiaFriendlyController(Controller):
         self.df_state.on_change = self.change_active
         self.dia_state = DialogState()
         self.dia_state.on_done_build = self.update_view
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
+        self.ac_state.on_colors_updated = self.change_active
+        self.dm_state.on_change = self.change_active
 
         self.settings_dialog: SettingsDialog = self.page.session.get("window").settings_dialog
 
@@ -36,10 +42,8 @@ class DyslexiaFriendlyController(Controller):
     def change_active(self):
         active: bool = self.df_state.active
 
-        if self.old_active == active:
-            return
-        
-        self.old_active = active
+        colors = self.ac_state.color_values
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
 
         try:
             button: SettingsImageButton = None
@@ -47,15 +51,17 @@ class DyslexiaFriendlyController(Controller):
                 if (button.text == "Readable" and active) or (button.text == "Default" and not active):
                     button.active = True
 
-                    button.bgcolor = "#4d191f51"
-                    button.check_box.bgcolor = "#af191f51"
-                    button.border = border.all(1, "#191f51")
+                    button.bgcolor = colors["button_bgcolor"].replace("4d", "00") if dark_mode else colors["button_bgcolor"]
+                    button.check_box.bgcolor = colors["button_bgcolor"].replace("4d", "af") if not dark_mode else "white"
+                    button.check_box.border = border.all(colors["button_bgcolor"].replace("4d", "73"))
+                    button.border = border.all(1, colors["button_bgcolor"].replace("4d", ""))
                     button.label.weight = FontWeight.BOLD
                 else:
                     button.active = False
 
                     button.bgcolor = "#00191f51"
                     button.check_box.bgcolor = "#00191f51"
+                    button.check_box.border = border.all(colors["button_bgcolor"].replace("4d", "73"))
                     button.border = border.all(1, "#006b6b6b")
                     button.label.weight = FontWeight.NORMAL
 

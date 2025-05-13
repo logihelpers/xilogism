@@ -1,7 +1,5 @@
 from flet import *
 import flet.canvas as cv
-import numpy as np
-from scipy.interpolate import CubicSpline
 
 from presentation.views.widgets.circuit_components.abstract_element import LogicElement
 from presentation.states.dark_mode_state import DarkModeState, DarkModeScheme
@@ -19,7 +17,7 @@ class ORGate(LogicElement):
         super().__init__()
 
         self.dm_state = DarkModeState()
-        self.dm_state.on_change = self.update_color
+        self.dm_state.on_change = self.update_colors
 
         self.input_coord = []
         scale = 1
@@ -62,19 +60,29 @@ class ORGate(LogicElement):
         symbol_elements.append(output_line)
         self.output_coord = (output_line.x, output_line.y)
 
-        points = self.get_spaced_points(self.FULL_SIDE_LENGTH, input_count)
+        points_template = [
+            (0 * scale, 50 * scale),    # (x, y)
+            (12.5 * scale, 25 * scale),
+            (9 * scale, 37.5 * scale),
+            (9 * scale, 12.5 * scale)
+        ]
+        points = [(x * scale, y * scale) for x, y in points_template]
+        sorted_points = sorted(points, key=lambda p: p[1])
 
-        y_values = np.array([50, 25, 37.5, 12.5]) * scale
-        x_values = np.array([0, 12.5, 9, 9]) * scale
+        def interpolate_y(y, points):
+            for i in range(len(points) - 1):
+                x0, y0 = points[i]
+                x1, y1 = points[i + 1]
+                if y0 <= y <= y1 or y1 <= y <= y0:
+                    if y1 != y0:
+                        return x0 + (x1 - x0) * (y - y0) / (y1 - y0)
+            return points[-1][0]
 
-        sorted_indices = np.argsort(y_values)
-        y_sorted = y_values[sorted_indices]
-        x_sorted = x_values[sorted_indices]
+        # Get y-points for inputs
+        y_points = self.get_spaced_points(self.FULL_SIDE_LENGTH, input_count)
 
-        spline = CubicSpline(y_sorted, x_sorted)
-
-        for point in points:
-            x = spline(point)
+        for point in y_points:
+            x = interpolate_y(point, sorted_points)
             move = cv.Path.MoveTo(start_x + x, start_y + point)
             input_line = cv.Path.LineTo(start_x - self.INPUT_ARM_WIDTH, start_y + point)
 
@@ -104,10 +112,10 @@ class ORGate(LogicElement):
         step = total / (divisions + 1)
         return [round(step * i, 5) for i in range(1, divisions + 1)]
     
-    def update_color(self):
+    def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         for shape in self.shapes:
             if type(shape) == cv.Text:
-                shape.style.color = "white" if dark_mode else "dark"
+                shape.style = TextStyle(color = "white" if dark_mode else "black")
             else:
                 shape.paint.color = "white" if dark_mode else "dark"

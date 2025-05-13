@@ -18,7 +18,7 @@ class ANDGate(LogicElement):
         super().__init__()
 
         self.dm_state = DarkModeState()
-        self.dm_state.on_change = self.update_color
+        self.dm_state.on_change = self.update_colors
 
         self.input_coord = []
         scale = 1
@@ -92,10 +92,10 @@ class ANDGate(LogicElement):
         step = total / (divisions + 1)
         return [round(step * i, 5) for i in range(1, divisions + 1)]
     
-    def update_color(self):
+    def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         for shape in self.shapes:
             if type(shape) == cv.Text:
-                shape.style.color = "white" if dark_mode else "dark"
+                shape.style = TextStyle(color = "white" if dark_mode else "black")
             else:
                 shape.paint.color = "white" if dark_mode else "dark"

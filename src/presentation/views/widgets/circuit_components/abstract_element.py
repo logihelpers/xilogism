@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 class LogicElement(ABC):
     class Position:
@@ -12,3 +12,7 @@ class LogicElement(ABC):
     output_node_position: Position = None
     output_coord: tuple = None
     input_coord: list = None
+
+    @abstractmethod
+    def update_colors(self):
+        pass

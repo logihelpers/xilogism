@@ -1,6 +1,8 @@
 from flet import *
 from presentation.views.widgets.settings.settings_image_button import SettingsImageButton
 from presentation.states.language_state import Languages, LanguageState
+from presentation.states.dark_mode_state import *
+from presentation.states.accent_color_state import AccentColorState
 
 class LanguageSettings(Column):
     def __init__(self):
@@ -11,6 +13,8 @@ class LanguageSettings(Column):
         self.spacing = 16
 
         self.lang_state = LanguageState()
+        self.ac_state = AccentColorState()
+        self.dm_state = DarkModeState()
 
         self.preview_image = Image(
             "/icons_light/language_english.png",
@@ -52,12 +56,18 @@ class LanguageSettings(Column):
     
     def did_mount(self):
         super().did_mount()
-
         self.lang_state.on_lang_updated = self.update_lang
+        self.ac_state.on_colors_updated = self.update_colors
+        self.update_colors()
     
     def update_lang(self):
         lang_values = self.lang_state.lang_values
         self.controls[0].value = lang_values["language_title"]
+        self.update()
+    
+    def update_colors(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.controls[1].controls[1].border = border.all(1, "white" if dark_mode else "black")
         self.update()
 
 class LanguageButton(ListTile):
@@ -65,6 +75,8 @@ class LanguageButton(ListTile):
     active: bool = False
     def __init__(self, language: Languages = None, on_button_press = None):
         super().__init__()
+
+        self.dm_state = DarkModeState()
 
         self.language = language
 
@@ -91,3 +103,13 @@ class LanguageButton(ListTile):
     
     def on_button_press(self, event: ControlEvent):
         pass
+
+    def did_mount(self):
+        super().did_mount()
+        self.dm_state.on_change = self.update_colors
+        self.update_colors()
+    
+    def update_colors(self):
+        dark_mode = self.dm_state.active == DarkModeScheme.DARK
+        self.leading.color = "white" if dark_mode else "black"
+        self.update()

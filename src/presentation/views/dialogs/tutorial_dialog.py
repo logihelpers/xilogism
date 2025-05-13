@@ -230,11 +230,14 @@ class TutorialPage(Column):
                             expand=True,
                             content=Image(
                                 src=image_file,
-                                fit=ImageFit.FILL,
+                                fit=ImageFit.FIT_WIDTH,
                                 width=400,
                                 height=240,
+                                border_radius=32
                             ),
-                            height=400
+                            height=400,
+                            border_radius=32,
+                            border=border.all(1, "black")
                         ),
                         Container(
                             expand=True,

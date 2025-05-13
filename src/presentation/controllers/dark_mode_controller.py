@@ -54,15 +54,13 @@ class DarkModeController(Controller):
     def change_active(self):
         active = DarkModeScheme(self.dm_state.active)
 
-        if self.old_active == active:
-            return
-        
-        self.old_active = active
-
         self.page.theme_mode = ThemeMode.DARK if active == DarkModeScheme.DARK else ThemeMode.LIGHT
 
         colors = get_colors(active, self.ac_state.active)
         self.ac_state.color_values = colors
+
+        self.page.theme.color_scheme_seed = colors["button_bgcolor"].replace("4d", "")
+        self.page.update()
 
         try:
             button: SettingsImageButton = None
@@ -70,9 +68,10 @@ class DarkModeController(Controller):
                 if (button.text == "Dark" and active.value) or (button.text == "Default" and not active.value):
                     button.active = True
 
-                    button.bgcolor = "#4d191f51"
-                    button.check_box.bgcolor = "#af191f51"
-                    button.border = border.all(1, "#191f51")
+                    button.bgcolor = colors["button_bgcolor"].replace("4d", "00") if active == DarkModeScheme.DARK else colors["button_bgcolor"]
+                    button.check_box.bgcolor = colors["button_bgcolor"].replace("4d", "af") if not active == DarkModeScheme.DARK else "white"
+                    button.check_box.border = border.all(colors["button_bgcolor"].replace("4d", "73"))
+                    button.border = border.all(1, colors["button_bgcolor"].replace("4d", ""))
                     button.label.weight = FontWeight.BOLD
                     button.update()
 
@@ -83,6 +82,7 @@ class DarkModeController(Controller):
                     button.bgcolor = "#00191f51"
                     button.check_box.bgcolor = "#00191f51"
                     button.border = border.all(1, "#006b6b6b")
+                    button.check_box.border = border.all(colors["button_bgcolor"].replace("4d", "73"))
                     button.label.weight = FontWeight.NORMAL
                     button.update()
 

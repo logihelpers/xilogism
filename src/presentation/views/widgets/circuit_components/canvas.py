@@ -8,6 +8,8 @@ class Canvas(Drawboard):
             expand=expand
         )
 
+        self.logic_elements = list()
+
         self.dm_state = DarkModeState()
         self.dm_state.on_change = self.update_color
 
@@ -15,9 +17,15 @@ class Canvas(Drawboard):
         logic_gate: LogicElement = None
         for logic_gate in argv:
             self.shapes.extend(logic_gate.shapes)
+            self.logic_elements.append(logic_gate)
+            self.update_color()
     
     def clear(self):
         self.shapes = []
+        self.logic_elements.clear()
     
     def update_color(self):
+        element: LogicElement = None
+        for element in self.logic_elements:
+            element.update_colors()
         self.update()

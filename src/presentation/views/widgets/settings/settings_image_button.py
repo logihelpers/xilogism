@@ -1,11 +1,15 @@
 from flet import *
 from typing import Dict, List
+from presentation.states.accent_color_state import AccentColorState
 
 class SettingsImageButton(Container):
     _active: bool = False
     refs: Dict[str, List['SettingsImageButton']] = {}
     def __init__(self, image: str = None, text: str = None, group_id: str= None, image_scale: float = 1.0, on_button_press = None):
         super().__init__()
+
+        self.ac_state = AccentColorState()
+
         self.group_id = group_id
         self.text = text
         self.check_box = Container(
@@ -62,6 +66,7 @@ class SettingsImageButton(Container):
     
     def _hover(self, event: ControlEvent):
         button: SettingsImageButton = event.control
+        colors = self.ac_state.color_values
         
         iter_button: SettingsImageButton = None
         for iter_button in SettingsImageButton.refs[button.group_id]:
@@ -69,8 +74,8 @@ class SettingsImageButton(Container):
                 if button.active:
                     continue
                 else:
-                    button.bgcolor = "#1a191f51" if event.data == "true" else "#006b6b6b"
-                    button.border = border.all(1, "#191f51") if event.data == "true" else border.all(1, "#006b6b6b")
+                    button.bgcolor = colors["button_bgcolor"].replace("4d", "05") if event.data == "true" else "#006b6b6b"
+                    button.border = border.all(1, colors["button_bgcolor"].replace("4d", "")) if event.data == "true" else border.all(1, "#006b6b6b")
                     button.label.weight = FontWeight.BOLD if event.data == "true" else FontWeight.NORMAL
                 button.update()
     

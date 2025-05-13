@@ -38,13 +38,13 @@ class AccentColorController(Controller):
     def change_active(self):
         active: AccentColors = self.ac_state.active
 
-        if self.old_active == active:
-            return
-        
-        self.old_active = active
-
         colors = get_colors(self.dm_state.active, active)
         self.ac_state.color_values = colors
+
+        self.page.theme.color_scheme_seed = colors["button_bgcolor"].replace("4d", "")
+        self.page.update()
+
+        self.dm_state.active = self.dm_state.active
 
         try:
             button: AccentColorButton = None

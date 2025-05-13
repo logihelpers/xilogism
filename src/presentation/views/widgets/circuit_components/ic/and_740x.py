@@ -17,7 +17,7 @@ class AND740XIC(LogicElement):
         super().__init__()
 
         self.dm_state = DarkModeState()
-        self.dm_state.on_change = self.update_color
+        self.dm_state.on_change = self.update_colors
 
         self.input_coord: list = []
         self.output_coord: list = []
@@ -71,10 +71,10 @@ class AND740XIC(LogicElement):
             cv.Text(start_x + 30, start_y + self.FULL_SIDE_LENGTH - 20, "7")
         ]
     
-    def update_color(self):
+    def update_colors(self):
         dark_mode = self.dm_state.active == DarkModeScheme.DARK
         for shape in self.shapes:
             if type(shape) == cv.Text:
-                shape.style.color = "white" if dark_mode else "dark"
+                shape.style = TextStyle(color = "white" if dark_mode else "black")
             else:
                 shape.paint.color = "white" if dark_mode else "dark"
