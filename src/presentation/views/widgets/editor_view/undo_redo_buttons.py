@@ -24,7 +24,8 @@ class UndoRedoButtons(Container):
                         src="/icons_light/undo.png",
                         width=16,
                         height=16
-                    )
+                    ),
+                    on_click=self.undo
                 ),
                 VerticalDivider(1, color="black"),
                 Container(
@@ -36,7 +37,8 @@ class UndoRedoButtons(Container):
                         src="/icons_light/redo.png",
                         width=16,
                         height=16
-                    )
+                    ),
+                    on_click=self.redo
                 ),
             ]
         )
@@ -67,3 +69,25 @@ class UndoRedoButtons(Container):
         # self.content.controls[0].on_hover = _hover__  # Undo Container
         # self.content.controls[2].on_hover = _hover__  # Redo Container
         self.update()
+    
+    def undo(self, _):
+        self.page.on_keyboard_event(
+            KeyboardEvent(
+                key="z",
+                ctrl=True,
+                shift=False,
+                alt=False,
+                meta=False
+            )
+        )
+
+    def redo(self, _):
+        self.page.on_keyboard_event(
+            KeyboardEvent(
+                key="y",
+                ctrl=True,
+                shift=False,
+                alt=False,
+                meta=False
+            )
+        )

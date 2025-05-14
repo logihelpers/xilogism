@@ -21,6 +21,7 @@ from presentation.states.render_state import RenderState
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.accent_color_state import AccentColorState
 from presentation.states.dark_mode_state import *
+from presentation.states.active_sidebar_button_state import ActiveSideBarButtonState
 
 from xilowidgets import Editor, Revealer, Zoomer
 from flet_layoutbuilder import LayoutBuilder
@@ -50,10 +51,13 @@ class EditorView(Container):
         self.ad_state.on_change = self.update_animations
         self.ac_state = AccentColorState()
         self.dm_state = DarkModeState()
+        self.asb_state = ActiveSideBarButtonState()
 
         self.hidden_options = Revealer(
             content_hidden=True,
             content_length=72,
+            animation_duration=500,
+            animation_curve=AnimationCurve.EASE_IN_OUT_CIRC,
             content=Container(
                 margin=margin.only(right = 8),
                 border=border.all(1, "black"),
@@ -65,23 +69,25 @@ class EditorView(Container):
                         Container(
                             width = 32,
                             height = 32,
-                            padding = 4,
+                            padding = 8,
                             content=Image(
                                 src="/icons_light/new.png",
                                 width=16,
                                 height=16
-                            )
+                            ),
+                            on_click = lambda event: setattr(self.asb_state, 'active', "New Xilogism"),
                         ),
                         VerticalDivider(1, color="black"),
                         Container(
                             width = 32,
                             height = 32,
-                            padding = 4,
+                            padding = 8,
                             content=Image(
                                 src="/icons_light/open.png",
                                 width=16,
                                 height=16
-                            )
+                            ),
+                            on_click = lambda event: setattr(self.asb_state, 'active', "Open Xilogism"),
                         ),
                     ]
                 )

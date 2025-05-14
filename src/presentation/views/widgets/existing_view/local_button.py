@@ -49,12 +49,6 @@ class LocalButton(Container):
             fit=ImageFit.COVER
         )
 
-        self.more_icon = Image(
-            src="/icons_light/settings_more.png",
-            width=32,
-            height=32
-        )
-
         self.content = Row(
             spacing=8,
             controls=[
@@ -66,8 +60,7 @@ class LocalButton(Container):
                         self.path_text,
                         self.date_text
                     ]
-                ),
-                self.more_icon,
+                )
             ]
         )
     
@@ -89,7 +82,6 @@ class LocalButton(Container):
         self.path_text.style.color = colors["text_color"]
         self.date_text.style.color = colors["text_color"]
         self.docu_icon.src = "/icons_light/Document.png" if not dark_mode else "/icons_dark/Document.png"
-        self.more_icon.src = "/icons_light/settings_more.png" if not dark_mode else "/icons_dark/settings_more.png"
         self.update()
     
     def did_mount(self):

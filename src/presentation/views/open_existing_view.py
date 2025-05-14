@@ -3,6 +3,7 @@ from presentation.views.widgets.existing_view import *
 from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
 from presentation.states.dark_mode_state import *
+from services.init.init_files import AppendFile
 
 class OpenExistingView(Container):
     widget_scale: float = 1.0
@@ -44,8 +45,27 @@ class OpenExistingView(Container):
                 color="black",
                 weight=FontWeight.W_500,
                 size=14,
+            )
+        )
+
+        self.pick_file_dialog = FilePicker(
+            on_result=self.pick_files_result
+        )
+
+        self.open_from_system = FilledButton(
+            "Open from System",
+            icon=Icons.FILE_OPEN_OUTLINED,
+            bgcolor="#4d191f51",
+            color="black",
+            style=ButtonStyle(
+                padding=padding.symmetric(16, 8),
+                shape=RoundedRectangleBorder(8),
+                side=BorderSide(1, "black")
             ),
-            visible=False
+            on_click=lambda _: self.pick_file_dialog.pick_files(
+                allow_multiple=False,
+                allowed_extensions=["xlg", "XLG"]
+            ),
         )
 
         self.pinned_text = Text(
@@ -77,7 +97,7 @@ class OpenExistingView(Container):
                     alignment=MainAxisAlignment.SPACE_BETWEEN,
                     controls=[
                         self.greetings_text,
-                        self.search_tf
+                        self.open_from_system
                     ]
                 ),
                 self.pinned_text,
@@ -95,6 +115,10 @@ class OpenExistingView(Container):
             ]
         )
     
+    def did_mount(self):
+        super().did_mount()
+        self.page.overlay.append(self.pick_file_dialog)
+    
     def update_lang(self):
         lang_values = self.lang_state.lang_values
         self.greetings_text.value = lang_values["greetings"]
@@ -109,10 +133,13 @@ class OpenExistingView(Container):
         self.greetings_text.color = colors["text_color"]
         self.pinned_text.color = colors["text_color"]
         self.local_text.color = colors["text_color"]
-        self.search_tf.hint_style.color = colors["text_color"]
-        self.search_tf.bgcolor = colors["button_bgcolor"]
-        self.search_tf.border = border.all(1, colors["button_border_color"])
+        self.open_from_system.bgcolor = colors["button_bgcolor"].replace("4d", "0f") if "4d" in colors["button_bgcolor"] else colors["button_bgcolor"].replace("#", "#73")
+        self.open_from_system.color = colors["text_color"]
+        self.open_from_system.style.side = BorderSide(1, colors["text_color"])
         self.content.controls[4].color = colors["divider_color"]  # Divider
-        self.search_tf.icon.src = "/icons_dark/search.png" if dark_mode else "/icons_light/search.png"
 
         self.update()
+    
+    def pick_files_result(self, e: FilePickerResultEvent):
+        if e.files:
+            AppendFile(e.files[0].path)
