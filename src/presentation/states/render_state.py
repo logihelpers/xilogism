@@ -68,16 +68,16 @@ class RenderState(metaclass = Singleton):
     
     @image.setter
     def image(self, image: RenderDict[str, str] | Tuple[RenderDict[str, str], bool]):
-        if isinstance(image, RenderDict):
+        if isinstance(image, RenderDict) or isinstance(image, dict):
             self._image.update(image)
-            self.call_image_change_callbacks()
+            self.call_image_change_callbacks(image)
         elif isinstance(image, tuple):
             data, suppress_callback = image
             if suppress_callback:
                 self._image.update_without_callback(data)
             else:
                 self._image.update(data)
-                self.call_image_change_callbacks()
+                self.call_image_change_callbacks(data)
     
     @property
     def on_input_change(self):
@@ -114,6 +114,6 @@ class RenderState(metaclass = Singleton):
         for callback in self._on_output_change:
             callback(output_dict)
     
-    def call_image_change_callbacks(self, image_dict):
+    def call_image_change_callbacks(self, image_dict: dict):
         for callback in self._on_image_change:
             callback(image_dict)

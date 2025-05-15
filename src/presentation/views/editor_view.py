@@ -341,7 +341,7 @@ class EditorView(Container):
         self.canvas.capture(1000, 772)
     
     def capture_image(self, event: ControlEvent):
-        self.render_state.image[self.key_name] = event.data
+        self.render_state.image = {self.key_name: event.data}
     
     def update_colors(self):
         colors = self.ac_state.color_values

@@ -12,6 +12,7 @@ import shutil
 import numpy as np
 from PIL import Image as IMG
 import win32api
+import pythoncom
 
 from flet import Page, margin as mg, SnackBar, Text, SnackBarBehavior
 from presentation.states.active_file_state import ActiveFileState
@@ -110,6 +111,8 @@ class ExportController(Controller):
     def export_to_file(self, margin: bool, titleblock_enable: bool, proj_name: str, creator: str, date: str, is_pdf = 0):
         if self.key_name == "":
             self.key_name = "New"
+
+        pythoncom.CoInitialize()
         
         image_data = base64.b64decode(self.render_state.image[self.key_name])
         image_stream = io.BytesIO(image_data)

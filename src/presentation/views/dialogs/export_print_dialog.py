@@ -5,6 +5,7 @@ from presentation.states.export_state import ExportState, FileFormat
 from presentation.states.animation_disable_state import AnimationDisableState
 from presentation.states.language_state import LanguageState
 from presentation.states.accent_color_state import AccentColorState
+from presentation.states.active_file_state import ActiveFileState
 
 from xilowidgets import Revealer, XDialog, Switcher, XDropdown
 
@@ -20,6 +21,7 @@ class ExportPrintDialog(XDialog):
         self.ad_state.on_change = self.update_animations
         self.lang_state = LanguageState()
         self.ac_state = AccentColorState()
+        self.af_state = ActiveFileState()
 
         self.content_padding = 0
         self.title_padding = 0
@@ -347,8 +349,13 @@ class ExportPrintDialog(XDialog):
         self.extra_options.update()
     
     def update_preview(self, image_dict: dict):
+        if image_dict == {}:
+            image_str = self.r_state.image[self.af_state.active.title]
+        else:
+            image_str = list(image_dict.values())[0]
+
         try:
-            self.preview_image.src_base64 = list(image_dict.values())[0]
+            self.preview_image.src_base64 = image_str
             self.preview_image.update()
         except:
             pass
