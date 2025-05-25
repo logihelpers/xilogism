@@ -44,6 +44,7 @@ class XilogismLoadingUI:
             inter_font_path = "src/assets/fonts/Inter.ttf"  # Update to your font file path
             self.inter_bold = tkfont.Font(family="Inter", size=72, weight="bold")
             self.inter_regular = tkfont.Font(family="Inter", size=16)
+            self.inter_regular_2 = tkfont.Font(family="Inter", size=14)
         except Exception:
             # Fallback to Helvetica if Inter font fails to load
             self.inter_bold = tkfont.Font(family="Helvetica", size=72, weight="bold")
@@ -126,7 +127,7 @@ class XilogismLoadingUI:
         self.loading_label = tk.Label(
             self.root,
             text="Please wait while we set a few things up for you.",
-            font=self.inter_regular,
+            font=self.inter_regular_2,
             bg="#f5f5f5",
             fg="black"
         )

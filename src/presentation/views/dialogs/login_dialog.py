@@ -41,7 +41,8 @@ class LoginDialog(XDialog, metaclass=Singleton):
                 decoration=TextDecoration.UNDERLINE,
                 weight=FontWeight.BOLD,
                 color="#1D2357"
-            )
+            ),
+            visible=False
         )
 
         self.dont_have_acct_text = Text(

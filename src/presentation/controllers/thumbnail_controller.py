@@ -37,7 +37,7 @@ class ThumbnailController(Controller):
         alpha = img_array[:, :, 3]
         non_transparent = np.where(alpha > 0)
         if len(non_transparent[0]) == 0:
-            raise ValueError("No non-transparent content found")
+            return
         y_min, y_max = np.min(non_transparent[0]), np.max(non_transparent[0])
         x_min, x_max = np.min(non_transparent[1]), np.max(non_transparent[1])
 
